@@ -108,5 +108,3 @@ REM del lock.tmp
 REM build the executable that will live-load a shared library
 cl %CommonCompilerFlags% "%PROJECT_PATH%\src\win32_%PROJECT_NAME%.cpp" ^
    /Fmwin32_%PROJECT_NAME%.map  /link %CommonLinkerFlags%
-
-popd
