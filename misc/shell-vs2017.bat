@@ -3,28 +3,25 @@
 REM Set the PROJECT_PATH, and PROJECT_NAME. Run this script from anywhere.
 
 REM Build the 64-bit version by default
-if    "%1" == ""          set Platform=amd64
-if /i "%1" == "x86"       set Platform=x86
-if /i "%1" == "x86_amd64" set Platform=x86_amd64
-if /i "%1" == "x86_x64"   set Platform=x86_amd64
-if /i "%1" == "x86_arm"   set Platform=x86_arm
-if /i "%1" == "amd64"     set Platform=amd64
-if /i "%1" == "amd64_x86" set Platform=amd64_x86
-if /i "%1" == "amd64_arm" set Platform=amd64_arm
-if /i "%1" == "x64"       set Platform=amd64
-if /i "%1" == "x64_x86"   set Platform=amd64_x86
-if /i "%1" == "x64_arm"   set Platform=amd64_arm
-if /i "%1" == "arm"       set Platform=arm
+if    "%1" == ""        set Architecture=amd64
+if /i "%1" == "x86"     set Architecture=x86
+if /i "%1" == "amd64"   set Architecture=amd64
+if /i "%1" == "arm"     set Architecture=arm
+if /i "%1" == "arm64"   set Architecture=arm64
+if "%Architecture%" == "" goto :errArch
 
-if "%Platform%" == "" goto :err
+if    "%2" == ""        set HostArchitecture=amd64
+if /i "%2" == "x86"     set HostArchitecture=x86
+if /i "%2" == "amd64"   set HostArchitecture=amd64
+if "%HostArchtecture" == "" goto errHostArch
 
 REM get the command-line options for the script to set environment variables
 REM call "E:\local\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -?
 
-call "E:\local\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%Platform% -host_arch=%Platform% -no_logo
+call "E:\local\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%Architecture% -host_arch=%HostArchitecture% -no_logo
 
 REM verify the environment variables are set properly
-REM call "E:\local\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%Platform% -host_arch=%Platform% -no_logo -test
+REM call "E:\local\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%Architecture% -host_arch=%HostArchitecture% -no_logo -test
 
 REM Find the project path. This script assumes it is one directory-level below
 REM the project directory.
@@ -43,9 +40,14 @@ REM Remove the trailing directory separator
 IF %PROJECT_PATH:~-1%==\ SET PROJECT_PATH=%PROJECT_PATH:~0,-1%
 
 FOR %%f in ("%PROJECT_PATH%") DO SET PROJECT_NAME=%%~nxf
-TITLE %PROJECT_NAME% Project: Build %Platform%
+TITLE %PROJECT_NAME% Project: Build %Architecture%
 
 goto :EOF
 
-:err
-echo Error: "%1" is not a valid platform. Please select amd64 (default), or x86.
+:errArch
+echo Error: "%1" is not a valid platform architecture. Please select amd64 (default), x86, arm64, or arm.
+
+goto :EOF
+
+:errHostArch
+echo Error: "%2" is not a valid host architecture. Please select amd64 (default), or x86.
