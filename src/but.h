@@ -24,26 +24,54 @@ enum ButTestResult
     TEST_RESULT_NOTRUN          // The test case has not run
 } ButTestResult;
 
-typedef s32     (*setupType)(TestDataHandle);
-typedef s32     (*runTestType)(TestDataHandle);
-typedef void    (*teardownType)(TestDataHandle);
+typedef wch*    (*GetNameTestCase)(void);
+typedef s32     (*SetupTestCase)(TestDataHandle);
+typedef s32     (*RunTestCase)(TestDataHandle);
+typedef void    (*TeardownTestCase)(TestDataHandle);
 
+// Test case interface
+typedef
+struct ButTestCaseInf
+{
+    GetNameTestCase     get;
+    SetupTestCase       setup;
+    RunTestCase         run;
+    TeardownTestCase    teardown;
+} ButTestCaseInf, *PButTestCaseInf;
+
+// What kind of an internal struct do I need?
 typedef
 struct ButTestCase
 {
-    wch*            name;
-    setupType       setup;
-    runTestType     run;
-    teardownType    teardown;
-    TestDataHandle  testData;
-} ButTestCase, *PButTestCase;
+    ButTestCaseInf  interface;
+    TestDataHandle  data;
+} BetTestCase, *PButTestCase;
 
+typedef const wch* (*GetNameTestSuite)(void);
+typedef size_t (*CountTestCases)(void);
+typedef PButTestCaseInf (*GetTestCase)(size_t index);
+typedef PButTestCaseInf (*FirstTestCase)(void);
+typedef PButTestCaseInf (*NextTestCase)(PButTestCaseInf);
+typedef PButTestCaseInf (*EndTestCase)(void);
+
+typedef
+struct ButTestSuiteInf
+{
+    GetNameTestSuite    name;
+    CountTestCases      count;
+    GetTestCase         get;
+    FirstTestCase       first;
+    NextTestCase        next;
+    EndTestCase         end;
+} ButTestSuiteInf, *PButTestSuiteInf;
+
+//! Move to but.c. This is the internal representation
 typedef
 struct ButTestSuite
 {
     wch*            name;
     size_t          count;
-    PButTestCase    testCases;
+    PButTestCaseInf testCases;
 } ButTestSuite, *PButTestSuite;
 
 /**
