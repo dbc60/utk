@@ -131,14 +131,16 @@ typedef real64  r64;
 #define ALIGN8(Value) ((Value + 7) & ~7)
 #define ALIGN16(Value) ((Value + 15) & ~15)
 
-/*
- * Generate a unique handle. Great for making opaque pointers to objects. It's
- * better than void. The compiler will emit a warning or error if the value of
- * one handle is assigned to a different kind of handle, whereas pointers to
- * void can freely exchange their values.
+/**
+ * This is a convenience macro for generating opaque handles.
+ *
+ * If we follow the convention of naming structs with a single leading
+ * underscore, such as 'struct _foo`, then this macro will define a forward
+ * declaration of the struct and pointer type to it. The pointer type
+ * is then usable as an opaque handle to specific instances of the struct.
  */
 #define DEFINE_HANDLE(name)         \
-    struct name##__h { int unused; };   \
-    typedef struct name##__h *name
+    struct _##name { int unused; };   \
+    typedef struct _##name *name
 
 END_EXTERN_C

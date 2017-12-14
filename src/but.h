@@ -12,15 +12,16 @@ BEGIN_EXTERN_C
 
 // A Handle for test data
 DEFINE_HANDLE(TestData);
+DEFINE_HANDLE(test_context);
 
 typedef
 enum _but_test_result
 {
-    TEST_RESULT_PASSED,         // The test case was run and it returned successfully
-    TEST_RESULT_FAILED,         // The test case was run and it returned a failure
-    TEST_RESULT_EXC_FAILED,     // The main test passed, but an exception path failed
-    TEST_RESULT_SETUP_FAILED,   // The setup function reported a failure
-    TEST_RESULT_NOTRUN          // The test case has not run
+    BTR_PASSED,         // The test case was run and it returned successfully
+    BTR_FAILED,         // The test case was run and it returned a failure
+    BTR_EXC_FAILED,     // The main test passed, but an exception path failed
+    BTR_SETUP_FAILED,   // The setup function reported a failure
+    BTR_NOTRUN          // The test case has not run
 } but_test_result;
 
 typedef wch*    (*test_case_name_get)(void);
