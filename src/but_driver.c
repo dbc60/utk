@@ -9,9 +9,9 @@
  */
 struct _result_context
 {
-    memory_index    index;      // the index of the test case
-    but_test_result result;     // the result code
-    s32             errorCode;  // the error code from the test case
+    memory_index            index;      // the index of the test case
+    enum but_test_result    result;     // the result code
+    s32                     errorCode;  // the error code from the test case
 };
 
 
