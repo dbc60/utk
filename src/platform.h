@@ -134,13 +134,12 @@ typedef real64  r64;
 /**
  * This is a convenience macro for generating opaque handles.
  *
- * If we follow the convention of naming structs with a single leading
- * underscore, such as 'struct _foo`, then this macro will define a forward
- * declaration of the struct and pointer type to it. The pointer type
- * is then usable as an opaque handle to specific instances of the struct.
+ * This macro creates a forward declaration of a struct and defines a pointer
+ * type to it. The pointer type is then usable as an opaque handle to specific
+ * instances of the struct.
  */
 #define DEFINE_HANDLE(name)         \
-    struct _##name { int unused; };   \
-    typedef struct _##name *name
+    struct name { int unused; };    \
+    typedef struct name *name
 
 END_EXTERN_C
