@@ -1,0 +1,11 @@
+.red { color: red; }
+.bolditalic {
+  font-weight: bold;
+  font-style: italic;
+}
+.pre {
+    color: #0831bb;
+}
+.reference {
+    color: #00973f;
+}
