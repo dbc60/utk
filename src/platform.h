@@ -1,7 +1,16 @@
 /* ========================================================================
-   Author: Douglas B. Cuthbertson
-   (C) Copyright 2015 by Douglas B. Cuthbertson. All Rights Reserved.
-   ======================================================================== */
+ * (C) Copyright 2015,2017 Douglas B. Cuthbertson
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ * ========================================================================
+ */
+
+/**
+ * @file
+ * @brief a variety of convenient data types and macros
+ */
+
 #pragma once
 
 #if defined(__cplusplus)
