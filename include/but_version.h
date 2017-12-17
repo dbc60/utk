@@ -11,8 +11,8 @@
  * @brief Methods for retrieving the version of this BUT library
  */
 
-#ifndef BUT_VERSION_H
-#define BUT_VERSION_H
+#ifndef BUT_VERSION_H_INCLUDED
+#define BUT_VERSION_H_INCLUDED
 
 #define BUT_MAJOR_VERSION 0
 #define BUT_MINOR_VERSION 0
@@ -39,4 +39,4 @@ const char *but_version(void); /* Returns BUT_VERSION */
  */
 int but_version_num(void);  /* Returns BUT_VERSION_NUM */
 
-#endif  /* BUT_VERSION_H */
+#endif  /* BUT_VERSION_H_INCLUDED */

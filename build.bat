@@ -83,9 +83,12 @@ REM Optimization switches /O2 /Oi /fp:fast
 
 set BUILD_PATH=%cd%
 
-set CommonCompilerFlags=/MTd /nologo /fp:fast /Gm- /GR- /EHsc /WX /W4 /wd4201 /wd4100 ^
-    /wd4189 /wd4127 /wd4505 /FC /Z7 /Od /Oi /D "_UNICODE" /D "UNICODE" ^
-    /D PROJECT_INTERNAL=1 /D PROJECT_SLOW=1 /D PROJECT_WIN32=1 /Wv:18
+set CommonCompilerFlags=/GS /Zc:wchar_t /MTd /nologo /fp:fast /Gm- /GR- /EHsc ^
+    /WX /W4 /wd4201 /Zc:inline ^
+    /wd4100 /wd4189 /wd4127 /wd4505 /FC /Z7 /Od /Oi /D _UNICODE /D UNICODE ^
+    /D _DEBUG /D PROJECT_INTERNAL=1 /D PROJECT_SLOW=1 /D PROJECT_WIN32=1 ^
+    /Wv:18 /Iinclude /Fabuild\x64\Debug\ /Fobuild\x64\Debug\
+
 set CommonLinkerFlags=/incremental:no /opt:ref user32.lib gdi32.lib winmm.lib
 
 REM clean up the symbol files from the previous build so we will have fresh
@@ -106,5 +109,11 @@ REM    /PDB:%PROJECT_NAME%_%random_value%.pdb
 REM del lock.tmp
 
 REM build the executable that will live-load a shared library
-cl %CommonCompilerFlags% "%PROJECT_PATH%\src\win32_%PROJECT_NAME%.cpp" ^
-   /Fmwin32_%PROJECT_NAME%.map  /link %CommonLinkerFlags%
+REM cl %CommonCompilerFlags% "%PROJECT_PATH%\src\win32_%PROJECT_NAME%.cpp" ^
+REM   /Fmwin32_%PROJECT_NAME%.map  /link %CommonLinkerFlags%
+
+REM build the static library for the BUT driver: but_driver.lib
+REM the '/c' flag means 'compile only, do not link'
+cl %CommonCompilerFlags% /c /D _LIB /Fpbuild\x64\Debug\but_driver.pch /Fdbuild\x64\Debug\but_driver.pdb src\but_driver.c src\but_version.c src\but.c
+
+lib /OUT:"%PROJECT_PATH%\build\x64\Debug\but_driver.lib" /MACHINE:X64 /NOLOGO build\x64\Debug\but_driver.obj build\x64\Debug\but_version.obj build\x64\Debug\but.obj

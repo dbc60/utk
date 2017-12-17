@@ -1,8 +1,13 @@
 /* ========================================================================
-   Author: Douglas B. Cuthbertson
-   (C) Copyright 2015 by Douglas B. Cuthbertson. All Rights Reserved.
-   ======================================================================== */
-#pragma once
+ * (C) Copyright 2015,2017 Douglas B. Cuthbertson
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ * ========================================================================
+ */
+
+#ifndef PLATFORM_H_INCLUDED
+#define PLATFORM_H_INCLUDED
 
 #if defined(__cplusplus)
 // Single line extern "C"
@@ -138,8 +143,8 @@ typedef real64  r64;
  * type to it. The pointer type is then usable as an opaque handle to specific
  * instances of the struct.
  */
-#define DEFINE_HANDLE(name)         \
-    struct name { int unused; };    \
-    typedef struct name *name
+#define DEFINE_HANDLE(name) typedef struct name name
 
 END_EXTERN_C
+
+#endif  /* PLATFORM_H_INCLUDED */

@@ -11,10 +11,11 @@
  * @brief TBD
  */
 
-#pragma once
-
+#ifndef BUT_H_INCLUDED
+#define BUT_H_INCLUDED
 
 #include "platform.h"
+
 
 BEGIN_EXTERN_C
 // Basic Unit Test (BUT)
@@ -36,9 +37,9 @@ enum but_test_result
 };
 
 typedef wch*    (*test_case_name_get)(void);
-typedef s32     (*test_case_setup)(test_data);
-typedef s32     (*test_case_run)(test_data);
-typedef void    (*test_case_teardown)(test_data);
+typedef s32     (*test_case_setup)(test_data*);
+typedef s32     (*test_case_run)(test_data*);
+typedef void    (*test_case_teardown)(test_data*);
 
 // Test case interface
 struct but_test_case_inf
@@ -71,9 +72,11 @@ struct but_test_suite_inf
  * This is the only function that a shared/dynamic-link library (DLL) must
  * export so the test driver can retrieve the test suite.
  */
-typedef but_test_suite (*but_test_suite_get)(void);
+typedef but_test_suite* (*but_test_suite_get)(void);
 
 // getButTestSuite is the only function that a Basic Unit Test DLL must export.
 but_test_suite_get test_suite_get;
 
 END_EXTERN_C
+
+#endif  /* BUT_H_INCLUDED */
