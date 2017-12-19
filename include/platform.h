@@ -48,7 +48,17 @@ typedef int8_t  int08;
 typedef int16_t int16;
 typedef int32_t int32;
 typedef int64_t int64;
+
+/**
+ * the intent of bool32 is to be zero for false and non-zero for true.
+ */
 typedef int32_t bool32;
+
+#undef FALSE
+#define FALSE ((bool32)0)
+
+#undef TRUE
+#define TRUE ((bool32) 1)
 
 typedef uint8_t  uint8;
 typedef uint8_t  uint08;
@@ -83,6 +93,7 @@ typedef uint32  u32;
 typedef uint64  u64;
 
 typedef bool32  b32;
+typedef char    ch8;
 typedef wchar_t wch;
 typedef real32  r32;
 typedef real64  r64;

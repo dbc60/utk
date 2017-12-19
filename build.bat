@@ -110,10 +110,13 @@ REM del lock.tmp
 
 REM build the executable that will live-load a shared library
 REM cl %CommonCompilerFlags% "%PROJECT_PATH%\src\win32_%PROJECT_NAME%.cpp" ^
-REM   /Fmwin32_%PROJECT_NAME%.map  /link %CommonLinkerFlags%
+REM    /Fmwin32_%PROJECT_NAME%.map  /link %CommonLinkerFlags%
 
 REM build the static library for the BUT driver: but_driver.lib
 REM the '/c' flag means 'compile only, do not link'
 cl %CommonCompilerFlags% /c /D _LIB /Fpbuild\x64\Debug\but_driver.pch /Fdbuild\x64\Debug\but_driver.pdb src\but_driver.c src\but_version.c src\but.c
 
 lib /OUT:"%PROJECT_PATH%\build\x64\Debug\but_driver.lib" /MACHINE:X64 /NOLOGO build\x64\Debug\but_driver.obj build\x64\Debug\but_version.obj build\x64\Debug\but.obj
+
+cl %CommonCompilerFlags% "%PROJECT_PATH%\src\win32_but_driver.c" ^
+   /Febuild\x64\Debug\win32_but_driver.exe /Fmbuild\x64\Debug\win32_but_driver.map  /link %CommonLinkerFlags% build\x64\Debug\but_driver.lib

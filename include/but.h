@@ -16,61 +16,66 @@
 
 #include "platform.h"
 
-
 BEGIN_EXTERN_C
 // Basic Unit Test (BUT)
 
-// A Handle for test data
-DEFINE_HANDLE(test_data);
-DEFINE_HANDLE(test_context);
-DEFINE_HANDLE(but_test_case);
-DEFINE_HANDLE(but_test_suite);
+// Forward declarations of "opaque" types
+typedef void* test_data;
+typedef struct test_context test_context;
+typedef struct but_test_case but_test_case;
+typedef struct but_test_suite but_test_suite;
 
 
 enum but_test_result
 {
     BTR_PASSED,         // The test case was run and it returned successfully
     BTR_FAILED,         // The test case was run and it returned a failure
-    BTR_EXC_FAILED,     // The main test passed, but an exception path failed
-    BTR_SETUP_FAILED,   // The setup function reported a failure
-    BTR_NOTRUN          // The test case has not run
+    BTR_FAILED_EXC,     // The main test passed, but an exception path failed
+    BTR_FAILED_SETUP,   // The setup function reported a failure
+    BTR_NOT_RUN,        // The test case has not run
+    BTR_CONTEXT_INVALID // Something is wrong with the test context
 };
+typedef enum but_test_result but_test_result;
 
-typedef wch*    (*test_case_name_get)(void);
-typedef s32     (*test_case_setup)(test_data*);
-typedef s32     (*test_case_run)(test_data*);
-typedef void    (*test_case_teardown)(test_data*);
+
+typedef s32     (*test_case_setup)(void* data);
+typedef s32     (*test_case_run)(void* data);
+typedef void    (*test_case_teardown)(void* data);
 
 // Test case interface
-struct but_test_case_inf
+struct but_test_case
 {
-    test_case_name_get  get;
+    const ch8          *name;
     test_case_setup     setup;
     test_case_run       run;
     test_case_teardown  teardown;
+    void               *test_data;
 };
+typedef struct but_test_case but_test_case;
 
-typedef const wch* (*test_suite_name_get)(void);
-typedef size_t (*test_case_count)(void);
-typedef struct but_test_case_inf* (*test_case_get)(size_t index);
-typedef struct but_test_case_inf* (*test_case_first)(void);
-typedef struct but_test_case_inf* (*test_case_next)(but_test_case_inf);
-typedef struct but_test_case_inf* (*test_case_end)(void);
 
-struct but_test_suite_inf
+/**
+ * return the test case at index, or null if the index is not in the range of
+ * zero to (count - 1).
+ */
+typedef struct but_test_case* (*test_case_get)(size_t index);
+
+struct but_test_suite
 {
-    test_suite_name_get name;
-    test_case_count     count;
-    test_case_get       get;
-    test_case_first     first;
-    test_case_next      next;
-    test_case_end       end;
+    const ch8          *name;
+    size_t              count;
+    but_test_case     **test_cases;
 };
+typedef struct but_test_suite but_test_suite;
+
 
 /**
  * A pointer to a function that will return the address of a ButTestSuite.
  * This is the only function that a shared/dynamic-link library (DLL) must
  * export so the test driver can retrieve the test suite.
+ * 
+ * Yes, you do have to write test cases if you want something more than an
+ * empty test suite.
  */
 typedef but_test_suite* (*but_test_suite_get)(void);
 
