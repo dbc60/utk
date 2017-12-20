@@ -94,6 +94,7 @@ typedef uint64  u64;
 
 typedef bool32  b32;
 typedef char    ch8;
+typedef unsigned char uch;
 typedef wchar_t wch;
 typedef real32  r32;
 typedef real64  r64;
@@ -160,6 +161,10 @@ typedef real64  r64;
  * instances of the struct.
  */
 #define DEFINE_HANDLE(name) typedef struct name name
+
+#ifndef UNREFERENCED
+#define UNREFERENCED(name) (name)
+#endif
 
 END_EXTERN_C
 

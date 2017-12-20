@@ -3,7 +3,7 @@
 #include "but_driver.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
+#include "stdafx.h"
 
 
 static void
@@ -14,7 +14,7 @@ test_driver_display_test_case(test_context *ctx)
 
     name_test_case = test_context_get_name_test_case(ctx);
     idx = test_context_get_index(ctx);
-    printf("%6d. \"%s\" %s\n", idx+1, name_test_case, " test case running.");
+    printf("%6zd. \"%s\" %s\n", idx+1, name_test_case, " test case running.");
 }
 
 
@@ -29,7 +29,7 @@ but_test_driver(but_test_suite *bts)
     const ch8      *case_name;
 
     if (bts) {
-        printf("\nTesting %s Package. Running %d Test Cases.\n",
+        printf("\nTesting %s Package. Running %zd Test Cases.\n",
                bts->name,
                bts->count);
 
@@ -60,9 +60,9 @@ but_test_driver(but_test_suite *bts)
 
             suite_name = test_context_get_name_test_suite(ctx);
             printf("\n%s Package Results\n\tTest Count:\t\
-%d\n\tTests Run:\t%d\n\tTests Passed:\
-\t%d\n\tTests Failed:\t%d\n\t\
-Setups Failed:\t%d\n",
+%zd\n\tTests Run:\t%zd\n\tTests Passed:\
+\t%zd\n\tTests Failed:\t%zd\n\t\
+Setups Failed:\t%zd\n",
                    suite_name,
                    test_context_get_count_test_cases(ctx),
                    test_context_get_count_run(ctx),
@@ -90,7 +90,7 @@ main(int argc, char **argv)
     int                 i;
     char               *tspath;
     HMODULE             library;
-    but_test_suite_get  bts_get;
+    but_test_suite_get *bts_get;
     but_test_suite     *bts;
 
     if (argc > 1) {
@@ -100,7 +100,7 @@ main(int argc, char **argv)
             library = LoadLibraryA(tspath);
 
             if (library) {
-                bts_get = (but_test_suite_get)GetProcAddress(library, "test_suite_get");
+                bts_get = (but_test_suite_get*)GetProcAddress(library, "test_suite_get");
                 if (bts_get) {
                     bts = bts_get();
                     /*

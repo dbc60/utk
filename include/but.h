@@ -19,6 +19,14 @@
 BEGIN_EXTERN_C
 // Basic Unit Test (BUT)
 
+#ifdef WIN_BUILD
+#define DllImport   __declspec(dllimport)
+#define DllExport   __declspec(dllexport)
+#else
+#define DllImport
+#define DllExport
+#endif
+
 // Forward declarations of "opaque" types
 typedef void* test_data;
 typedef struct test_context test_context;
@@ -38,9 +46,9 @@ enum but_test_result
 typedef enum but_test_result but_test_result;
 
 
-typedef s32     (*test_case_setup)(void* data);
-typedef s32     (*test_case_run)(void* data);
-typedef void    (*test_case_teardown)(void* data);
+typedef s32     (*test_case_setup)(void *data);
+typedef s32     (*test_case_run)(void *data);
+typedef void    (*test_case_teardown)(void *data);
 
 // Test case interface
 struct but_test_case
@@ -77,10 +85,10 @@ typedef struct but_test_suite but_test_suite;
  * Yes, you do have to write test cases if you want something more than an
  * empty test suite.
  */
-typedef but_test_suite* (*but_test_suite_get)(void);
+typedef but_test_suite* (but_test_suite_get)(void);
 
 // getButTestSuite is the only function that a Basic Unit Test DLL must export.
-but_test_suite_get test_suite_get;
+DllExport but_test_suite_get test_suite_get;
 
 END_EXTERN_C
 

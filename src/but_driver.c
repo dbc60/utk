@@ -7,8 +7,9 @@
  */
 
 #include "platform.h"
-#include "but_internal.h"
+#include "but.h"
 #include "but_driver.h"
+
 // malloc prototypes
 #include <stdlib.h> 
 
@@ -62,20 +63,16 @@ grow_capacity(test_context *ctx)
 
     // Calculate a new capacity, but make it no more than
     // the number of test cases in the test suite
-    if (ctx->capacity + increment > (size_t)ctx->test_suite->count)
-    {
+    if (ctx->capacity + increment > (size_t)ctx->test_suite->count) {
         new_capacity = ctx->test_suite->count;
         count = ctx->test_suite->count - ctx->capacity;
-    }
-    else
-    {
+    } else {
         new_capacity = ctx->capacity + increment;
         count = increment;
     }
 
     new_results = realloc(ctx->results, new_capacity * sizeof(result_context));
-    if (new_results)
-    {
+    if (new_results) {
         // Initialize new memory block
         memset(&new_results[ctx->capacity],
                0,
@@ -83,25 +80,23 @@ grow_capacity(test_context *ctx)
         ctx->capacity = new_capacity;
         ctx->results = new_results;
     }
-}   // grow_capacity
+}
 
 
 static void
 insert_result(test_context *ctx, enum but_test_result result, int error_code)
 {
-    if (ctx->count_results == ctx->capacity)
-    {
+    if (ctx->count_results == ctx->capacity) {
         grow_capacity(ctx);
     }
 
-    if ((size_t)ctx->count_results < ctx->capacity)
-    {
+    if ((size_t)ctx->count_results < ctx->capacity) {
         ctx->results[ctx->count_results].index = ctx->index;
         ctx->results[ctx->count_results].result = result;
         ctx->results[ctx->count_results].error_code = error_code;
         ++ctx->count_results;
     }
-}   // insert_result
+}
 
 
 /**

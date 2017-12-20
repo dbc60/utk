@@ -84,16 +84,15 @@ REM Optimization switches /O2 /Oi /fp:fast
 set BUILD_PATH=%cd%
 
 set CommonCompilerFlags=/GS /Zc:wchar_t /MTd /nologo /fp:fast /Gm- /GR- /EHsc ^
-    /WX /W4 /wd4201 /Zc:inline ^
-    /wd4100 /wd4189 /wd4127 /wd4505 /FC /Z7 /Od /Oi /D _UNICODE /D UNICODE ^
+    /WX /W4 /Zc:inline /FC /Z7 /Od /Oi /D _UNICODE /D UNICODE ^
     /D _DEBUG /D PROJECT_INTERNAL=1 /D PROJECT_SLOW=1 /D PROJECT_WIN32=1 ^
-    /Wv:18 /Iinclude /Fabuild\x64\Debug\ /Fobuild\x64\Debug\
+    /D WIN_BUILD /Wv:18 /Iinclude /Fabuild\x64\Debug\ /Fobuild\x64\Debug\
 
-set CommonLinkerFlags=/incremental:no /opt:ref user32.lib gdi32.lib winmm.lib
+set CommonLinkerFlags=/nologo /incremental:no /opt:ref kernel32.lib user32.lib gdi32.lib winmm.lib
 
 REM clean up the symbol files from the previous build so we will have fresh
 REM ones for live-load debugging in VS
-del *.pdb > NUL 2> NUL
+del /q build\x64\Debug\*.pdb
 
 REM old way to create a new shared library. Use %random% instead
 REM set datetime=%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~0,2%%time:~3,2%%time:~6,2%
@@ -114,9 +113,29 @@ REM    /Fmwin32_%PROJECT_NAME%.map  /link %CommonLinkerFlags%
 
 REM build the static library for the BUT driver: but_driver.lib
 REM the '/c' flag means 'compile only, do not link'
-cl %CommonCompilerFlags% /c /D _LIB /Fpbuild\x64\Debug\but_driver.pch /Fdbuild\x64\Debug\but_driver.pdb src\but_driver.c src\but_version.c src\but.c
+cl %CommonCompilerFlags% /c /Fpbuild\x64\Debug\but_driver.pch /Fdbuild\x64\Debug\but_driver.pdb src\but_driver.c src\but_version.c
 
-lib /OUT:"%PROJECT_PATH%\build\x64\Debug\but_driver.lib" /MACHINE:X64 /NOLOGO build\x64\Debug\but_driver.obj build\x64\Debug\but_version.obj build\x64\Debug\but.obj
+REM /OUT:"%PROJECT_PATH%\build\x64\Debug\but_driver.lib" /MACHINE:X64 /NOLOGO build\x64\Debug\but_driver.obj build\x64\Debug\but_version.obj
 
+REM build but_driver.dll and its link library but_driver.lib
+link %CommonLinkerFlags% /DLL /MACHINE:X64 /OUT:build\x64\Debug\but_driver.dll ^
+     /PDB:build\x64\Debug\but_driver.pdb build\x64\Debug\but_driver.obj ^
+     build\x64\Debug\but_version.obj
+
+REM build but_driver.exe from win32_but_driver.c and the link-library,
+REM but_driver.lib
 cl %CommonCompilerFlags% "%PROJECT_PATH%\src\win32_but_driver.c" ^
    /Febuild\x64\Debug\win32_but_driver.exe /Fmbuild\x64\Debug\win32_but_driver.map  /link %CommonLinkerFlags% build\x64\Debug\but_driver.lib
+
+REM compile the components of test_driver.dll that tests but_driver.dll
+cl %CommonCompilerFlags% /c /Isrc /D _LIB /Fpbuild\x64\Debug\test_driver.pch ^
+   /Fdbuild\x64\Debug\test_driver.pdb "%PROJECT_PATH%\but\test_driver.c" ^
+   "%PROJECT_PATH%\but\but_basic_unit_test.c" "%PROJECT_PATH%\but\but_test.c"
+
+REM lib /OUT:"%PROJECT_PATH%\build\x64\Debug\test_driver.lib" /MACHINE:X64 "build\x64\Debug\test_driver.obj" "build\x64\Debug\but_basic_unit_test.obj" "build\x64\Debug\but_test.obj"
+
+REM build test_driver.dll - the unit test for but_driver.dll
+link %CommonLinkerFlags% /DLL /MACHINE:X64 ^
+     /OUT:"build\x64\Debug\test_driver.dll" ^
+     /PDB:build\x64\Debug\test_driver.pdb "build\x64\Debug\test_driver.obj" ^
+     "build\x64\Debug\but_basic_unit_test.obj" "build\x64\Debug\but_test.obj"

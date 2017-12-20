@@ -6,6 +6,7 @@ REM Build the 64-bit version by default
 if    "%1" == ""        set Architecture=amd64
 if /i "%1" == "x86"     set Architecture=x86
 if /i "%1" == "amd64"   set Architecture=amd64
+if /i "%1" == "x64"     set Architecture=amd64
 if /i "%1" == "arm"     set Architecture=arm
 if /i "%1" == "arm64"   set Architecture=arm64
 if "%Architecture%" == "" goto :errArch

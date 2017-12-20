@@ -16,11 +16,11 @@
 
 #define BUT_MAJOR_VERSION 0
 #define BUT_MINOR_VERSION 0
-#define BUT_PATCH_VERSION 0
+#define BUT_PATCH_VERSION 1
 #define BUT_VERSION_NUM ((BUT_MAJOR_VERSION << 16) | \
                          (BUT_MINOR_VERSION << 8) | \
                          BUT_PATCH_VERSION)
-#define BUT_VERSION "0.0.0"
+#define BUT_VERSION "0.0.1"
 
 /**
  * @see BUT_VERSION
