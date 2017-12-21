@@ -81,8 +81,10 @@ REM   __ISO_C_VISIBLE   - the version of C we are targeting for the math library
 REM                       1995 = C95, 1999 = C99, 2011 = C11.
 REM Optimization switches /O2 /Oi /fp:fast
 
-set BUILD_PATH=%cd%
-
+set PROJECT_PATH=%cd%
+set BUILD_CONFIG=Debug
+set BUILD_PATH=%PROJECT_PATH%\build\%Platform%\%BUILD_CONFIG%
+echo BUILD_PATH=%BUILD_PATH%
 set CommonCompilerFlags=/GS /Zc:wchar_t /MTd /nologo /fp:fast /Gm- /GR- /EHsc ^
     /WX /W4 /Zc:inline /FC /Z7 /Od /Oi /D _UNICODE /D UNICODE ^
     /D _DEBUG /D PROJECT_INTERNAL=1 /D PROJECT_SLOW=1 /D PROJECT_WIN32=1 ^
@@ -92,7 +94,11 @@ set CommonLinkerFlags=/nologo /incremental:no /opt:ref kernel32.lib user32.lib g
 
 REM clean up the symbol files from the previous build so we will have fresh
 REM ones for live-load debugging in VS
-del /q build\x64\Debug\*.pdb
+IF NOT EXIST "%BUILD_PATH%" md "%BUILD_PATH%"
+REM echo "%BUILD_PATH%"\*.pdb
+REM dir "%BUILD_PATH%"\
+
+del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 
 REM old way to create a new shared library. Use %random% instead
 REM set datetime=%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~0,2%%time:~3,2%%time:~6,2%

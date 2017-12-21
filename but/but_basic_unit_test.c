@@ -11,7 +11,7 @@ static but_test_case *tca[] =
     &tc2,
 
     &load_driver,
-    &test_version,
+    &test_validate_version,
     &test_begin_end,
     &test_is_valid,
     &next_tc,

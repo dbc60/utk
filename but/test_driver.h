@@ -5,7 +5,7 @@
 #include <but.h>
 
 extern but_test_case load_driver;
-extern but_test_case test_version;
+extern but_test_case test_validate_version;
 extern but_test_case test_begin_end;
 extern but_test_case test_is_valid;
 extern but_test_case next_tc;
