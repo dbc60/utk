@@ -475,6 +475,13 @@ testNextIndexMore(void *data)
         if (tdd->tdd_get_index(tdd->tdd_ctx) == 1) {
             if (tdd->tdd_more(tdd->tdd_ctx) == 1) {
                 tdd->tdd_next(tdd->tdd_ctx);
+                /**
+                 * @todo No! tdd_more is supposed to be a Boolean. Yes, FALSE
+                 * is what we expect here, but this code hides the logic
+                 * behind the fact that C has no 'bool' type, so int and b32
+                 * are actually the same. The compiler will never issues a
+                 * warning about type mismatches or implicit conversion!
+                 */
                 result = tdd->tdd_more(tdd->tdd_ctx);
             } else {
                 result = 1;

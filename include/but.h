@@ -45,7 +45,13 @@ enum but_test_result
 };
 typedef enum but_test_result but_test_result;
 
-
+/**
+ * @todo consider changing the return types of setup and run from s32 to b32.
+ * I think a more limited value range - like TRUE/FALSE - may be helpful in
+ * reasoning about the code. In fact, why not change it to but_test_result? If
+ * not that, then some other enumerated type, so we don't have to assume zero
+ * is okay, and all other values are a failure of some kind.
+ */
 typedef s32     (*test_case_setup)(void *data);
 typedef s32     (*test_case_run)(void *data);
 typedef void    (*test_case_teardown)(void *data);

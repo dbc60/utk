@@ -27,9 +27,9 @@
  */
 struct result_context
 {
-    memory_index            index;          // the index of the test case
-    enum but_test_result    result;         // the result code
-    s32                     error_code;    // from the test case
+    memory_index    index;      // the index of the test case
+    but_test_result result;     // the result code
+    s32             error_code; // from the test case
 };
 typedef struct result_context result_context;
 
@@ -84,7 +84,7 @@ grow_capacity(but_context *ctx)
 
 
 static void
-insert_result(but_context *ctx, enum but_test_result result, int error_code)
+insert_result(but_context *ctx, but_test_result result, int error_code)
 {
     if (ctx->count_results == ctx->capacity) {
         grow_capacity(ctx);
