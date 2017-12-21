@@ -12,57 +12,62 @@
 #define TEST_NAME1          "Test 1"
 #define TEST_NAME2          "Test 2"
 #define SUITE_NAME          "Driver"
-#define LOAD_DRIVER_TEST_STR        "Load Driver"
-#define BEGIN_END_TEST_STR          "Begin and End"
-#define IS_VALID_TEST_STR           "Is-valid"
-#define NEXT_INDEX_MORE_TEST_STR    "Next/Index/More"
-#define CASE_NAME_TEST_STR          "Case Name"
-#define SUITE_NAME_TEST_STR         "Suite Name"
-#define INDEX_TEST_STR              "Index"
-#define COUNT_TEST_STR              "Count"
-#define RUN_TEST_STR                "Run"
-#define RESULTS_TEST_STR            "Results"
+#define TEST_STR_VERIFY_VERSION     "Verify Version"
+#define TEST_STR_LOAD_DRIVER        "Load Driver"
+#define TEST_STR_BEGIN_END          "Begin and End"
+#define TEST_STR_IS_VALID           "Is-valid"
+#define TEST_STR_NEXT_INDEX_MORE    "Next/Index/More"
+#define TEST_STR_CASE_NAME          "Case Name"
+#define TEST_STR_SUITE_NAME         "Suite Name"
+#define TEST_STR_INDEX              "Index"
+#define TEST_STR_COUNT              "Count"
+#define TEST_STR_RUN                "Run"
+#define TEST_STR_RESULTS            "Results"
 
 // GetProcAddress never uses wchar_t, so these are regular C-strings
-#define IS_VALID_CTX_STR        "test_context_is_valid"
-#define BEGIN_CTX_STR           "test_context_new"
-#define END_CTX_STR             "test_context_delete"
-#define NEXT_CTX_STR            "test_context_next"
-#define MORE_CASES_CTX_STR      "test_context_more_test_cases"
-#define GET_SUITE_NAME_CTX_STR  "test_context_get_name_test_suite"
-#define GET_CASE_NAME_CTX_STR   "test_context_get_name_test_case"
-#define GET_CASE_INDEX_CTX_STR  "test_context_get_index"
-#define GET_COUNT_CTX_STR       "test_context_get_count_test_cases"
-#define RUN_CURRENT_CTX_STR     "test_context_run"
-#define GET_PASS_COUNT_CTX_STR  "test_context_get_count_passed"
-#define GET_FAIL_COUNT_CTX_STR  "test_context_get_count_failed"
-#define GET_SETUP_FAIL_COUNT_CTX_STR    "test_context_get_count_failed_setup"
-#define GET_RESULTS_COUNT_CTX_STR       "test_context_get_count_results"
-#define GET_RESULT_CTX_STR      "test_context_get_result"
+#define CTX_STR_IS_VALID        "test_context_is_valid"
+#define CTX_STR_BEGIN           "test_context_new"
+#define CTX_STR_END             "test_context_delete"
+#define CTX_STR_NEXT            "test_context_next"
+#define CTX_STR_MORE_CASES      "test_context_more_test_cases"
+#define CTX_STR_GET_SUITE_NAME  "test_context_get_name_test_suite"
+#define CTX_STR_GET_CASE_NAME   "test_context_get_name_test_case"
+#define CTX_STR_GET_CASE_INDEX  "test_context_get_index"
+#define CTX_STR_GET_COUNT       "test_context_get_count_test_cases"
+#define CTX_STR_RUN_CURRENT     "test_context_run"
+#define CTX_STR_GET_PASS_COUNT  "test_context_get_count_passed"
+#define CTX_STR_GET_FAIL_COUNT  "test_context_get_count_failed"
+#define CTX_STR_GET_SETUP_FAIL_COUNT    "test_context_get_count_failed_setup"
+#define CTX_STR_GET_RESULTS_COUNT       "test_context_get_count_results"
+#define CTX_STR_GET_RESULT      "test_context_get_result"
 
 // Function prototype typedefs
-typedef int  (*context_is_valid)(test_context*);
-typedef test_context* (*context_new)(but_test_suite *);
-typedef void (*context_delete)(test_context*);
-typedef void (*context_next)(test_context*);
-typedef b32 (*context_more)(test_context*);
-typedef const ch8 *(*get_name_case)(test_context*);
-typedef const ch8 *(*get_name_suite)(test_context*);
-typedef size_t (*get_index)(test_context* handle);
-typedef size_t (*get_count)(test_context* handle);
-typedef void (*run_current)(test_context* handle);
-typedef size_t (*get_count_passed)(test_context*);
-typedef size_t (*get_count_failed)(test_context*);
-typedef size_t (*get_count_failed_setup)(test_context*);
-typedef size_t (*get_count_results)(test_context*);
-typedef but_test_result (*get_result)(test_context*, int);
+typedef const ch8 *(*get_version_string)(but_context*);
+/* add two prototypes; one for getting the version as a 'ch8*', and the other
+ * to get it as a 's32' for the testVersion test.
+ */
+typedef int  (*context_is_valid)(but_context*);
+typedef but_context* (*context_new)(but_test_suite *);
+typedef void (*context_delete)(but_context*);
+typedef void (*context_next)(but_context*);
+typedef b32 (*context_more)(but_context*);
+typedef const ch8 *(*get_name_case)(but_context*);
+typedef const ch8 *(*get_name_suite)(but_context*);
+typedef size_t (*get_index)(but_context* handle);
+typedef size_t (*get_count)(but_context* handle);
+typedef void (*run_current)(but_context* handle);
+typedef size_t (*get_count_passed)(but_context*);
+typedef size_t (*get_count_failed)(but_context*);
+typedef size_t (*get_count_failed_setup)(but_context*);
+typedef size_t (*get_count_results)(but_context*);
+typedef but_test_result (*get_result)(but_context*, int);
 
 // Test driver's data
 typedef 
 struct test_driver_data
 {
     HMODULE                 handle;
-    test_context*           ctx;
+    but_context*           ctx;
     but_test_suite         *ts;
     context_new             context_new;
     context_delete          context_delete;
@@ -91,6 +96,7 @@ static int loadTestDriver(void *data);
 static void unloadTestDriver(void *data);
 static int setupContext(void *data);
 static void teardownContext(void *data);
+static int testVersion(void *data);
 static int testBeginEnd(void *data);
 static int testIsValid(void *data);
 static int testNextIndexMore(void *data);
@@ -104,16 +110,25 @@ static int testResults(void *data);
 
 but_test_case load_driver =
 {
-    LOAD_DRIVER_TEST_STR,
+    TEST_STR_LOAD_DRIVER,
     NULL,
     &loadDriver,
     NULL,
     NULL
 };
 
+but_test_case test_version = 
+{
+    TEST_STR_VERIFY_VERSION,
+    NULL,
+    &testVersion,
+    NULL,
+    NULL
+};
+
 but_test_case test_begin_end = 
 {
-    BEGIN_END_TEST_STR,
+    TEST_STR_BEGIN_END,
     &loadTestDriver,
     &testBeginEnd,
     &unloadTestDriver,
@@ -122,7 +137,7 @@ but_test_case test_begin_end =
 
 but_test_case test_is_valid = 
 {
-    IS_VALID_TEST_STR,
+    TEST_STR_IS_VALID,
     loadTestDriver,
     testIsValid,
     unloadTestDriver,
@@ -131,7 +146,7 @@ but_test_case test_is_valid =
 
 but_test_case next_tc =
 {
-    NEXT_INDEX_MORE_TEST_STR,
+    TEST_STR_NEXT_INDEX_MORE,
     setupContext,
     testNextIndexMore,
     teardownContext,
@@ -140,7 +155,7 @@ but_test_case next_tc =
 
 but_test_case case_name = 
 {
-    CASE_NAME_TEST_STR,
+    TEST_STR_CASE_NAME,
     setupContext,
     testCaseName,
     teardownContext,
@@ -149,7 +164,7 @@ but_test_case case_name =
 
 but_test_case suite_name = 
 {
-    SUITE_NAME_TEST_STR,
+    TEST_STR_SUITE_NAME,
     setupContext,
     testSuiteName,
     teardownContext,
@@ -158,7 +173,7 @@ but_test_case suite_name =
 
 but_test_case case_index = 
 {
-    INDEX_TEST_STR,
+    TEST_STR_INDEX,
     setupContext,
     testIndex,
     teardownContext,
@@ -167,7 +182,7 @@ but_test_case case_index =
 
 but_test_case case_count = 
 {
-    COUNT_TEST_STR,
+    TEST_STR_COUNT,
     setupContext,
     testCount,
     teardownContext,
@@ -176,7 +191,7 @@ but_test_case case_count =
 
 but_test_case test_run = 
 {
-    RUN_TEST_STR,
+    TEST_STR_RUN,
     setupContext,
     testRun,
     teardownContext,
@@ -186,7 +201,7 @@ but_test_case test_run =
 
 but_test_case test_results = 
 {
-    RESULTS_TEST_STR,
+    TEST_STR_RESULTS,
     setupContext,
     testResults,
     teardownContext,
@@ -263,59 +278,59 @@ loadTestDriver(void *data)
 
     if (result == 0)
     {
-        tdd->is_valid = (context_is_valid)GetProcAddress(tdd->handle, IS_VALID_CTX_STR);
+        tdd->is_valid = (context_is_valid)GetProcAddress(tdd->handle, CTX_STR_IS_VALID);
         result |= tdd->is_valid == 0;
 
-        tdd->context_new = (context_new)GetProcAddress(tdd->handle, BEGIN_CTX_STR);
+        tdd->context_new = (context_new)GetProcAddress(tdd->handle, CTX_STR_BEGIN);
         result |= tdd->context_new == 0;
 
-        tdd->context_delete = (context_delete)GetProcAddress(tdd->handle, END_CTX_STR);
+        tdd->context_delete = (context_delete)GetProcAddress(tdd->handle, CTX_STR_END);
         result |= tdd->context_delete == 0;
 
-        tdd->next = (context_next)GetProcAddress(tdd->handle, NEXT_CTX_STR);
+        tdd->next = (context_next)GetProcAddress(tdd->handle, CTX_STR_NEXT);
         result |= tdd->next == 0;
 
-        tdd->more = (context_more)GetProcAddress(tdd->handle, MORE_CASES_CTX_STR);
+        tdd->more = (context_more)GetProcAddress(tdd->handle, CTX_STR_MORE_CASES);
         result |= tdd->more == 0;
 
         tdd->get_name_case =
-            (get_name_case)GetProcAddress(tdd->handle, GET_CASE_NAME_CTX_STR);
+            (get_name_case)GetProcAddress(tdd->handle, CTX_STR_GET_CASE_NAME);
         result |= tdd->get_name_case == 0;
 
         tdd->get_name_suite =
-            (get_name_suite)GetProcAddress(tdd->handle, GET_SUITE_NAME_CTX_STR);
+            (get_name_suite)GetProcAddress(tdd->handle, CTX_STR_GET_SUITE_NAME);
         result |= tdd->get_name_suite == 0;
 
         tdd->get_index =
-            (get_index)GetProcAddress(tdd->handle, GET_CASE_INDEX_CTX_STR);
+            (get_index)GetProcAddress(tdd->handle, CTX_STR_GET_CASE_INDEX);
         result |= tdd->get_index == 0;
 
         tdd->get_count =
-            (get_count)GetProcAddress(tdd->handle, GET_COUNT_CTX_STR);
+            (get_count)GetProcAddress(tdd->handle, CTX_STR_GET_COUNT);
         result |= tdd->get_count == 0;
 
         tdd->run_current =
-            (run_current)GetProcAddress(tdd->handle, RUN_CURRENT_CTX_STR);
+            (run_current)GetProcAddress(tdd->handle, CTX_STR_RUN_CURRENT);
         result |= tdd->run_current == 0;
 
         tdd->get_count_passed =
-            (get_count_passed)GetProcAddress(tdd->handle, GET_PASS_COUNT_CTX_STR);
+            (get_count_passed)GetProcAddress(tdd->handle, CTX_STR_GET_PASS_COUNT);
         result |= tdd->get_count_passed == 0;
 
         tdd->get_count_failed =
-            (get_count_failed)GetProcAddress(tdd->handle, GET_FAIL_COUNT_CTX_STR);
+            (get_count_failed)GetProcAddress(tdd->handle, CTX_STR_GET_FAIL_COUNT);
         result |= tdd->get_count_failed == 0;
 
         tdd->get_count_failed_setup =
-            (get_count_failed_setup)GetProcAddress(tdd->handle, GET_SETUP_FAIL_COUNT_CTX_STR);
+            (get_count_failed_setup)GetProcAddress(tdd->handle, CTX_STR_GET_SETUP_FAIL_COUNT);
         result |= tdd->get_count_failed_setup == 0;
 
         tdd->get_count_results =
-            (get_count_results)GetProcAddress(tdd->handle, GET_RESULTS_COUNT_CTX_STR);
+            (get_count_results)GetProcAddress(tdd->handle, CTX_STR_GET_RESULTS_COUNT);
         result |= tdd->get_count_results == 0;
 
         tdd->get_result =
-            (get_result)GetProcAddress(tdd->handle, GET_RESULT_CTX_STR);
+            (get_result)GetProcAddress(tdd->handle, CTX_STR_GET_RESULT);
         result |= tdd->get_result == 0;
 
         tdd->ts = &ts;
@@ -364,6 +379,17 @@ teardownContext(void *data)
 
     tdd->context_delete(tdd->ctx);
     unloadTestDriver(data);
+}
+
+
+static int
+testVersion(void *data)
+{
+    int result = -1;
+
+    UNREFERENCED(data);
+
+    return result;
 }
 
 
@@ -526,7 +552,7 @@ static int
 testResults(void *data)
 {
     TestDriveData      *tdd = (TestDriveData*)data;
-    test_context*    ctx = tdd->ctx;
+    but_context*    ctx = tdd->ctx;
     int                 result = 0;
 
     tdd->run_current(ctx);

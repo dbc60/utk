@@ -29,7 +29,7 @@ BEGIN_EXTERN_C
 
 // Forward declarations of "opaque" types
 typedef void* test_data;
-typedef struct test_context test_context;
+typedef struct but_context but_context;
 typedef struct but_test_case but_test_case;
 typedef struct but_test_suite but_test_suite;
 

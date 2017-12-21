@@ -11,6 +11,8 @@ A Basic Unit Test Library
     :maxdepth: 2
     :caption: Table of Contents
 
-*************************************
-BUT - A Unit Test Implementation in C
-*************************************
+*******************************************
+BUT - A Basic Unit Test Implementation in C
+*******************************************
+
+The BUT library is merely a stepping stone to a more sophisticated unit test library. It provides the simplest test framework I thought I could get away with.

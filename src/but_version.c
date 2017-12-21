@@ -6,15 +6,16 @@
  * ========================================================================
  */
 
-#include "but_version.h"
+#include <platform.h>
+#include <but_version.h>
 
-const char*
+const ch8 *
 but_version(void)
 {
     return BUT_VERSION;
 }
 
-int
+s32
 but_version_num(void)
 {
     return BUT_VERSION_NUM;

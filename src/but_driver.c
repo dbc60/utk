@@ -34,7 +34,7 @@ struct result_context
 typedef struct result_context result_context;
 
 
-struct test_context
+struct but_context
 {
     intptr_t        magic;              // indicates a valid context
     but_test_suite *test_suite;         // suite under test
@@ -47,7 +47,7 @@ struct test_context
     size_t          capacity;           // number of results that can be stored
     result_context *results;            // array of test results.
 };
-typedef struct test_context test_context;
+typedef struct but_context but_context;
 
 
 /**
@@ -55,7 +55,7 @@ typedef struct test_context test_context;
  */
 
 static void
-grow_capacity(test_context *ctx)
+grow_capacity(but_context *ctx)
 {
     result_context *new_results;
     size_t          new_capacity, count;
@@ -84,7 +84,7 @@ grow_capacity(test_context *ctx)
 
 
 static void
-insert_result(test_context *ctx, enum but_test_result result, int error_code)
+insert_result(but_context *ctx, enum but_test_result result, int error_code)
 {
     if (ctx->count_results == ctx->capacity) {
         grow_capacity(ctx);
@@ -110,7 +110,7 @@ insert_result(test_context *ctx, enum but_test_result result, int error_code)
  * greater than count.
  */
 b32
-test_context_is_valid(test_context* ctx)
+but_is_valid(but_context* ctx)
 {
     b32 result = FALSE;
 
@@ -125,12 +125,12 @@ test_context_is_valid(test_context* ctx)
     return result;
 }
 
-test_context*
-test_context_new(but_test_suite *bts)
+but_context*
+but_new(but_test_suite *bts)
 {
-    test_context *result;
+    but_context *result;
 
-    result = calloc(1, sizeof(test_context));
+    result = calloc(1, sizeof(but_context));
     if (result != NULL) {
         result->magic = (intptr_t)result;
         result->test_suite = bts;
@@ -140,7 +140,7 @@ test_context_new(but_test_suite *bts)
 }
 
 void
-test_context_delete(test_context *ctx)
+but_delete(but_context *ctx)
 {
     if (ctx->results) {
         free(ctx->results);
@@ -150,7 +150,7 @@ test_context_delete(test_context *ctx)
 }
 
 void
-test_context_next(test_context *ctx)
+but_next(but_context *ctx)
 {
     if (ctx->index < ctx->test_suite->count) {
         ++ctx->index;
@@ -158,19 +158,19 @@ test_context_next(test_context *ctx)
 }
 
 b32
-test_context_more_test_cases(test_context *ctx)
+but_more_test_cases(but_context *ctx)
 {
     return (ctx->index < ctx->test_suite->count) ? TRUE : FALSE;
 }
 
 const ch8 *
-test_context_get_name_test_suite(test_context *ctx)
+but_get_name_test_suite(but_context *ctx)
 {
     return ctx->test_suite->name;
 }
 
 const ch8 *
-test_context_get_name_test_case(test_context *ctx)
+but_get_name_test_case(but_context *ctx)
 {
     const ch8* result = NULL;
 
@@ -182,21 +182,21 @@ test_context_get_name_test_case(test_context *ctx)
 }
 
 size_t
-test_context_get_index(test_context *ctx)
+but_get_index(but_context *ctx)
 {
     return ctx->index;
 }
 
 size_t
-test_context_get_count_test_cases(test_context *ctx)
+but_get_count_test_cases(but_context *ctx)
 {
     return ctx->test_suite->count;
 }
 
 void
-test_context_run(test_context *ctx)
+but_run(but_context *ctx)
 {
-    if (test_context_more_test_cases(ctx)) {
+    if (but_more_test_cases(ctx)) {
         but_test_case *tc = ctx->test_suite->test_cases[ctx->index];
         s32 result_setup = 0;
         s32 result_test = 0;
@@ -231,37 +231,37 @@ test_context_run(test_context *ctx)
 }
 
 size_t
-test_context_get_count_run(test_context *ctx)
+but_get_count_run(but_context *ctx)
 {
     return ctx->count_run;
 }
 
 size_t
-test_context_get_count_passed(test_context *ctx)
+but_get_count_passed(but_context *ctx)
 {
     return ctx->count_passed;
 }
 
 size_t
-test_context_get_count_failed(test_context *ctx)
+but_get_count_failed(but_context *ctx)
 {
     return ctx->count_failed;
 }
 
 size_t
-test_context_get_count_failed_setup(test_context *ctx)
+but_get_count_failed_setup(but_context *ctx)
 {
     return ctx->count_failed_setup;
 }
 
 size_t
-test_context_get_count_results(test_context *ctx)
+but_get_count_results(but_context *ctx)
 {
     return ctx->count_results;
 }
 
 but_test_result
-test_context_get_result(test_context *ctx, size_t index)
+but_get_result(but_context *ctx, size_t index)
 {
     but_test_result result = BTR_PASSED;
     size_t i = 0;
@@ -285,7 +285,7 @@ test_context_get_result(test_context *ctx, size_t index)
 }
 
 s32
-test_context_get_error_code(test_context *ctx, size_t index)
+but_get_error_code(but_context *ctx, size_t index)
 {
     s32 result = 0;
     size_t i = 0;

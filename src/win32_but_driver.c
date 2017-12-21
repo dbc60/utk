@@ -7,13 +7,13 @@
 
 
 static void
-test_driver_display_test_case(test_context *ctx)
+test_driver_display_test_case(but_context *ctx)
 {
     const ch8      *name_test_case;
     size_t          idx;
 
-    name_test_case = test_context_get_name_test_case(ctx);
-    idx = test_context_get_index(ctx);
+    name_test_case = but_get_name_test_case(ctx);
+    idx = but_get_index(ctx);
     printf("%6zd. \"%s\" %s\n", idx+1, name_test_case, " test case running.");
 }
 
@@ -21,7 +21,7 @@ test_driver_display_test_case(test_context *ctx)
 static int
 but_test_driver(but_test_suite *bts)
 {
-    test_context   *ctx;
+    but_context    *ctx;
     size_t          i;
     int             result = 0;
     but_test_result result_test;
@@ -33,42 +33,42 @@ but_test_driver(but_test_suite *bts)
                bts->name,
                bts->count);
 
-        ctx = test_context_new(bts);
-        if (test_context_is_valid(ctx)) {
-            while (test_context_more_test_cases(ctx)) {
+        ctx = but_new(bts);
+        if (but_is_valid(ctx)) {
+            while (but_more_test_cases(ctx)) {
                 // Display the name of the test case
                 test_driver_display_test_case(ctx);
-                test_context_run(ctx);
-                i = test_context_get_index(ctx);
-                result_test = test_context_get_result(ctx, i);
+                but_run(ctx);
+                i = but_get_index(ctx);
+                result_test = but_get_result(ctx, i);
                 if (result_test != 0) {
-                    case_name = test_context_get_name_test_case(ctx);
+                    case_name = but_get_name_test_case(ctx);
                     if (result_test == BTR_FAILED_SETUP) {
                         printf("Error: could not setup %s: error code 0x%08x\n",
                                case_name,
-                               test_context_get_error_code(ctx, i));
+                               but_get_error_code(ctx, i));
                     } else if (result_test == BTR_FAILED) {
                         printf("%s failed: error code = 0x%08x\n",
                                case_name,
-                               test_context_get_error_code(ctx, i));
+                               but_get_error_code(ctx, i));
                     }
                 }
 
                 // Get the next test case
-                test_context_next(ctx);
+                but_next(ctx);
             }
 
-            suite_name = test_context_get_name_test_suite(ctx);
+            suite_name = but_get_name_test_suite(ctx);
             printf("\n%s Package Results\n\tTest Count:\t\
 %zd\n\tTests Run:\t%zd\n\tTests Passed:\
 \t%zd\n\tTests Failed:\t%zd\n\t\
 Setups Failed:\t%zd\n",
                    suite_name,
-                   test_context_get_count_test_cases(ctx),
-                   test_context_get_count_run(ctx),
-                   test_context_get_count_passed(ctx),
-                   test_context_get_count_failed(ctx),
-                   test_context_get_count_failed_setup(ctx));
+                   but_get_count_test_cases(ctx),
+                   but_get_count_run(ctx),
+                   but_get_count_passed(ctx),
+                   but_get_count_failed(ctx),
+                   but_get_count_failed_setup(ctx));
         } else {
             printf("Invalid test context\n");
             result = BTR_CONTEXT_INVALID;

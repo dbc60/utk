@@ -14,6 +14,8 @@
 #ifndef BUT_VERSION_H_INCLUDED
 #define BUT_VERSION_H_INCLUDED
 
+#include "platform.h"
+
 #define BUT_MAJOR_VERSION 0
 #define BUT_MINOR_VERSION 0
 #define BUT_PATCH_VERSION 1
@@ -26,7 +28,7 @@
  * @see BUT_VERSION
  * @return the version of hte BUT library as a string
  */
-const char *but_version(void); /* Returns BUT_VERSION */
+const ch8 * but_version(void); /* Returns BUT_VERSION */
 
 /**
  * The BUT version encoded into an int, with the low order 8 bits being the
@@ -37,6 +39,6 @@ const char *but_version(void); /* Returns BUT_VERSION */
  * @see BUT_VERSION_NUM
  * @return the version of hte BUT library as an int.
  */
-int but_version_num(void);  /* Returns BUT_VERSION_NUM */
+s32 but_version_num(void);  /* Returns BUT_VERSION_NUM */
 
 #endif  /* BUT_VERSION_H_INCLUDED */
