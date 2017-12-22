@@ -34,8 +34,7 @@ typedef struct but_test_case but_test_case;
 typedef struct but_test_suite but_test_suite;
 
 
-enum but_test_result
-{
+enum but_test_result {
     BTR_PASSED,         // The test case was run and it returned successfully
     BTR_FAILED,         // The test case was run and it returned a failure
     BTR_FAILED_EXC,     // The main test passed, but an exception path failed
@@ -45,6 +44,12 @@ enum but_test_result
 };
 typedef enum but_test_result but_test_result;
 
+enum but_result {
+    BUT_FAIL,
+    BUT_SUCCESS
+};
+typedef enum but_result but_result;
+
 /**
  * @todo consider changing the return types of setup and run from s32 to b32.
  * I think a more limited value range - like TRUE/FALSE - may be helpful in
@@ -52,9 +57,9 @@ typedef enum but_test_result but_test_result;
  * not that, then some other enumerated type, so we don't have to assume zero
  * is okay, and all other values are a failure of some kind.
  */
-typedef s32     (*test_case_setup)(void *data);
-typedef s32     (*test_case_run)(void *data);
-typedef void    (*test_case_teardown)(void *data);
+typedef but_result  (*test_case_setup)(void *data);
+typedef but_result  (*test_case_run)(void *data);
+typedef void        (*test_case_teardown)(void *data);
 
 // Test case interface
 struct but_test_case

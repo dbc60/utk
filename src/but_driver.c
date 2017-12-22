@@ -198,22 +198,22 @@ but_run(but_context *ctx)
 {
     if (but_more_test_cases(ctx)) {
         but_test_case *tc = ctx->test_suite->test_cases[ctx->index];
-        s32 result_setup = 0;
-        s32 result_test = 0;
+        but_result result_setup = BUT_SUCCESS;
+        but_result result_test = BUT_FAIL;
 
         // a setup routine is optional
         if (tc->setup) {
             // non-zero is an error
             result_setup = tc->setup(tc->test_data);
-            if (result_setup) {
+            if (BUT_FAIL == result_setup) {
                 insert_result(ctx, BTR_FAILED_SETUP, result_setup);
                 ++ctx->count_failed_setup;
             }
         }
 
-        if (0 == result_setup) {
+        if (BUT_SUCCESS == result_setup) {
             result_test = tc->run(tc->test_data);
-            if (result_test) {
+            if (BUT_FAIL == result_test) {
                 insert_result(ctx, BTR_FAILED, result_test);
                 ++ctx->count_failed;
             } else {

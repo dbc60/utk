@@ -18,8 +18,8 @@
 #include <windows.h>
 
 #define DRIVER_LIBRARY      "but_driver.dll"
-#define TEST_NAME1          "Test 1"
-#define TEST_NAME2          "Test 2"
+#define TEST_NAME1          "Test Success"
+#define TEST_NAME2          "Test Fail"
 #define SUITE_NAME          "Driver"
 
 // Names of test cases
@@ -105,24 +105,24 @@ struct test_driver_data
 
 TestDriveData testData;
 
-static int test1(void *data);
-static int test2(void *data);
+static but_result test1(void *data);
+static but_result test2(void *data);
 
-static int loadDriver(void *data);
-static int loadTestDriver(void *data);
 static void unloadTestDriver(void *data);
-static int setupContext(void *data);
 static void teardownContext(void *data);
-static int testValidateVersion(void *data);
-static int testNewDelete(void *data);
-static int testIsValid(void *data);
-static int testNextIndexMore(void *data);
-static int testCaseName(void *data);
-static int testSuiteName(void *data);
-static int testIndex(void *data);
-static int testCount(void *data);
-static int testRun(void *data);
-static int testResults(void *data);
+static but_result loadDriver(void *data);
+static but_result loadTestDriver(void *data);
+static but_result setupContext(void *data);
+static but_result testValidateVersion(void *data);
+static but_result testNewDelete(void *data);
+static but_result testIsValid(void *data);
+static but_result testNextIndexMore(void *data);
+static but_result testCaseName(void *data);
+static but_result testSuiteName(void *data);
+static but_result testIndex(void *data);
+static but_result testCount(void *data);
+static but_result testRun(void *data);
+static but_result testResults(void *data);
 
 
 but_test_case load_driver =
@@ -226,8 +226,8 @@ but_test_case test_results =
 };
 
 
-static int test1(void *data) {UNREFERENCED(data); return 0;}
-static int test2(void *data) {UNREFERENCED(data); return -1;}
+static but_result test1(void *data) {UNREFERENCED(data); return BUT_SUCCESS;}
+static but_result test2(void *data) {UNREFERENCED(data); return BUT_FAIL;}
 
 static but_test_case tc1 =
 {
@@ -261,71 +261,80 @@ static but_test_suite ts =
 };
 
 
-static int
+static but_result
 loadDriver(void *data)
 {
     HMODULE             library;
-    int                 result;
+    but_result          result = BUT_FAIL;
 
     UNREFERENCED(data);
     library = LoadLibraryA(DRIVER_LIBRARY);
 
     if (library)
     {
-        result = 0;
+        result = BUT_SUCCESS;
         FreeLibrary(library);
     }
-    else
-    {
-        result = -1;
-    }
+
     return result;
 }
 
 
-static int
+static but_result
 loadTestDriver(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int             result;
+    but_result      result = BUT_FAIL;
 
     tdd->tdd_handle = LoadLibraryA(DRIVER_LIBRARY);
-
-    result = (tdd->tdd_handle) ? 0 : -1;
-
-    if (result == 0)
+    if (tdd->tdd_handle)
     {
-        tdd->tdd_get_version_str = (get_version_str)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_VERSION_STR);
+        result = BUT_SUCCESS;
+        tdd->tdd_get_version_str =
+            (get_version_str)GetProcAddress(tdd->tdd_handle, 
+                                            CTX_STR_GET_VERSION_STR);
         result |= tdd->tdd_get_version_str == 0;
         
-        tdd->tdd_get_version_num = (get_version_num)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_VERSION_NUM);
+        tdd->tdd_get_version_num =
+            (get_version_num)GetProcAddress(tdd->tdd_handle,
+                                            CTX_STR_GET_VERSION_NUM);
         result |= tdd->tdd_get_version_num == 0;
         
-        tdd->tdd_is_valid = (is_valid)GetProcAddress(tdd->tdd_handle, CTX_STR_IS_VALID);
+        tdd->tdd_is_valid =
+            (is_valid)GetProcAddress(tdd->tdd_handle,
+                                     CTX_STR_IS_VALID);
         result |= tdd->tdd_is_valid == 0;
 
-        tdd->tdd_new = (but_context_new)GetProcAddress(tdd->tdd_handle, CTX_STR_NEW);
+        tdd->tdd_new =
+            (but_context_new)GetProcAddress(tdd->tdd_handle, CTX_STR_NEW);
         result |= tdd->tdd_new == 0;
 
-        tdd->tdd_delete = (but_context_delete)GetProcAddress(tdd->tdd_handle, CTX_STR_DELETE);
+        tdd->tdd_delete =
+            (but_context_delete)GetProcAddress(tdd->tdd_handle,
+                                               CTX_STR_DELETE);
         result |= tdd->tdd_delete == 0;
 
-        tdd->tdd_next = (next)GetProcAddress(tdd->tdd_handle, CTX_STR_NEXT);
+        tdd->tdd_next =
+            (next)GetProcAddress(tdd->tdd_handle, CTX_STR_NEXT);
         result |= tdd->tdd_next == 0;
 
-        tdd->tdd_more = (more)GetProcAddress(tdd->tdd_handle, CTX_STR_MORE_CASES);
+        tdd->tdd_more =
+            (more)GetProcAddress(tdd->tdd_handle, CTX_STR_MORE_CASES);
         result |= tdd->tdd_more == 0;
 
         tdd->tdd_get_name_case =
-            (get_name_case)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_CASE_NAME);
+            (get_name_case)GetProcAddress(tdd->tdd_handle,
+                                          CTX_STR_GET_CASE_NAME);
         result |= tdd->tdd_get_name_case == 0;
 
         tdd->tdd_get_name_suite =
-            (get_name_suite)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_SUITE_NAME);
+            (get_name_suite)GetProcAddress(tdd->tdd_handle,
+                                           CTX_STR_GET_SUITE_NAME);
         result |= tdd->tdd_get_name_suite == 0;
 
         tdd->tdd_get_index =
-            (get_index)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_CASE_INDEX);
+            (get_index)GetProcAddress(tdd->tdd_handle,
+                                      CTX_STR_GET_CASE_INDEX);
         result |= tdd->tdd_get_index == 0;
 
         tdd->tdd_get_count =
@@ -337,19 +346,23 @@ loadTestDriver(void *data)
         result |= tdd->tdd_run_current == 0;
 
         tdd->tdd_get_count_passed =
-            (get_count_passed)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_PASS_COUNT);
+            (get_count_passed)GetProcAddress(tdd->tdd_handle,
+                                             CTX_STR_GET_PASS_COUNT);
         result |= tdd->tdd_get_count_passed == 0;
 
         tdd->tdd_get_count_failed =
-            (get_count_failed)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_FAIL_COUNT);
+            (get_count_failed)GetProcAddress(tdd->tdd_handle,
+                                             CTX_STR_GET_FAIL_COUNT);
         result |= tdd->tdd_get_count_failed == 0;
 
         tdd->tdd_get_count_failed_setup =
-            (get_count_failed_setup)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_SETUP_FAIL_COUNT);
+            (get_count_failed_setup)GetProcAddress(tdd->tdd_handle,
+                                                   CTX_STR_GET_SETUP_FAIL_COUNT);
         result |= tdd->tdd_get_count_failed_setup == 0;
 
         tdd->tdd_get_count_results =
-            (get_count_results)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_RESULTS_COUNT);
+            (get_count_results)GetProcAddress(tdd->tdd_handle,
+                                              CTX_STR_GET_RESULTS_COUNT);
         result |= tdd->tdd_get_count_results == 0;
 
         tdd->tdd_get_result =
@@ -372,22 +385,22 @@ unloadTestDriver(void *data)
         FreeLibrary(tdd->tdd_handle);
         tdd->tdd_handle = 0;
     }
-}   // unloadTestDriver
+}
 
 
-static int
+static but_result
 setupContext(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int result = 0;
+    but_result result = 0;
 
     result = loadTestDriver(data);
-    if (0 == result) {
+    if (BUT_SUCCESS == result) {
         tdd->tdd_ctx = tdd->tdd_new(tdd->tdd_ts);
     
         if (!tdd->tdd_is_valid(tdd->tdd_ctx)) {
             unloadTestDriver(data);
-            result = -1;
+            result = BUT_FAIL;
         }
     }
 
@@ -405,10 +418,10 @@ teardownContext(void *data)
 }
 
 
-static int
+static but_result
 testValidateVersion(void *data)
 {
-    int result = -1;
+    but_result result = BUT_FAIL;
     TestDriveData *tdd = (TestDriveData*)data;
     const ch8 *version_str;
     s32 version_num;
@@ -416,9 +429,11 @@ testValidateVersion(void *data)
     version_str = tdd->tdd_get_version_str();
     version_num = tdd->tdd_get_version_num();
     if (version_str) {
-        if (0 == strncmp(version_str, BUT_VERSION, ARRAY_COUNT(BUT_VERSION) - 1)
+        if (0 == strncmp(version_str,
+                         BUT_VERSION,
+                         ARRAY_COUNT(BUT_VERSION) - 1)
             && BUT_VERSION_NUM == version_num) {
-            result = 0;
+            result = BUT_SUCCESS;
         }
     }
 
@@ -426,182 +441,179 @@ testValidateVersion(void *data)
 }
 
 
-static int
+static but_result
 testNewDelete(void *data)
 {
-    int                 result = 0;
+    but_result          result = BUT_FAIL;
     TestDriveData      *tdd = (TestDriveData*)data;
 
     tdd->tdd_ctx = tdd->tdd_new(tdd->tdd_ts);
     if (tdd->tdd_ctx) {
         tdd->tdd_delete(tdd->tdd_ctx);
-    } else {
-        result = -1;
+        result = BUT_SUCCESS;
     }
 
     return result;
 }
 
 
-static int
+static but_result
 testIsValid(void *data)
 {
-    int                 result;
+    but_result          result = BUT_FAIL;
     TestDriveData      *tdd = (TestDriveData*)data;
 
     tdd->tdd_ctx = tdd->tdd_new(tdd->tdd_ts);
     if (tdd->tdd_ctx) {
-        result = tdd->tdd_is_valid(tdd->tdd_ctx) ? 0 : -1;
+        if (tdd->tdd_is_valid(tdd->tdd_ctx)) {
+            result = BUT_SUCCESS;
+        }
+
         tdd->tdd_delete(tdd->tdd_ctx);
-    }
-    else
-    {
-        result = -1;
     }
 
     return result;
 }
 
 
-static int
+/**
+ * @todo - This is not a good test. It can fail in too many ways. If it doesn't
+ * return BUT_SUCCESS, it will take more effort than necessary to figure out
+ * why and where it failed.
+ */
+static but_result
 testNextIndexMore(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int             result = -1;
+    but_result      result = BUT_FAIL;
 
-    if (tdd->tdd_get_count(tdd->tdd_ctx) > 0)
-    {
+    if (tdd->tdd_get_count(tdd->tdd_ctx) > 0) {
         tdd->tdd_next(tdd->tdd_ctx);
         if (tdd->tdd_get_index(tdd->tdd_ctx) == 1) {
             if (tdd->tdd_more(tdd->tdd_ctx) == 1) {
                 tdd->tdd_next(tdd->tdd_ctx);
-                /**
-                 * @todo No! tdd_more is supposed to be a Boolean. Yes, FALSE
-                 * is what we expect here, but this code hides the logic
-                 * behind the fact that C has no 'bool' type, so int and b32
-                 * are actually the same. The compiler will never issues a
-                 * warning about type mismatches or implicit conversion!
-                 */
-                result = tdd->tdd_more(tdd->tdd_ctx);
-            } else {
-                result = 1;
+                if (FALSE == tdd->tdd_more(tdd->tdd_ctx)) {
+                    result = BUT_SUCCESS;
+                }
             }
-        } else {
-            result = 2;
         }
-    } else {
-        result = 3;
     }
 
     return result;
-}   // testNextIndexMore
+}
 
 
-static int
+static but_result
 testCaseName(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int             result;
+    but_result      result = BUT_FAIL;
     const ch8      *name;
 
     name = tdd->tdd_get_name_case(tdd->tdd_ctx);
 
-    if (name) {
-        result = strcmp(name, TEST_NAME1);
-    } else {
-        result = 1;
-    }
-
-    tdd->tdd_next(tdd->tdd_ctx);
-    name = tdd->tdd_get_name_case(tdd->tdd_ctx);
-    if (name) {
-        result = strcmp(name, TEST_NAME2);
-    } else {
-        result = 2;
+    if (name && 0 == strcmp(name, TEST_NAME1)) {
+        tdd->tdd_next(tdd->tdd_ctx);
+        name = tdd->tdd_get_name_case(tdd->tdd_ctx);
+        if (name && 0 == strcmp(name, TEST_NAME2)) {
+            result = BUT_SUCCESS;
+        }
     }
 
     return result;
-}   // testCaseName
+}
 
 
-static int
+static but_result
 testSuiteName(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int             result;
+    but_result      result = BUT_FAIL;
     const ch8      *name;
 
     name = tdd->tdd_get_name_suite(tdd->tdd_ctx);
-
-    result = strcmp(name, SUITE_NAME);
-
-    tdd->tdd_next(tdd->tdd_ctx);
-    name = tdd->tdd_get_name_suite(tdd->tdd_ctx);
-
-    result |= strcmp(name, SUITE_NAME);
+    if (name && 0 == strcmp(name, SUITE_NAME)) {
+        tdd->tdd_next(tdd->tdd_ctx);
+        name = tdd->tdd_get_name_suite(tdd->tdd_ctx);
+        if (name && 0 == strcmp(name, SUITE_NAME)) {
+            result = BUT_SUCCESS;
+        }
+    }
 
     return result;
-}   // testSuiteName
+}
 
 
-static int
+static but_result
 testIndex(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int             result;
+    but_result      result = BUT_FAIL;
+    size_t          index;
 
-    result = tdd->tdd_get_index(tdd->tdd_ctx) != 0;
-    tdd->tdd_next(tdd->tdd_ctx);
-    result |= tdd->tdd_get_index(tdd->tdd_ctx) != 1;
+    index = tdd->tdd_get_index(tdd->tdd_ctx);
+    if (0 == index) {
+        tdd->tdd_next(tdd->tdd_ctx);
+        if (tdd->tdd_get_index(tdd->tdd_ctx) == 1) {
+            result = BUT_SUCCESS;
+        }
+    }
 
     return result;
-}   // testIndex
+}
 
 
-static int
+static but_result
 testCount(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int             result;
+    but_result      result = BUT_FAIL;
 
-    result = tdd->tdd_get_count(tdd->tdd_ctx) != 2;
+    if (tdd->tdd_get_count(tdd->tdd_ctx) == 2) {
+        result = BUT_SUCCESS;
+    }
+
     return result;
-}   // testCount
+}
 
 
-static int
+static but_result
 testRun(void *data)
 {
     TestDriveData  *tdd = (TestDriveData*)data;
-    int             result = 0;
+    but_result      result = BUT_FAIL;
 
     tdd->tdd_run_current(tdd->tdd_ctx);
     tdd->tdd_next(tdd->tdd_ctx);
     tdd->tdd_run_current(tdd->tdd_ctx);
 
-    result |= tdd->tdd_get_count_passed(tdd->tdd_ctx) != 1;
-    result |= tdd->tdd_get_count_failed(tdd->tdd_ctx) != 1;
-    result |= tdd->tdd_get_count_failed_setup(tdd->tdd_ctx) != 0;
-    result |= tdd->tdd_get_count_results(tdd->tdd_ctx) != 1;
+    if (tdd->tdd_get_count_passed(tdd->tdd_ctx) == 1
+        && tdd->tdd_get_count_failed(tdd->tdd_ctx) == 1
+        && tdd->tdd_get_count_failed_setup(tdd->tdd_ctx) == 0
+        && tdd->tdd_get_count_results(tdd->tdd_ctx) == 1) {
+        result = BUT_SUCCESS;
+    }
 
     return result;
-}   // testRun
+}
 
 
-static int
+static but_result
 testResults(void *data)
 {
-    TestDriveData      *tdd = (TestDriveData*)data;
+    TestDriveData  *tdd = (TestDriveData*)data;
     but_context*    ctx = tdd->tdd_ctx;
-    int                 result = 0;
+    but_result      result = BUT_FAIL;
 
     tdd->tdd_run_current(ctx);
     tdd->tdd_next(ctx);
     tdd->tdd_run_current(ctx);
 
     // zero is a successful test, so we expect BUT_PASSED and BUT_FAILED
-    result |= tdd->tdd_get_result(ctx, 0) != BTR_PASSED;
-    result |= tdd->tdd_get_result(ctx, 1) != BTR_FAILED;
+    if (tdd->tdd_get_result(ctx, 0) == BTR_PASSED
+        && tdd->tdd_get_result(ctx, 1) == BTR_FAILED) {
+        result = BUT_SUCCESS;
+    }
 
     return result;
 }
