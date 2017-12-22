@@ -19,7 +19,7 @@
 BEGIN_EXTERN_C
 // Basic Unit Test (BUT)
 
-#ifdef WIN_BUILD
+#ifdef PROJECT_WIN32
 #define DllImport   __declspec(dllimport)
 #define DllExport   __declspec(dllexport)
 #else
