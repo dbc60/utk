@@ -28,7 +28,8 @@ Major Tasks
   * Threads. Handle multiple threads.
   * Memory. Track memory usage through :code:`malloc`, :code:`calloc`, :code:`free` and other standard C memory allocation functions.
   * Memory Region module. Needed for the Memory module.
-  * Design an API for UTK
+
+* Design an API for UTK
 
 **********
 API Design
