@@ -139,7 +139,7 @@ but_test_case test_case_driver_load =
     NULL
 };
 
-but_test_case test_case_version_valid =
+but_test_case test_case_valid_version =
 {
     BTC_NAME_VALIDATE_VERSION,
     &driver_setup,
@@ -157,7 +157,7 @@ but_test_case test_case_new_delete =
     (void*)&testData
 };
 
-but_test_case test_case_is_valid_context =
+but_test_case test_case_valid_context =
 {
     BTC_NAME_IS_VALID,
     driver_setup,

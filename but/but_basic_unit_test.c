@@ -19,9 +19,9 @@ static but_test_case *tca[] =
     &test_case_str,
 
     &test_case_driver_load,
-    &test_case_version_valid,
+    &test_case_valid_version,
     &test_case_new_delete,
-    &test_case_is_valid_case,
+    &test_case_valid_context,
     &test_case_next,
     &test_case_name_case,
     &test_case_name_suite,

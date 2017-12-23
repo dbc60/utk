@@ -13,9 +13,9 @@
 #include <but.h>
 
 extern but_test_case test_case_driver_load;
-extern but_test_case test_case_version_valid;
+extern but_test_case test_case_valid_version;
 extern but_test_case test_case_new_delete;
-extern but_test_case test_case_is_valid_context;
+extern but_test_case test_case_valid_context;
 extern but_test_case test_case_next;
 extern but_test_case test_case_name_case;
 extern but_test_case test_case_name_suite;
