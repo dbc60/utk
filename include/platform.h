@@ -74,7 +74,7 @@ typedef intptr_t    smm;
 typedef float real32;
 typedef double real64;
 
-//! @note: Very brief type names.
+/** @note: Very brief type names. */
 typedef int8    s8;
 typedef int8    s08;
 typedef int16   s16;
@@ -138,7 +138,7 @@ typedef real64  r64;
 #define STRINGIFY_HELPER(X) #X
 #define STRINGIFY(X) STRINGIFY_HELPER(X)
 
-/*! @note: Originally, these three macros defined different usages of the
+/** @note: Originally, these three macros defined different usages of the
  * keyword static as 'internal', 'local_persist' and 'global_variable'. I've
  * changed them to all-caps and changed 'internal' to 'INTERNAL_FUNCTION,
  * because 'internal' is used as a field name in some Windows structures. For

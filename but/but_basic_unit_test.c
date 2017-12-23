@@ -15,20 +15,20 @@
 
 static but_test_case *tca[] = 
 {
-    &tc1,
-    &tc2,
+    &test_case_null,
+    &test_case_str,
 
-    &load_driver,
-    &test_validate_version,
-    &test_begin_end,
-    &test_is_valid,
-    &next_tc,
-    &case_name,
-    &suite_name,
-    &case_index,
-    &case_count,
-    &test_run,
-    &test_results
+    &test_case_driver_load,
+    &test_case_version_valid,
+    &test_case_new_delete,
+    &test_case_is_valid_case,
+    &test_case_next,
+    &test_case_name_case,
+    &test_case_name_suite,
+    &test_case_index,
+    &test_case_count,
+    &test_case_run,
+    &test_case_results
 };
 
 static

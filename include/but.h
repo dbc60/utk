@@ -50,25 +50,18 @@ enum but_results {
 };
 typedef enum but_results but_result;
 
-/**
- * @todo consider changing the return types of setup and run from s32 to b32.
- * I think a more limited value range - like TRUE/FALSE - may be helpful in
- * reasoning about the code. In fact, why not change it to but_test_result? If
- * not that, then some other enumerated type, so we don't have to assume zero
- * is okay, and all other values are a failure of some kind.
- */
-typedef but_result  (*test_case_setup)(void *data);
-typedef but_result  (*test_case_run)(void *data);
-typedef void        (*test_case_teardown)(void *data);
+typedef but_result  (but_method_setup)(void *data);
+typedef but_result  (but_method_run)(void *data);
+typedef void        (but_method_teardown)(void *data);
 
 // Test case interface
 struct but_test_case
 {
-    const ch8          *name;
-    test_case_setup     setup;
-    test_case_run       run;
-    test_case_teardown  teardown;
-    void               *test_data;
+    const ch8           *name;
+    but_method_setup    *setup;
+    but_method_run      *run;
+    but_method_teardown *teardown;
+    void                *test_data;
 };
 typedef struct but_test_case but_test_case;
 
@@ -77,7 +70,7 @@ typedef struct but_test_case but_test_case;
  * return the test case at index, or null if the index is not in the range of
  * zero to (count - 1).
  */
-typedef struct but_test_case* (*test_case_get)(size_t index);
+//typedef struct but_test_case* (*but_method_get)(size_t index);
 
 struct but_test_suite
 {

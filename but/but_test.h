@@ -16,7 +16,7 @@
 #error BUT_H_INCLUDED must be defined
 #endif
 
-extern but_test_case tc1;
-extern but_test_case tc2;
+extern but_test_case test_case_null;
+extern but_test_case test_case_str;
 
 #endif

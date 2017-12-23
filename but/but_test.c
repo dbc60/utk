@@ -19,9 +19,9 @@
 static but_result but_test_data_null(void *data);
 static but_result but_test_data_test(void *data);
 
-but_test_case tc1 = {TEST_STR_NULL_DATA, NULL, but_test_data_null, NULL, NULL};
+but_test_case test_case_null = {TEST_STR_NULL_DATA, NULL, but_test_data_null, NULL, NULL};
 
-but_test_case tc2 = {
+but_test_case test_case_str = {
     TEST_STR_TEST_DATA, NULL, but_test_data_test, NULL, (void*)TEST_DATA_STR
 };
 
