@@ -132,6 +132,12 @@ typedef real64  r64;
 
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 
+/** @brief A stringification macro for C or C++.
+ * STRINGIFY converts its argument to a string.
+ */
+#define STRINGIFY_HELPER(X) #X
+#define STRINGIFY(X) STRINGIFY_HELPER(X)
+
 /*! @note: Originally, these three macros defined different usages of the
  * keyword static as 'internal', 'local_persist' and 'global_variable'. I've
  * changed them to all-caps and changed 'internal' to 'INTERNAL_FUNCTION,

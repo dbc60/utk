@@ -1,9 +1,23 @@
+/* ========================================================================
+ * (C) Copyright 2015,2017 Douglas B. Cuthbertson
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ * ========================================================================
+ */
+
 #include "platform.h"
 #include "but.h"
 #include "but_driver.h"
+#include <but_version.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "stdafx.h"
+
+#define TEST_DRIVER_NAME                "Basic Unit Test Driver (WIN)"
+#define TEST_CASE_RUNNING_MSG           "test case running"
+#define TEST_DRIVER_INVALID_CONTEXT     "invalid test context"
+#define TEST_DRIVER_EMPTY_TEST_SUITE    "no test suite found"
 
 
 static void
@@ -14,7 +28,7 @@ test_driver_display_test_case(but_context *ctx)
 
     name_test_case = but_get_name_test_case(ctx);
     idx = but_get_index(ctx);
-    printf("%6zd. \"%s\" %s\n", idx+1, name_test_case, " test case running.");
+    printf("%6zd. \"%s\" %s.\n", idx+1, name_test_case, TEST_CASE_RUNNING_MSG);
 }
 
 
@@ -29,7 +43,7 @@ but_test_driver(but_test_suite *bts)
     const ch8      *case_name;
 
     if (bts) {
-        printf("\nTesting %s Package. Running %zd Test Cases.\n",
+        printf("\nLoaded %s test suite. Running %zd Test Cases.\n",
                bts->name,
                bts->count);
 
@@ -59,7 +73,7 @@ but_test_driver(but_test_suite *bts)
             }
 
             suite_name = but_get_name_test_suite(ctx);
-            printf("\n%s Package Results\n\tTest Count:\t\
+            printf("\n%s Test Suite Results\n\tTest Count:\t\
 %zd\n\tTests Run:\t%zd\n\tTests Passed:\
 \t%zd\n\tTests Failed:\t%zd\n\t\
 Setups Failed:\t%zd\n",
@@ -70,11 +84,11 @@ Setups Failed:\t%zd\n",
                    but_get_count_failed(ctx),
                    but_get_count_failed_setup(ctx));
         } else {
-            printf("Invalid test context\n");
+            printf("Error: %s.\n", TEST_DRIVER_INVALID_CONTEXT);
             result = BTR_CONTEXT_INVALID;
         }
     } else {
-        printf("No Test Suite\n");
+        printf("Error: %s.\n", TEST_DRIVER_EMPTY_TEST_SUITE);
         result = BTR_CONTEXT_INVALID;
     }
 
@@ -90,8 +104,11 @@ main(int argc, char **argv)
     int                 i;
     char               *tspath;
     HMODULE             library;
-    but_test_suite_get *bts_get;
+    but_test_suite_load *bts_load;
     but_test_suite     *bts;
+    const ch8 * version = but_version();
+
+    printf("%s Version %s\n", TEST_DRIVER_NAME, version);
 
     if (argc > 1) {
         // Assume each argument is a path to a test suite
@@ -100,9 +117,10 @@ main(int argc, char **argv)
             library = LoadLibraryA(tspath);
 
             if (library) {
-                bts_get = (but_test_suite_get*)GetProcAddress(library, "test_suite_get");
-                if (bts_get) {
-                    bts = bts_get();
+                bts_load = (but_test_suite_load*)GetProcAddress(library, TEST_SUITE_LOAD_NAME);
+
+                if (bts_load) {
+                    bts = bts_load();
                     /*
                      * Most of the time we just want to see the error reports
                      * and move on to the next test suite. If we don't return
@@ -113,8 +131,9 @@ main(int argc, char **argv)
                      */
                     (void)but_test_driver(bts);
                 } else {
-                    printf("Error: test suite %s doesn't export 'test_suite_get'\n",
-                           tspath);
+                    printf("Error: test suite %s doesn't export '%s'\n",
+                           tspath,
+                           TEST_SUITE_LOAD_NAME);
                 }
 
                 FreeLibrary(library);

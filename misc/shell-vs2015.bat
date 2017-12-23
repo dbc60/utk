@@ -1,6 +1,14 @@
+:: ========================================================================
+:: (C) Copyright 2015,2017 Douglas B. Cuthbertson
+::
+:: This library is free software; you can redistribute it and/or modify
+:: it under the terms of the MIT license. See LICENSE for details.
+:: ========================================================================
+
+
 @echo off
 
-REM Build the 64-bit version by default
+:: Build the 64-bit version by default
 set Architecture=
 if    "%1" == ""          set Architecture=amd64
 if /i "%1" == "x86"       set Architecture=x86
@@ -19,20 +27,20 @@ if "%Architecture%" == "" goto :err
 
 call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %Architecture%
 
-REM Find the project path. This script assumes it is one directory-level below
-REM the project directory.
+:: Find the project path. This script assumes it is one directory-level below
+:: the project directory.
 set HERE=%~dp0
 
-REM Remove the trailing directory separator
+:: Remove the trailing directory separator
 IF %HERE:~-1%==\ SET HERE=%PROJECT_PATH:~0,-1%
 
-REM This script is one level below the project directory, so remove the
-REM subdirectory from the path.
+:: This script is one level below the project directory, so remove the
+:: subdirectory from the path.
 FOR /f "delims=" %%F in ("%HERE%") do (
   set PROJECT_PATH=%%~dpF
 )
 
-REM Remove the trailing directory separator
+:: Remove the trailing directory separator
 IF %PROJECT_PATH:~-1%==\ SET PROJECT_PATH=%PROJECT_PATH:~0,-1%
 
 FOR %%f in ("%PROJECT_PATH%") DO SET PROJECT_NAME=%%~nxf

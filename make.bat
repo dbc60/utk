@@ -1,8 +1,15 @@
+:: ========================================================================
+:: (C) Copyright 2015,2017 Douglas B. Cuthbertson
+::
+:: This library is free software; you can redistribute it and/or modify
+:: it under the terms of the MIT license. See LICENSE for details.
+:: ========================================================================
+
 @ECHO OFF
 
 pushd %~dp0
 
-REM Command file for Sphinx documentation
+:: Command file for Sphinx documentation
 
 if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build

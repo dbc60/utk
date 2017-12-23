@@ -34,7 +34,7 @@ typedef struct but_test_case but_test_case;
 typedef struct but_test_suite but_test_suite;
 
 
-enum but_test_result {
+enum but_test_results {
     BTR_PASSED,         // The test case was run and it returned successfully
     BTR_FAILED,         // The test case was run and it returned a failure
     BTR_FAILED_EXC,     // The main test passed, but an exception path failed
@@ -42,13 +42,13 @@ enum but_test_result {
     BTR_NOT_RUN,        // The test case has not run
     BTR_CONTEXT_INVALID // Something is wrong with the test context
 };
-typedef enum but_test_result but_test_result;
+typedef enum but_test_results but_test_result;
 
-enum but_result {
+enum but_results {
     BUT_FAIL,
     BUT_SUCCESS
 };
-typedef enum but_result but_result;
+typedef enum but_results but_result;
 
 /**
  * @todo consider changing the return types of setup and run from s32 to b32.
@@ -96,10 +96,11 @@ typedef struct but_test_suite but_test_suite;
  * Yes, you do have to write test cases if you want something more than an
  * empty test suite.
  */
-typedef but_test_suite* (but_test_suite_get)(void);
+typedef but_test_suite* (but_test_suite_load)(void);
 
-// getButTestSuite is the only function that a Basic Unit Test DLL must export.
-DllExport but_test_suite_get test_suite_get;
+// This is the only function that a Basic Unit Test DLL must export.
+#define TEST_SUITE_LOAD_NAME "test_suite_load"
+DllExport but_test_suite_load test_suite_load;
 
 END_EXTERN_C
 

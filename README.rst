@@ -1,7 +1,9 @@
-.. Notes documentation master file, created by
-   sphinx-quickstart on Sun Mar 26 05:07:12 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. ========================================================================
+   (C) Copyright 2015,2017 Douglas B. Cuthbertson
+
+.. This library is free software; you can redistribute it and/or modify
+   it under the terms of the MIT license. See LICENSE for details.
+   ========================================================================
 
 #########################
 A Basic Unit Test Library

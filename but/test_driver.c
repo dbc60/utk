@@ -18,8 +18,8 @@
 #include <windows.h>
 
 #define DRIVER_LIBRARY      "but_driver.dll"
-#define TEST_NAME1          "Test Success"
-#define TEST_NAME2          "Test Fail"
+#define TEST_DATA_SUCCESS   "Test Success"
+#define TEST_DATA_FAIL      "Test Fail"
 #define SUITE_NAME          "Driver"
 
 // Names of test cases
@@ -110,9 +110,10 @@ static but_result test2(void *data);
 
 static void unloadTestDriver(void *data);
 static void teardownContext(void *data);
-static but_result loadDriver(void *data);
 static but_result loadTestDriver(void *data);
 static but_result setupContext(void *data);
+
+static but_result testLoadDriver(void *data);
 static but_result testValidateVersion(void *data);
 static but_result testNewDelete(void *data);
 static but_result testIsValid(void *data);
@@ -129,7 +130,7 @@ but_test_case load_driver =
 {
     TEST_STR_LOAD_DRIVER,
     NULL,
-    &loadDriver,
+    &testLoadDriver,
     NULL,
     NULL
 };
@@ -229,18 +230,18 @@ but_test_case test_results =
 static but_result test1(void *data) {UNREFERENCED(data); return BUT_SUCCESS;}
 static but_result test2(void *data) {UNREFERENCED(data); return BUT_FAIL;}
 
-static but_test_case tc1 =
+static but_test_case test_success =
 {
-    TEST_NAME1,
+    TEST_DATA_SUCCESS,
     NULL,
     test1,
     NULL,
     NULL
 };
 
-static but_test_case tc2 = 
+static but_test_case test_fail = 
 {
-    TEST_NAME2,
+    TEST_DATA_FAIL,
     NULL,
     test2,
     NULL,
@@ -249,11 +250,11 @@ static but_test_case tc2 =
 
 static but_test_case *tca[] = 
 {
-    &tc1,
-    &tc2
+    &test_success,
+    &test_fail
 };
 
-static but_test_suite ts = 
+static but_test_suite test_suite_success_fail = 
 {
     SUITE_NAME,
     ARRAY_COUNT(tca),
@@ -261,25 +262,13 @@ static but_test_suite ts =
 };
 
 
-static but_result
-loadDriver(void *data)
-{
-    HMODULE             library;
-    but_result          result = BUT_FAIL;
-
-    UNREFERENCED(data);
-    library = LoadLibraryA(DRIVER_LIBRARY);
-
-    if (library)
-    {
-        result = BUT_SUCCESS;
-        FreeLibrary(library);
-    }
-
-    return result;
-}
-
-
+/**
+ * A BUT test_case_setup routine that loads the BUT driver DLL and resolves all
+ * its exported symbols to fields in a TestDriveData struct. Those functions
+ * will be exercised by various test cases.
+ * 
+ * Call unloadTestDriver to release the resouces allocated here
+ */
 static but_result
 loadTestDriver(void *data)
 {
@@ -369,7 +358,7 @@ loadTestDriver(void *data)
             (get_result)GetProcAddress(tdd->tdd_handle, CTX_STR_GET_RESULT);
         result |= tdd->tdd_get_result == 0;
 
-        tdd->tdd_ts = &ts;
+        tdd->tdd_ts = &test_suite_success_fail;
     }
 
     return result;
@@ -415,6 +404,30 @@ teardownContext(void *data)
 
     tdd->tdd_delete(tdd->tdd_ctx);
     unloadTestDriver(data);
+}
+
+
+/**
+ * @brief exported unit tests
+ */
+
+/* Just load and unload the test driver DLL */
+static but_result
+testLoadDriver(void *data)
+{
+    HMODULE             library;
+    but_result          result = BUT_FAIL;
+
+    UNREFERENCED(data);
+    library = LoadLibraryA(DRIVER_LIBRARY);
+
+    if (library)
+    {
+        result = BUT_SUCCESS;
+        FreeLibrary(library);
+    }
+
+    return result;
 }
 
 
@@ -512,10 +525,10 @@ testCaseName(void *data)
 
     name = tdd->tdd_get_name_case(tdd->tdd_ctx);
 
-    if (name && 0 == strcmp(name, TEST_NAME1)) {
+    if (name && 0 == strcmp(name, TEST_DATA_SUCCESS)) {
         tdd->tdd_next(tdd->tdd_ctx);
         name = tdd->tdd_get_name_case(tdd->tdd_ctx);
-        if (name && 0 == strcmp(name, TEST_NAME2)) {
+        if (name && 0 == strcmp(name, TEST_DATA_FAIL)) {
             result = BUT_SUCCESS;
         }
     }
