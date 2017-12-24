@@ -11,7 +11,13 @@ Planning Cycle Zero
 
 There are several things I'd like to accomplish. Here is where I'm going to sort out which goals and features to purue next.
 
-I think BUT is good enough to use on its own for now, so I don't plan on updating it beyond its current version, v0.1.0. I will port it to Linux, FreeBSD, and Mac OS X so I can use it to test the other components I need for the heirarchical test library that will become UTK.
+I think BUT is good enough to use on its own for now, so I don't plan on updating it beyond its current version, v0.1.0. I will port it to Linux, FreeBSD, and Mac OS X so I can use it to test the other components I need for the hierarchical test library that will become UTK.
+
+The overall goal for UTK is to count, track, and test exception points. An exception point is any place in the code under test that can fail to acquire a desired resource. The initial set of exception points will be limited to memory allocation.
+
+The intent is to see if the code under test can handle the system being out of memory. The library will simulate a failure at each place memory is allocated in a test case, and run the test to competion. The first time the test is run, it will cause :code:`malloc`, or any of the other allocators, to fail at the first place it is called. At the end of the test, the library will determine if the failure was handled correctly.
+
+The library will then rerun the test allowing the first allocation to succeed (if it can), but a second call to a memory allocator will fail. This time and each successive execution of the test, the library will not only check if the failure was handled correctly, but it will check if previous memory allocations were cleaned up or if memory was allowed to leak. It will continue like this until all calls to all memory allocators have failed at least once.
 
 ************
 Major Tasks
@@ -20,7 +26,8 @@ Major Tasks
 * Port BUT to Linux
 * Port BUT to FreeBSD
 * Port BUT to Mac OS X
-* Create the following modules
+* Make a Windows installer using WiX
+* Create the following modules to support testing exception points in a memory allocator:
 
   * Exception Handling. This is needed for the memory management and test module.
   * Mutex. Needed the Memory Region module, and probably for the Threads module.
@@ -29,6 +36,7 @@ Major Tasks
   * Memory. Track memory usage through :code:`malloc`, :code:`calloc`, :code:`free` and other standard C memory allocation functions.
   * Memory Region module. Needed for the Memory module.
 
+* Add timers to record the elapsed time for each test case, and the overall time for the test suite.
 * Design an API for UTK
 
 **********
