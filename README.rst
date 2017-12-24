@@ -13,8 +13,6 @@ A Basic Unit Test Library
     :maxdepth: 2
     :caption: Table of Contents
 
-    doc/planning cycle 0
-
 *******************************************
 BUT - A Basic Unit Test Implementation in C
 *******************************************
