@@ -271,3 +271,6 @@ _build
 # My _assets directory - keep binaries out of git
 _assets/
 _static/MathJax/
+
+# Vagrant generated files
+.vagrant/
