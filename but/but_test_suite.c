@@ -15,10 +15,11 @@
 
 static but_test_case *tca[] = 
 {
+    // basic BUT tests
     &test_case_null,
     &test_case_str,
 
-    &test_case_driver_load,
+    // BUT driver tests
     &test_case_valid_version,
     &test_case_new_delete,
     &test_case_valid_context,

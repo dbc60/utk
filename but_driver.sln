@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "but_driver", "vs2017\but_driver\but_driver.vcxproj", "{458E5FCF-05DA-4C6A-BEB5-0914AF6AB931}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_driver", "vs2017\test_driver\test_driver.vcxproj", "{202B5835-F12B-4A10-9EC5-9E20022F33DF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{458E5FCF-05DA-4C6A-BEB5-0914AF6AB931} = {458E5FCF-05DA-4C6A-BEB5-0914AF6AB931}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "win32_but_driver", "vs2017\win32_but_driver\win32_but_driver.vcxproj", "{0C218BA3-240B-479F-AC3C-AB40BA556B4B}"
 	ProjectSection(ProjectDependencies) = postProject

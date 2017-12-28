@@ -11,20 +11,24 @@
 #include "but_test.h"
 #include <string.h>
 
-#define TEST_STR_NULL_DATA              "Null Data"
-#define TEST_STR_TEST_DATA              "Test Data"
+#define TEST_NAME_NULL_DATA  "Null Data"
+#define TEST_NAME_STR_DATA   "String Data"
 
 #define TEST_DATA_STR "Data"
 
 static but_result but_test_data_null(void *data);
-static but_result but_test_data_test(void *data);
+static but_result but_test_data_str(void *data);
 
-but_test_case test_case_null = {TEST_STR_NULL_DATA, NULL, but_test_data_null, NULL, NULL};
+but_test_case test_case_null = {TEST_NAME_NULL_DATA, NULL, but_test_data_null, NULL, NULL};
 
 but_test_case test_case_str = {
-    TEST_STR_TEST_DATA, NULL, but_test_data_test, NULL, (void*)TEST_DATA_STR
+    TEST_NAME_STR_DATA, NULL, but_test_data_str, NULL, (void*)TEST_DATA_STR
 };
 
+
+/**
+ * @brief Verify the but_test_case "test_data" field  is null.
+ */
 static but_result
 but_test_data_null(void *data)
 {
@@ -38,12 +42,16 @@ but_test_data_null(void *data)
 }
 
 
+/**
+* @brief Verify the but_test_case "test_data" field  is the assigned string.
+*/
 static but_result
-but_test_data_test(void *data)
+but_test_data_str(void *data)
 {
     but_result result = BUT_FAIL;
 
-    if (data != NULL && 0 == strcmp((char*)data, TEST_DATA_STR)) {
+    if (data != NULL &&
+        0 == strncmp((char*)data, TEST_DATA_STR, sizeof (TEST_DATA_STR) - 1)) {
         result = BUT_SUCCESS;
     }
 

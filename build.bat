@@ -7,14 +7,12 @@
 
 @echo off
 
-:: Run this script from the build directory, that is, the directory where you
-:: want all the build artifacts to be placed.
-
-:: Added _UNICODE and UNICODE so I can use Unicode strings in structs and whatnot.
-:: Need user32.lib to link MessageBox(), which es used on branch DAY001
-:: Need gdi32.lib to link PatBlt(), which es used on branch DAY002
-:: 2015.01.25 (Day004) I added /FC to get full path names in diagnostics. It's
-:: helpful when using Emacs to code and launch the debugger and executable
+:: Added _UNICODE and UNICODE so I can use Unicode strings in structs and
+:: whatnot.
+:: Need user32.lib if you link MessageBox()
+:: Need gdi32.lib to link PatBlt()
+:: /FC to get full path names in diagnostics. It's helpful when using Emacs to
+:: code and launch the debugger and executable
 
 :: /GS- turn off security checks because that compile-time option relies on
 :: the C runtime library, which we are not using.
@@ -32,8 +30,6 @@
 :: and  extern "C" defaults to nothrow (/EHc)
 
 :: /EHa- disable C++ Exception Handling, so we don't have stack unwind code.
-:: Casey says we don't need it.
-
 
 :: /W3 set warning level 3.
 :: /W4 set warning level 4. It's better
@@ -96,7 +92,7 @@ if    "%1" == ""          set BUILD_CONFIG=Debug
 if /i "%1" == "Debug"     set BUILD_CONFIG=Debug
 if /i "%1" == "Release"   set BUILD_CONFIG=Release
 
-set BUILD_ROOT=build
+set BUILD_ROOT=obj
 set BUILD_PATH=%BUILD_ROOT%\%Architecture%\%BUILD_CONFIG%
 set PROJECT_PATH=%cd%
 
@@ -117,7 +113,7 @@ if "%Architecture%" == "x86" (
     set MACHINE_FLAG=/MACHINE:X86
 )
 
-set COMMON_COMPILER_FLAGS=/nologo /Zc:wchar_t /fp:fast /Gm- /GR- /GS /EHsc ^
+set COMMON_COMPILER_FLAGS=/nologo /Zc:wchar_t /fp:fast /Gm- /GR- /GS /EHa- ^
     /WX /W4 /Zc:inline /FC /Z7 /Oi /D _UNICODE /D UNICODE ^
     /D PROJECT_WIN32=1 /Iinclude /Fa%BUILD_PATH%\ /Fo%BUILD_PATH%\
 
@@ -191,29 +187,23 @@ del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 :: the '/c' flag means 'compile only, do not link'
 cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch /Fd%BUILD_PATH%\but_driver.pdb src\but_driver.c src\but_version.c
 
-:: lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
+lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
 
-:: build but_driver.dll and its link library but_driver.lib
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:%BUILD_PATH%\but_driver.dll ^
-     /PDB:%BUILD_PATH%\but_driver.pdb %BUILD_PATH%\but_driver.obj ^
-     %BUILD_PATH%\but_version.obj
-
-:: build but_driver.exe from win32_but_driver.c and the link-library,
-:: but_driver.lib
+:: build but_driver.exe from win32_but_driver.c and the but_driver.lib static
+:: library.
 cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\win32_but_driver.c" ^
    /Fe%BUILD_PATH%\win32_but_driver.exe /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% %BUILD_PATH%\but_driver.lib
 
 :: compile the components of test_driver.dll that tests but_driver.dll
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_driver.pch ^
    /Fd%BUILD_PATH%\test_driver.pdb "%PROJECT_PATH%\but\test_driver.c" ^
-   "%PROJECT_PATH%\but\but_basic_unit_test.c" "%PROJECT_PATH%\but\but_test.c"
-
-:: lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\test_driver.lib" %MACHINE_FLAG% "%BUILD_PATH%\test_driver.obj" "%BUILD_PATH%\but_basic_unit_test.obj" "%BUILD_PATH%\but_test.obj"
+   "%PROJECT_PATH%\but\but_test_suite.c" "%PROJECT_PATH%\but\but_test.c"
 
 :: build test_driver.dll - the unit test for but_driver.dll
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_driver.dll" ^
      /PDB:%BUILD_PATH%\test_driver.pdb "%BUILD_PATH%\test_driver.obj" ^
-     "%BUILD_PATH%\but_basic_unit_test.obj" "%BUILD_PATH%\but_test.obj"
+     "%BUILD_PATH%\but_test_suite.obj" "%BUILD_PATH%\but_test.obj" ^
+     "%BUILD_PATH%\but_driver.lib"
 
 goto :EOF
 

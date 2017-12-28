@@ -6,13 +6,13 @@
  * ========================================================================
  */
 
-#include "platform.h"
-#include "but.h"
-#include "but_driver.h"
+#include <platform.h>
+#include <but.h>
+#include <but_driver.h>
 #include <but_version.h>
+#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "stdafx.h"
 
 #define TEST_DRIVER_NAME                "Basic Unit Test Driver (WIN)"
 #define TEST_CASE_RUNNING_MSG           "test case running"

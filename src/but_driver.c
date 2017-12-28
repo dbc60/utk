@@ -6,9 +6,9 @@
  * ========================================================================
  */
 
-#include "platform.h"
-#include "but.h"
-#include "but_driver.h"
+#include <platform.h>
+#include <but.h>
+#include <but_driver.h>
 
 // malloc prototypes
 #include <stdlib.h> 
