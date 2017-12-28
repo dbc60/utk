@@ -7,16 +7,8 @@
  */
 
 #include <platform.h>
-#include <but_version.h>
+#include <but.h>
+#include <but_driver.h>
 
-const ch8 *
-but_version(void)
-{
-    return BUT_VERSION_STR;
-}
-
-s32
-but_version_num(void)
-{
-    return BUT_VERSION_NUM;
-}
+void test_driver_display_test_case(but_context *ctx);
+int but_test_driver(but_test_suite *bts);

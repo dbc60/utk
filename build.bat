@@ -92,8 +92,7 @@ if    "%1" == ""          set BUILD_CONFIG=Debug
 if /i "%1" == "Debug"     set BUILD_CONFIG=Debug
 if /i "%1" == "Release"   set BUILD_CONFIG=Release
 
-set BUILD_ROOT=obj
-set BUILD_PATH=%BUILD_ROOT%\%Architecture%\%BUILD_CONFIG%
+set BUILD_ROOT=obj-win
 set PROJECT_PATH=%cd%
 
 if "%BUILD_CONFIG%" == "Debug" (
@@ -105,13 +104,18 @@ if "%BUILD_CONFIG%" =="Release" (
     set COMPILER_BUILD_FLAGS=/Ox /D PROJECT_INTERNAL=0 /D PROJECT_SLOW=0 /MT
 )
 
+:: Architecture is set by the shell-vs*.bat scripts in misc\
 if "%Architecture%" == "amd64" (
     set MACHINE_FLAG=/MACHINE:X64
+    set PLATFORM=x64
 )
 
 if "%Architecture%" == "x86" (
     set MACHINE_FLAG=/MACHINE:X86
+    set PLATFORM=x86
 )
+
+set BUILD_PATH=%BUILD_ROOT%\%PLATFORM%\%BUILD_CONFIG%
 
 set COMMON_COMPILER_FLAGS=/nologo /Zc:wchar_t /fp:fast /Gm- /GR- /GS /EHa- ^
     /WX /W4 /Zc:inline /FC /Z7 /Oi /D _UNICODE /D UNICODE ^
@@ -189,10 +193,12 @@ cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch /Fd%BUILD_PATH%\but_driver
 
 lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
 
-:: build but_driver.exe from win32_but_driver.c and the but_driver.lib static
-:: library.
+:: build win32_but_driver.exe from win32_but_driver.c, but_test_driver.c, and
+:: but_driver.lib
 cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\win32_but_driver.c" ^
-   /Fe%BUILD_PATH%\win32_but_driver.exe /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% %BUILD_PATH%\but_driver.lib
+   "%PROJECT_PATH%\src\but_test_driver.c" /Fe%BUILD_PATH%\win32_but_driver.exe ^
+   /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% ^
+   %BUILD_PATH%\but_driver.lib
 
 :: compile the components of test_driver.dll that tests but_driver.dll
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_driver.pch ^

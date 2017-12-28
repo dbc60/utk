@@ -12,7 +12,9 @@
 
 // For NULL
 #include <stddef.h>
-// For strcmp()
+// for itoa()
+#include <stdlib.h>
+// For strcmp(), strncat()
 #include <string.h>
 
 #define BTC_NAME_SUCCESS    "Test Success"
@@ -33,11 +35,6 @@
 #define BTC_NAME_RESULTS            "Results"
 
 TestDriveData testData;
-
-static but_result test_success(void *data);
-static but_result test_case_2(void *data);
-
-static but_result driver_setup(void *data);
 
 static but_result context_setup(void *data);
 static void context_teardown(void *data);
@@ -259,8 +256,8 @@ test_version_valid(void *data)
     version_num = tdd->tdd_get_version_num();
     if (version_str) {
         if (0 == strncmp(version_str,
-                         BUT_VERSION,
-                         ARRAY_COUNT(BUT_VERSION) - 1)
+                         BUT_VERSION_STR,
+                         ARRAY_COUNT(BUT_VERSION_STR) - 1)
             && BUT_VERSION_NUM == version_num) {
             result = BUT_SUCCESS;
         }

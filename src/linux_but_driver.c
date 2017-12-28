@@ -1,33 +1,24 @@
-/* ========================================================================
- * (C) Copyright 2015,2017 Douglas B. Cuthbertson
- *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the MIT license. See LICENSE for details.
- * ========================================================================
- */
-
 #include <platform.h>
 #include <but.h>
 #include <but_driver.h>
 #include <but_version.h>
 #include "but_test_driver.h"
-#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <dlfcn.h>
 
-#define TEST_DRIVER_NAME                "Basic Unit Test Driver (WIN)"
+#define TEST_DRIVER_NAME                "Basic Unit Test Driver (Tux)"
 
 
-// The command-line test driver interface
 int
 main(int argc, char **argv)
 {
-    int                 result = 0;
-    int                 i;
-    ch8                *tspath;
-    HMODULE             test_suite;
+    int result = 0;
+    int i;
+    ch8 *tspath;
+    void *test_suite;
     but_test_suite_load *bts_load;
-    but_test_suite     *bts;
+    but_test_suite *bts;
     const ch8 * version = but_version();
 
     printf("%s Version %s\n", TEST_DRIVER_NAME, version);
@@ -36,10 +27,11 @@ main(int argc, char **argv)
         // Assume each argument is a path to a test suite
         for (i = 1; i < argc; ++i) {
             tspath = argv[i];
-            test_suite = LoadLibraryA(tspath);
+            test_suite = dlopen(tspath, RTLD_NOW | RTLD_LOCAL);
 
             if (test_suite) {
-                bts_load = (but_test_suite_load*)GetProcAddress(test_suite, TEST_SUITE_LOAD_NAME);
+                bts_load = (but_test_suite_load*)
+                           dlsym(test_suite, TEST_SUITE_LOAD_NAME);
 
                 if (bts_load) {
                     bts = bts_load();
@@ -58,10 +50,15 @@ main(int argc, char **argv)
                            TEST_SUITE_LOAD_NAME);
                 }
 
-                FreeLibrary(test_suite);
+                (void)dlclose(test_suite);
             } else {
-                printf("Failed to load test suite %s, error = %d\n",
-                       tspath, GetLastError());
+                const ch8 *dlerr = dlerror();
+                if (NULL == dlerr) {
+                    dlerr = "unknown";
+                }
+
+                printf("Failed to load test suite %s, error = %s\n",
+                       tspath, dlerr);
             }
         }
     } else {

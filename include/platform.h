@@ -169,7 +169,7 @@ typedef real64  r64;
 #define DEFINE_HANDLE(name) typedef struct name name
 
 #ifndef UNREFERENCED
-#define UNREFERENCED(name) (name)
+#define UNREFERENCED(name) ((void)(name))
 #endif
 
 END_EXTERN_C

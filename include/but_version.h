@@ -17,20 +17,21 @@
 #include "platform.h"
 #include "but.h"    // define DllExport
 
-#define BUT_MAJOR_VERSION 0
-#define BUT_MINOR_VERSION 0
-#define BUT_PATCH_VERSION 1
-#define BUT_VERSION_NUM ((BUT_MAJOR_VERSION << 16) | \
-                         (BUT_MINOR_VERSION << 8) | \
-                         BUT_PATCH_VERSION)
-#define BUT_VERSION "0.1.0"
+#define BUT_VERSION_MAJOR 1
+#define BUT_VERSION_MINOR 0
+#define BUT_VERSION_PATCH 0
+#define BUT_VERSION_NUM ((BUT_VERSION_MAJOR << 16) | \
+                         (BUT_VERSION_MINOR << 8) | \
+                         BUT_VERSION_PATCH)
+#define BUT_VERSION_STR STRINGIFY(BUT_VERSION_MAJOR) "." \
+    STRINGIFY(BUT_VERSION_MINOR) "." STRINGIFY(BUT_VERSION_PATCH)
 
 /**
- * @see BUT_VERSION
+ * @see BUT_VERSION_STR
  * @return the version of hte BUT library as a string
  */
 typedef const ch8* (but_version_get)(void);
-DllExport but_version_get but_version; /* Returns BUT_VERSION */
+DllExport but_version_get but_version; /* Returns BUT_VERSION_STR */
 
 /**
  * The BUT version encoded into an int, with the low order 8 bits being the
