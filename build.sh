@@ -1,4 +1,11 @@
 #!/bin/bash
+###############################################################################
+# (C) Copyright 2015,2017 Douglas B. Cuthbertson
+#
+# This library is free software; you can redistribute it and/or modify
+# it under the terms of the MIT license. See LICENSE for details.
+###############################################################################
+
 
 BUILD_CONFIG=debug
 if [ -z "$1" ]; then
