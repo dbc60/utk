@@ -16,8 +16,8 @@
 
 #define TEST_DATA_STR "Data"
 
-static but_result but_test_data_null(void *data);
-static but_result but_test_data_str(void *data);
+INTERNAL_FUNCTION but_result but_test_data_null(void *data);
+INTERNAL_FUNCTION but_result but_test_data_str(void *data);
 
 but_test_case test_case_null = {TEST_NAME_NULL_DATA, NULL, but_test_data_null, NULL, NULL};
 
@@ -29,7 +29,7 @@ but_test_case test_case_str = {
 /**
  * @brief Verify the but_test_case "test_data" field  is null.
  */
-static but_result
+INTERNAL_FUNCTION but_result
 but_test_data_null(void *data)
 {
     but_result result = BUT_FAIL;
@@ -45,7 +45,7 @@ but_test_data_null(void *data)
 /**
 * @brief Verify the but_test_case "test_data" field  is the assigned string.
 */
-static but_result
+INTERNAL_FUNCTION but_result
 but_test_data_str(void *data)
 {
     but_result result = BUT_FAIL;

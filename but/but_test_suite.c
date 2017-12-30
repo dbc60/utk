@@ -8,12 +8,12 @@
 
 #include <platform.h>
 #include <but.h>
-#include "test_driver.h"
+#include "test_but_driver.h"
 #include "but_test.h"
 
 #define BUT_TS_NAME "BUT"
 
-static but_test_case *tca[] = 
+LOCAL_VARIABLE but_test_case *tca[] = 
 {
     // basic BUT tests
     &test_case_null,
@@ -32,7 +32,7 @@ static but_test_case *tca[] =
     &test_case_results
 };
 
-static
+LOCAL_VARIABLE
 but_test_suite but_ts = {BUT_TS_NAME, 
                          ARRAY_COUNT(tca),
                          tca};
