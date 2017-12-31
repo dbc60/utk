@@ -7,16 +7,24 @@
  */
 
 #include <platform.h>
-#include <but_version.h>
+#include <but.h>
+#include "test_ute_driver.h"
 
-const ch8 *
-but_get_version_str(void)
-{
-    return BUT_VERSION_STR;
-}
+#define UTE_TS_NAME "UTE"
 
-u32
-but_get_version_num(void)
+LOCAL_VARIABLE but_test_case *tca[] = 
 {
-    return BUT_VERSION_NUM;
+    // UTE driver tests
+    &test_case_valid_version,
+};
+
+LOCAL_VARIABLE
+but_test_suite ute_ts = {UTE_TS_NAME, 
+                         ARRAY_COUNT(tca),
+                         tca};
+
+DllExport but_test_suite *
+test_suite_load(void)
+{
+    return &ute_ts;
 }

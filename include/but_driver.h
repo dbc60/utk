@@ -15,9 +15,8 @@
 
 BEGIN_EXTERN_C
 
-DllExport int but_is_valid(but_context *ctx);
-
-/** @brief Test Context routines */
+/** @brief validate the test context */
+DllExport b32 but_is_valid(but_context *ctx);
 
 /** @brief make a new test context for the given test suite */
 DllExport but_context *but_new(but_test_suite *bts);

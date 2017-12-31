@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TEST_DRIVER_NAME                "Basic Unit Test Driver (WIN)"
+#define TEST_DRIVER_NAME                "Basic Unit Test Driver (Windows)"
 
 
 // The command-line test driver interface
@@ -28,7 +28,7 @@ main(int argc, char **argv)
     HMODULE             test_suite;
     but_test_suite_load *bts_load;
     but_test_suite     *bts;
-    const ch8 * version = but_version();
+    const ch8 * version = but_get_version_str();
 
     printf("%s Version %s\n", TEST_DRIVER_NAME, version);
 

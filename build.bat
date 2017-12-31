@@ -187,8 +187,12 @@ del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 :: cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\win32_%PROJECT_NAME%.cpp" ^
 ::    /Fmwin32_%PROJECT_NAME%.map  /link %LINKER_FLAGS%
 
+
+::
+:: Basic Unit Test (BUT)
+::
+
 :: build the static library for the BUT driver: but_driver.lib
-:: the '/c' flag means 'compile only, do not link'
 cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch /Fd%BUILD_PATH%\but_driver.pdb src\but_driver.c src\but_version.c
 
 lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
@@ -200,16 +204,35 @@ cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\win32_but_driver.c" ^
    /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% ^
    %BUILD_PATH%\but_driver.lib
 
-:: compile the components of test_driver.dll that tests but_driver.dll
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_driver.pch ^
-   /Fd%BUILD_PATH%\test_driver.pdb "%PROJECT_PATH%\but\test_driver.c" ^
+:: compile the components of test_but_driver.dll that tests but_driver.lib
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_but_driver.pch ^
+   /Fd%BUILD_PATH%\test_but_driver.pdb "%PROJECT_PATH%\but\test_but_driver.c" ^
    "%PROJECT_PATH%\but\but_test_suite.c" "%PROJECT_PATH%\but\but_test.c"
 
-:: build test_driver.dll - the unit test for but_driver.dll
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_driver.dll" ^
-     /PDB:%BUILD_PATH%\test_driver.pdb "%BUILD_PATH%\test_driver.obj" ^
+:: build test_but_driver.dll - the unit test for but_driver.lib
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
+     /PDB:%BUILD_PATH%\test_but_driver.pdb "%BUILD_PATH%\test_but_driver.obj" ^
      "%BUILD_PATH%\but_test_suite.obj" "%BUILD_PATH%\but_test.obj" ^
      "%BUILD_PATH%\but_driver.lib"
+
+::
+:: Unit Test Extended (UTE)
+::
+
+:: build the static library for the UTE driver: ute_driver.lib
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch /Fd%BUILD_PATH%\ute_driver.pdb src\ute_version.c
+
+lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO %BUILD_PATH%\ute_version.obj
+
+:: compile the components of test_ute_driver.dll that tests ute_driver.lib
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
+   /Fd%BUILD_PATH%\test_ute_driver.pdb "%PROJECT_PATH%\but\test_ute_driver.c" ^
+   "%PROJECT_PATH%\but\ute_test_suite.c"
+
+:: build test_ute_driver.dll - the unit test for ute_driver.lib
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
+     /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
+     "%BUILD_PATH%\ute_test_suite.obj" "%BUILD_PATH%\ute_driver.lib"
 
 goto :EOF
 

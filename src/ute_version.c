@@ -7,16 +7,16 @@
  */
 
 #include <platform.h>
-#include <but_version.h>
+#include <ute_version.h>
 
 const ch8 *
-but_get_version_str(void)
+ute_get_version_str(void)
 {
-    return BUT_VERSION_STR;
+    return UTE_VERSION_STR;
 }
 
 u32
-but_get_version_num(void)
+ute_get_version_num(void)
 {
-    return BUT_VERSION_NUM;
+    return UTE_VERSION_NUM;
 }

@@ -19,16 +19,7 @@
 BEGIN_EXTERN_C
 // Basic Unit Test (BUT)
 
-#ifdef PROJECT_WIN32
-#define DllImport   __declspec(dllimport)
-#define DllExport   __declspec(dllexport)
-#else
-#define DllImport
-#define DllExport
-#endif
-
 // Forward declarations of "opaque" types
-typedef void* test_data;
 typedef struct but_context but_context;
 typedef struct but_test_case but_test_case;
 typedef struct but_test_suite but_test_suite;

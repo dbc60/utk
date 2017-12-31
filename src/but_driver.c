@@ -54,7 +54,7 @@ typedef struct but_context but_context;
  *  Local functions
  */
 
-static void
+INTERNAL_FUNCTION void
 grow_capacity(but_context *ctx)
 {
     result_context *new_results;
@@ -83,7 +83,7 @@ grow_capacity(but_context *ctx)
 }
 
 
-static void
+INTERNAL_FUNCTION void
 insert_result(but_context *ctx, but_test_result result, int error_code)
 {
     if (ctx->count_results == ctx->capacity) {

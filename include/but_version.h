@@ -15,11 +15,10 @@
 #define BUT_VERSION_H_INCLUDED
 
 #include "platform.h"
-#include "but.h"    // define DllExport
 
 #define BUT_VERSION_MAJOR 1
 #define BUT_VERSION_MINOR 0
-#define BUT_VERSION_PATCH 0
+#define BUT_VERSION_PATCH 1
 #define BUT_VERSION_NUM ((BUT_VERSION_MAJOR << 16) | \
                          (BUT_VERSION_MINOR << 8) | \
                          BUT_VERSION_PATCH)
@@ -31,7 +30,7 @@
  * @return the version of hte BUT library as a string
  */
 typedef const ch8* (but_version_get)(void);
-DllExport but_version_get but_version; /* Returns BUT_VERSION_STR */
+DllExport but_version_get but_get_version_str; /* Returns BUT_VERSION_STR */
 
 /**
  * The BUT version encoded into an int, with the low order 8 bits being the
@@ -40,9 +39,9 @@ DllExport but_version_get but_version; /* Returns BUT_VERSION_STR */
  * For example, 9.30.91 would be 0x00091E5B.
  *
  * @see BUT_VERSION_NUM
- * @return the version of hte BUT library as an int.
+ * @return the version of hte BUT library as a 32-bit unsigned int.
  */
-typedef s32 (but_version_num_get)(void);
-DllExport but_version_num_get but_version_num;  /* Returns BUT_VERSION_NUM */
+typedef u32 (but_version_num_get)(void);
+DllExport but_version_num_get but_get_version_num;  /* Returns BUT_VERSION_NUM */
 
 #endif  /* BUT_VERSION_H_INCLUDED */

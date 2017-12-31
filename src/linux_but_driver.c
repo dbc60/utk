@@ -27,7 +27,7 @@ main(int argc, char **argv)
     void *test_suite;
     but_test_suite_load *bts_load;
     but_test_suite *bts;
-    const ch8 * version = but_version();
+    const ch8 * version = but_get_version_str();
 
     printf("%s Version %s\n", TEST_DRIVER_NAME, version);
 

@@ -12,9 +12,7 @@
 
 // For NULL
 #include <stddef.h>
-// for itoa()
-#include <stdlib.h>
-// For strcmp(), strncat()
+// For strncmp()
 #include <string.h>
 
 #define BTC_NAME_SUCCESS    "Test Success"
@@ -34,7 +32,7 @@
 #define BTC_NAME_RUN                "Run"
 #define BTC_NAME_RESULTS            "Results"
 
-TestDriverData testData;
+but_test_driver_data test_data;
 
 static but_result context_setup(void *data);
 static void context_teardown(void *data);
@@ -53,7 +51,7 @@ static but_test_suite test_suite_success_fail;
 
 but_result
 driver_setup(void *data) {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
 
     tdd->btdd_new = &but_new;
     tdd->btdd_delete = &but_delete;
@@ -84,7 +82,7 @@ but_test_case test_case_valid_version =
     &driver_setup,
     &test_is_valid_version,
     NULL,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_new_delete =
@@ -93,7 +91,7 @@ but_test_case test_case_new_delete =
     &driver_setup,
     &test_new_delete,
     NULL,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_valid_context =
@@ -102,7 +100,7 @@ but_test_case test_case_valid_context =
     driver_setup,
     test_is_valid_context,
     NULL,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_next =
@@ -111,7 +109,7 @@ but_test_case test_case_next =
     context_setup,
     test_next_index_more,
     context_teardown,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_name_case =
@@ -120,7 +118,7 @@ but_test_case test_case_name_case =
     context_setup,
     test_name_case,
     context_teardown,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_name_suite =
@@ -129,7 +127,7 @@ but_test_case test_case_name_suite =
     context_setup,
     test_name_suite,
     context_teardown,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_index =
@@ -138,7 +136,7 @@ but_test_case test_case_index =
     context_setup,
     test_index,
     context_teardown,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_count =
@@ -147,7 +145,7 @@ but_test_case test_case_count =
     context_setup,
     test_count,
     context_teardown,
-    (void*)&testData
+    (void*)&test_data
 };
 
 but_test_case test_case_run =
@@ -156,7 +154,7 @@ but_test_case test_case_run =
     context_setup,
     test_run,
     context_teardown,
-    (void*)&testData
+    (void*)&test_data
 };
 
 
@@ -166,7 +164,7 @@ but_test_case test_case_results =
     context_setup,
     test_results,
     context_teardown,
-    (void*)&testData
+    (void*)&test_data
 };
 
 
@@ -215,7 +213,7 @@ static but_test_suite test_suite_success_fail =
 static but_result
 context_setup(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_result result = 0;
 
     result = driver_setup(data);
@@ -234,7 +232,7 @@ context_setup(void *data)
 static void
 context_teardown(void *data)
 {
-    TestDriverData *tdd = (TestDriverData*)data;
+    but_test_driver_data *tdd = (but_test_driver_data*)data;
 
     tdd->btdd_delete(tdd->btdd_ctx);
 }
@@ -248,7 +246,7 @@ static but_result
 test_is_valid_version(void *data)
 {
     but_result result = BUT_FAIL;
-    TestDriverData *tdd = (TestDriverData*)data;
+    but_test_driver_data *tdd = (but_test_driver_data*)data;
     const ch8 *version_str;
     s32 version_num;
 
@@ -271,7 +269,7 @@ static but_result
 test_new_delete(void *data)
 {
     but_result          result = BUT_FAIL;
-    TestDriverData      *tdd = (TestDriverData*)data;
+    but_test_driver_data      *tdd = (but_test_driver_data*)data;
 
     tdd->btdd_ctx = tdd->btdd_new(tdd->btdd_ts);
     if (tdd->btdd_ctx) {
@@ -287,7 +285,7 @@ static but_result
 test_is_valid_context(void *data)
 {
     but_result          result = BUT_FAIL;
-    TestDriverData      *tdd = (TestDriverData*)data;
+    but_test_driver_data      *tdd = (but_test_driver_data*)data;
 
     tdd->btdd_ctx = tdd->btdd_new(tdd->btdd_ts);
     if (tdd->btdd_ctx) {
@@ -310,7 +308,7 @@ test_is_valid_context(void *data)
 static but_result
 test_next_index_more(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_result      result = BUT_FAIL;
 
     if (tdd->btdd_get_count(tdd->btdd_ctx) > 0) {
@@ -332,7 +330,7 @@ test_next_index_more(void *data)
 static but_result
 test_name_case(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_result      result = BUT_FAIL;
     const ch8      *name;
 
@@ -353,7 +351,7 @@ test_name_case(void *data)
 static but_result
 test_name_suite(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_result      result = BUT_FAIL;
     const ch8      *name;
 
@@ -373,7 +371,7 @@ test_name_suite(void *data)
 static but_result
 test_index(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_result      result = BUT_FAIL;
     size_t          index;
 
@@ -392,7 +390,7 @@ test_index(void *data)
 static but_result
 test_count(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_result      result = BUT_FAIL;
 
     if (tdd->btdd_get_count(tdd->btdd_ctx) == 2) {
@@ -406,7 +404,7 @@ test_count(void *data)
 static but_result
 test_run(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_result      result = BUT_FAIL;
 
     tdd->btdd_run_current(tdd->btdd_ctx);
@@ -427,7 +425,7 @@ test_run(void *data)
 static but_result
 test_results(void *data)
 {
-    TestDriverData  *tdd = (TestDriverData*)data;
+    but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_context*    ctx = tdd->btdd_ctx;
     but_result      result = BUT_FAIL;
 
