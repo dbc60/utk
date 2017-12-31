@@ -6,8 +6,7 @@
  * ========================================================================
  */
 
-#ifndef INCLUDED_DRIVER_TEST_H
-#define INCLUDED_DRIVER_TEST_H
+#pragma once
 
 #include <but.h>
 #include <ute_version.h>
@@ -69,4 +68,3 @@ extern but_test_case test_case_valid_version;
 //extern but_test_case test_case_run;
 //extern but_test_case test_case_results;
 
-#endif  // INCLUDED_DRIVER_TEST_H

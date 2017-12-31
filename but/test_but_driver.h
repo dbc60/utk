@@ -6,8 +6,7 @@
  * ========================================================================
  */
 
-#ifndef INCLUDED_DRIVER_BUT_TEST_H
-#define INCLUDED_DRIVER_BUT_TEST_H
+#pragma once
 
 #include <but_driver.h>
 #include <but.h>
@@ -67,5 +66,3 @@ extern but_test_case test_case_index;
 extern but_test_case test_case_count;
 extern but_test_case test_case_run;
 extern but_test_case test_case_results;
-
-#endif  // INCLUDED_DRIVER_BUT_TEST_H

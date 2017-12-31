@@ -6,8 +6,7 @@
  * ========================================================================
  */
 
-#ifndef BUT_TEST_H_INCLUDED
-#define BUT_TEST_H_INCLUDED
+#pragma once
 
 #include <but.h>
 
@@ -18,5 +17,3 @@
 
 extern but_test_case test_case_null;
 extern but_test_case test_case_str;
-
-#endif

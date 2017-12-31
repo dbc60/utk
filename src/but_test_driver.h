@@ -6,6 +6,8 @@
  * ========================================================================
  */
 
+#pragma once
+
 #include <platform.h>
 #include <but.h>
 #include <but_driver.h>

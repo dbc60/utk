@@ -23,7 +23,7 @@ BEGIN_EXTERN_C
 typedef void* ute_test_data;
 typedef struct ute_context ute_context;
 typedef struct ute_test_suite ute_test_suite;
-typedef structu ute_test_case ute_test_case;
+typedef struct ute_test_case ute_test_case;
 
 /*
  * ute_test_result is ordered from best result (passed) to successively worse
@@ -73,3 +73,5 @@ typedef enum ute_results ute_result;
 typedef ute_result  (ute_method_setup)(void *data);
 typedef ute_result  (ute_method_run)(void *data);
 typedef void        (ute_method_teardown)(void *data);
+
+#endif  // UTE_H_INCLUDED
