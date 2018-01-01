@@ -10,14 +10,16 @@
 
 #include <but.h>
 #include <ute_version.h>
+#include <utk.h>
+#include <ute.h>
 //#include <ute_driver.h>
 
  // Function prototype typedefs
-typedef const ch8 * (*get_version_str)();
-typedef s32 (*get_version_num)();
+typedef const ch8* (*get_version_str)(void);
+typedef u32 (*get_version_num)(void);
+typedef ute_context * (*ute_context_new)(utk_test_suite *);
+typedef void (*ute_context_delete)(ute_context*);
 //typedef b32 (*is_valid)(ute_context*);
-//typedef ute_context * (*ute_context_new)(ute_test_suite *);
-//typedef void (*ute_context_delete)(ute_context*);
 //typedef void (*next)(ute_context*);
 //typedef b32 (*more)(ute_context*);
 //typedef const ch8 * (*get_name_case)(ute_context*);
@@ -34,12 +36,12 @@ typedef s32 (*get_version_num)();
 // Test driver's data
 struct ute_test_driver_data
 {
-//    ute_context            *utdd_ctx;
-//    ute_test_suite         *utdd_ts;
+    ute_context            *utdd_ctx;
+    utk_test_suite         *utdd_ts;
+    get_version_str         utdd_get_version_str;
+    get_version_num         utdd_get_version_num;
 //    ute_context_new         utdd_new;
 //    ute_context_delete      utdd_delete;
-    func_get_version_str   *utdd_get_version_str;
-    func_get_version_num   *utdd_get_version_num;
 //    is_valid                utdd_is_valid;
 //    next                    utdd_next;
 //    more                    utdd_more;
@@ -56,15 +58,15 @@ struct ute_test_driver_data
 };
 typedef struct ute_test_driver_data ute_test_driver_data;
 
-extern but_test_case test_case_valid_version;
-//extern but_test_case test_case_driver_load;
-//extern but_test_case test_case_new_delete;
-//extern but_test_case test_case_valid_context;
-//extern but_test_case test_case_next;
-//extern but_test_case test_case_name_case;
-//extern but_test_case test_case_name_suite;
-//extern but_test_case test_case_index;
-//extern but_test_case test_case_count;
-//extern but_test_case test_case_run;
-//extern but_test_case test_case_results;
+extern utk_test_case test_case_valid_version;
+//extern utk_test_case test_case_driver_load;
+//extern utk_test_case test_case_new_delete;
+//extern utk_test_case test_case_valid_context;
+//extern utk_test_case test_case_next;
+//extern utk_test_case test_case_name_case;
+//extern utk_test_case test_case_name_suite;
+//extern utk_test_case test_case_index;
+//extern utk_test_case test_case_count;
+//extern utk_test_case test_case_run;
+//extern utk_test_case test_case_results;
 

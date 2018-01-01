@@ -20,20 +20,20 @@
 
 ute_test_driver_data test_data;
 
-static but_result test_is_valid_version(void *data);
+static utk_result test_is_valid_version(void *data);
 
-but_result
+utk_result
 driver_setup(void *data) {
     ute_test_driver_data *utdd = (ute_test_driver_data*)data;
 
     utdd->utdd_get_version_str = &ute_get_version_str;
     utdd->utdd_get_version_num = &ute_get_version_num;
 
-    return BUT_SUCCESS;
+    return UTK_SUCCESS;
 }
 
 
-but_test_case test_case_valid_version =
+utk_test_case test_case_valid_version =
 {
     BTC_NAME_VALIDATE_VERSION,
     &driver_setup,
@@ -46,10 +46,10 @@ but_test_case test_case_valid_version =
  * @brief exported unit tests
  */
 
-static but_result
+static utk_result
 test_is_valid_version(void *data)
 {
-    but_result result = BUT_FAIL;
+    utk_result result = UTK_FAIL;
     ute_test_driver_data *tdd = (ute_test_driver_data*)data;
     const ch8 *version_str;
     s32 version_num;
@@ -61,7 +61,7 @@ test_is_valid_version(void *data)
                          UTE_VERSION_STR,
                          ARRAY_COUNT(UTE_VERSION_STR) - 1)
             && UTE_VERSION_NUM == version_num) {
-            result = BUT_SUCCESS;
+            result = UTK_SUCCESS;
         }
     }
 

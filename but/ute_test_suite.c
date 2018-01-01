@@ -12,18 +12,18 @@
 
 #define UTE_TS_NAME "UTE"
 
-LOCAL_VARIABLE but_test_case *tca[] = 
+LOCAL_VARIABLE utk_test_case *tca[] = 
 {
     // UTE driver tests
     &test_case_valid_version,
 };
 
 LOCAL_VARIABLE
-but_test_suite ute_ts = {UTE_TS_NAME, 
+utk_test_suite ute_ts = {UTE_TS_NAME, 
                          ARRAY_COUNT(tca),
                          tca};
 
-DllExport but_test_suite *
+DllExport utk_test_suite *
 test_suite_load(void)
 {
     return &ute_ts;

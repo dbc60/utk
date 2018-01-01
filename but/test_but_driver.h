@@ -8,14 +8,15 @@
 
 #pragma once
 
-#include <but_driver.h>
 #include <but.h>
+#include <but_version.h>
+#include <but_driver.h>
 
  // Function prototype typedefs
-typedef const ch8 * (*get_version_str)();
-typedef u32 (*get_version_num)();
+typedef const ch8* (*get_version_str)(void);
+typedef u32 (*get_version_num)(void);
 typedef b32 (*is_valid)(but_context*);
-typedef but_context * (*but_context_new)(but_test_suite *);
+typedef but_context * (*but_context_new)(utk_test_suite *);
 typedef void (*but_context_delete)(but_context*);
 typedef void (*next)(but_context*);
 typedef b32 (*more)(but_context*);
@@ -34,11 +35,11 @@ typedef but_test_result (*get_result)(but_context*, size_t);
 struct but_test_driver_data
 {
     but_context            *btdd_ctx;
-    but_test_suite         *btdd_ts;
-    but_context_new         btdd_new;
-    but_context_delete      btdd_delete;
+    utk_test_suite         *btdd_ts;
     get_version_str         btdd_get_version_str;
     get_version_num         btdd_get_version_num;
+    but_context_new         btdd_new;
+    but_context_delete      btdd_delete;
     is_valid                btdd_is_valid;
     next                    btdd_next;
     more                    btdd_more;
@@ -55,14 +56,14 @@ struct but_test_driver_data
 };
 typedef struct but_test_driver_data but_test_driver_data;
 
-extern but_test_case test_case_driver_load;
-extern but_test_case test_case_valid_version;
-extern but_test_case test_case_new_delete;
-extern but_test_case test_case_valid_context;
-extern but_test_case test_case_next;
-extern but_test_case test_case_name_case;
-extern but_test_case test_case_name_suite;
-extern but_test_case test_case_index;
-extern but_test_case test_case_count;
-extern but_test_case test_case_run;
-extern but_test_case test_case_results;
+extern utk_test_case test_case_driver_load;
+extern utk_test_case test_case_valid_version;
+extern utk_test_case test_case_new_delete;
+extern utk_test_case test_case_valid_context;
+extern utk_test_case test_case_next;
+extern utk_test_case test_case_name_case;
+extern utk_test_case test_case_name_suite;
+extern utk_test_case test_case_index;
+extern utk_test_case test_case_count;
+extern utk_test_case test_case_run;
+extern utk_test_case test_case_results;

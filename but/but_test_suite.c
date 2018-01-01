@@ -13,7 +13,7 @@
 
 #define BUT_TS_NAME "BUT"
 
-LOCAL_VARIABLE but_test_case *tca[] = 
+LOCAL_VARIABLE utk_test_case *tca[] = 
 {
     // basic BUT tests
     &test_case_null,
@@ -33,11 +33,11 @@ LOCAL_VARIABLE but_test_case *tca[] =
 };
 
 LOCAL_VARIABLE
-but_test_suite but_ts = {BUT_TS_NAME, 
+utk_test_suite but_ts = {BUT_TS_NAME, 
                          ARRAY_COUNT(tca),
                          tca};
 
-DllExport but_test_suite *
+DllExport utk_test_suite *
 test_suite_load(void)
 {
     return &but_ts;

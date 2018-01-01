@@ -29,9 +29,8 @@
  * @see UTE_VERSION_STR
  * @return the version of the UTE library as a string
  */
-typedef const ch8* (func_get_version_str)(void);
 /* Returns UTE_VERSION_STR */
-DllExport func_get_version_str ute_get_version_str;
+DllExport const ch8* ute_get_version_str(void);
 
 /**
  * The UTE version encoded into an int, with the low order 8 bits being the
@@ -42,8 +41,7 @@ DllExport func_get_version_str ute_get_version_str;
  * @see UTE_VERSION_NUM
  * @return the version of the UTE library as a 32-bit unsigned int.
  */
-typedef u32 (func_get_version_num)(void);
 /* Returns UTE_VERSION_NUM */
-DllExport func_get_version_num ute_get_version_num;
+DllExport u32 ute_get_version_num(void);
 
 #endif  /* UTE_VERSION_H_INCLUDED */

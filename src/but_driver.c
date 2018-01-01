@@ -37,7 +37,7 @@ typedef struct result_context result_context;
 struct but_context
 {
     intptr_t        magic;              // indicates a valid context
-    but_test_suite *test_suite;         // suite under test
+    utk_test_suite *test_suite;         // suite under test
     memory_index    index;              // index of the current test case
     size_t          count_run;          // number of tests run
     size_t          count_passed;       // number of tests that ran and passed
@@ -126,7 +126,7 @@ but_is_valid(but_context* ctx)
 }
 
 but_context*
-but_new(but_test_suite *bts)
+but_new(utk_test_suite *bts)
 {
     but_context *result;
 
@@ -197,23 +197,23 @@ void
 but_run(but_context *ctx)
 {
     if (but_more_test_cases(ctx)) {
-        but_test_case *tc = ctx->test_suite->test_cases[ctx->index];
-        but_result result_setup = BUT_SUCCESS;
-        but_result result_test = BUT_FAIL;
+        utk_test_case *tc = ctx->test_suite->test_cases[ctx->index];
+        utk_result result_setup = UTK_SUCCESS;
+        utk_result result_test = UTK_FAIL;
 
         // a setup routine is optional
         if (tc->setup) {
             // non-zero is an error
             result_setup = tc->setup(tc->test_data);
-            if (BUT_FAIL == result_setup) {
+            if (UTK_FAIL == result_setup) {
                 insert_result(ctx, BTR_FAILED_SETUP, result_setup);
                 ++ctx->count_failed_setup;
             }
         }
 
-        if (BUT_SUCCESS == result_setup) {
+        if (UTK_SUCCESS == result_setup) {
             result_test = tc->run(tc->test_data);
-            if (BUT_FAIL == result_test) {
+            if (UTK_FAIL == result_test) {
                 insert_result(ctx, BTR_FAILED, result_test);
                 ++ctx->count_failed;
             } else {

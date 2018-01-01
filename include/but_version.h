@@ -29,8 +29,7 @@
  * @see BUT_VERSION_STR
  * @return the version of hte BUT library as a string
  */
-typedef const ch8* (but_version_get)(void);
-DllExport but_version_get but_get_version_str; /* Returns BUT_VERSION_STR */
+DllExport const ch8* but_get_version_str(void); /* Returns BUT_VERSION_STR */
 
 /**
  * The BUT version encoded into an int, with the low order 8 bits being the
@@ -41,7 +40,6 @@ DllExport but_version_get but_get_version_str; /* Returns BUT_VERSION_STR */
  * @see BUT_VERSION_NUM
  * @return the version of hte BUT library as a 32-bit unsigned int.
  */
-typedef u32 (but_version_num_get)(void);
-DllExport but_version_num_get but_get_version_num;  /* Returns BUT_VERSION_NUM */
+DllExport u32 but_get_version_num(void);  /* Returns BUT_VERSION_NUM */
 
 #endif  /* BUT_VERSION_H_INCLUDED */

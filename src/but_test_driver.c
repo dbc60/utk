@@ -32,7 +32,7 @@ test_driver_display_test_case(but_context *ctx)
 
 
 int
-but_test_driver(but_test_suite *bts)
+but_test_driver(utk_test_suite *bts)
 {
     but_context    *ctx;
     size_t          i;

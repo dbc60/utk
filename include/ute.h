@@ -15,15 +15,14 @@
 #define UTE_H_INCLUDED
 
 #include "platform.h"
+#include "utk.h"
+
 
 BEGIN_EXTERN_C
 // Unit Test Extended (UTE)
 
-// Forward declarations of opaque types
-typedef void* ute_test_data;
+/** @brief the test context */
 typedef struct ute_context ute_context;
-typedef struct ute_test_suite ute_test_suite;
-typedef struct ute_test_case ute_test_case;
 
 /*
  * ute_test_result is ordered from best result (passed) to successively worse
@@ -64,14 +63,7 @@ enum ute_test_results
 };
 typedef enum ute_test_results ute_test_result;
 
-enum ute_results {
-    UTe_FAIL,
-    UTe_SUCCESS
-};
-typedef enum ute_results ute_result;
 
-typedef ute_result  (ute_method_setup)(void *data);
-typedef ute_result  (ute_method_run)(void *data);
-typedef void        (ute_method_teardown)(void *data);
+END_EXTERN_C
 
 #endif  // UTE_H_INCLUDED

@@ -25,8 +25,8 @@ main(int argc, char **argv)
     int i;
     ch8 *tspath;
     void *test_suite;
-    but_test_suite_load *bts_load;
-    but_test_suite *bts;
+    utk_test_suite_load *bts_load;
+    utk_test_suite *bts;
     const ch8 * version = but_get_version_str();
 
     printf("%s Version %s\n", TEST_DRIVER_NAME, version);
@@ -38,7 +38,7 @@ main(int argc, char **argv)
             test_suite = dlopen(tspath, RTLD_NOW | RTLD_LOCAL);
 
             if (test_suite) {
-                bts_load = (but_test_suite_load*)
+                bts_load = (utk_test_suite_load*)
                            dlsym(test_suite, TEST_SUITE_LOAD_NAME);
 
                 if (bts_load) {

@@ -34,29 +34,29 @@
 
 but_test_driver_data test_data;
 
-static but_result context_setup(void *data);
+static utk_result context_setup(void *data);
 static void context_teardown(void *data);
 
-static but_result test_is_valid_version(void *data);
-static but_result test_new_delete(void *data);
-static but_result test_is_valid_context(void *data);
-static but_result test_next_index_more(void *data);
-static but_result test_name_case(void *data);
-static but_result test_name_suite(void *data);
-static but_result test_index(void *data);
-static but_result test_count(void *data);
-static but_result test_run(void *data);
-static but_result test_results(void *data);
-static but_test_suite test_suite_success_fail;
+static utk_result test_is_valid_version(void *data);
+static utk_result test_new_delete(void *data);
+static utk_result test_is_valid_context(void *data);
+static utk_result test_next_index_more(void *data);
+static utk_result test_name_case(void *data);
+static utk_result test_name_suite(void *data);
+static utk_result test_index(void *data);
+static utk_result test_count(void *data);
+static utk_result test_run(void *data);
+static utk_result test_results(void *data);
+static utk_test_suite test_suite_success_fail;
 
-but_result
+utk_result
 driver_setup(void *data) {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
 
-    tdd->btdd_new = &but_new;
-    tdd->btdd_delete = &but_delete;
     tdd->btdd_get_version_str = &but_get_version_str;
     tdd->btdd_get_version_num = &but_get_version_num;
+    tdd->btdd_new = &but_new;
+    tdd->btdd_delete = &but_delete;
     tdd->btdd_is_valid = &but_is_valid;
     tdd->btdd_next = &but_next;
     tdd->btdd_more = &but_more_test_cases;
@@ -72,11 +72,11 @@ driver_setup(void *data) {
     tdd->btdd_get_result = &but_get_result;
     tdd->btdd_ts = &test_suite_success_fail;
 
-    return BUT_SUCCESS;
+    return UTK_SUCCESS;
 }
 
 
-but_test_case test_case_valid_version =
+utk_test_case test_case_valid_version =
 {
     BTC_NAME_VALIDATE_VERSION,
     &driver_setup,
@@ -85,7 +85,7 @@ but_test_case test_case_valid_version =
     (void*)&test_data
 };
 
-but_test_case test_case_new_delete =
+utk_test_case test_case_new_delete =
 {
     BTC_NAME_NEW_DELETE,
     &driver_setup,
@@ -94,7 +94,7 @@ but_test_case test_case_new_delete =
     (void*)&test_data
 };
 
-but_test_case test_case_valid_context =
+utk_test_case test_case_valid_context =
 {
     BTC_NAME_IS_VALID,
     driver_setup,
@@ -103,7 +103,7 @@ but_test_case test_case_valid_context =
     (void*)&test_data
 };
 
-but_test_case test_case_next =
+utk_test_case test_case_next =
 {
     BTC_NAME_NEXT_INDEX_MORE,
     context_setup,
@@ -112,7 +112,7 @@ but_test_case test_case_next =
     (void*)&test_data
 };
 
-but_test_case test_case_name_case =
+utk_test_case test_case_name_case =
 {
     BTC_NAME_CASE_NAME,
     context_setup,
@@ -121,7 +121,7 @@ but_test_case test_case_name_case =
     (void*)&test_data
 };
 
-but_test_case test_case_name_suite =
+utk_test_case test_case_name_suite =
 {
     BTC_NAME_SUITE_NAME,
     context_setup,
@@ -130,7 +130,7 @@ but_test_case test_case_name_suite =
     (void*)&test_data
 };
 
-but_test_case test_case_index =
+utk_test_case test_case_index =
 {
     BTC_NAME_INDEX,
     context_setup,
@@ -139,7 +139,7 @@ but_test_case test_case_index =
     (void*)&test_data
 };
 
-but_test_case test_case_count =
+utk_test_case test_case_count =
 {
     BTC_NAME_COUNT,
     context_setup,
@@ -148,7 +148,7 @@ but_test_case test_case_count =
     (void*)&test_data
 };
 
-but_test_case test_case_run =
+utk_test_case test_case_run =
 {
     BTC_NAME_RUN,
     context_setup,
@@ -158,7 +158,7 @@ but_test_case test_case_run =
 };
 
 
-but_test_case test_case_results =
+utk_test_case test_case_results =
 {
     BTC_NAME_RESULTS,
     context_setup,
@@ -168,17 +168,17 @@ but_test_case test_case_results =
 };
 
 
-static but_result test_success(void *data) {
+static utk_result test_success(void *data) {
     UNREFERENCED(data);
-    return BUT_SUCCESS;
+    return UTK_SUCCESS;
 }
 
-static but_result test_fail(void *data) {
+static utk_result test_fail(void *data) {
     UNREFERENCED(data);
-    return BUT_FAIL;
+    return UTK_FAIL;
 }
 
-static but_test_case test_case_success =
+static utk_test_case test_case_success =
 {
     BTC_NAME_SUCCESS,
     NULL,
@@ -187,7 +187,7 @@ static but_test_case test_case_success =
     NULL
 };
 
-static but_test_case test_case_fail =
+static utk_test_case test_case_fail =
 {
     BTC_NAME_FAIL,
     NULL,
@@ -196,13 +196,13 @@ static but_test_case test_case_fail =
     NULL
 };
 
-static but_test_case *tca[] =
+static utk_test_case *tca[] =
 {
     &test_case_success,
     &test_case_fail
 };
 
-static but_test_suite test_suite_success_fail =
+static utk_test_suite test_suite_success_fail =
 {
     SUITE_NAME,
     ARRAY_COUNT(tca),
@@ -210,18 +210,18 @@ static but_test_suite test_suite_success_fail =
 };
 
 
-static but_result
+static utk_result
 context_setup(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
-    but_result result = 0;
+    utk_result result = 0;
 
     result = driver_setup(data);
-    if (BUT_SUCCESS == result) {
+    if (UTK_SUCCESS == result) {
         tdd->btdd_ctx = tdd->btdd_new(tdd->btdd_ts);
     
         if (!tdd->btdd_is_valid(tdd->btdd_ctx)) {
-            result = BUT_FAIL;
+            result = UTK_FAIL;
         }
     }
 
@@ -242,10 +242,10 @@ context_teardown(void *data)
  * @brief exported unit tests
  */
 
-static but_result
+static utk_result
 test_is_valid_version(void *data)
 {
-    but_result result = BUT_FAIL;
+    utk_result result = UTK_FAIL;
     but_test_driver_data *tdd = (but_test_driver_data*)data;
     const ch8 *version_str;
     s32 version_num;
@@ -257,7 +257,7 @@ test_is_valid_version(void *data)
                          BUT_VERSION_STR,
                          ARRAY_COUNT(BUT_VERSION_STR) - 1)
             && BUT_VERSION_NUM == version_num) {
-            result = BUT_SUCCESS;
+            result = UTK_SUCCESS;
         }
     }
 
@@ -265,32 +265,32 @@ test_is_valid_version(void *data)
 }
 
 
-static but_result
+static utk_result
 test_new_delete(void *data)
 {
-    but_result          result = BUT_FAIL;
+    utk_result          result = UTK_FAIL;
     but_test_driver_data      *tdd = (but_test_driver_data*)data;
 
     tdd->btdd_ctx = tdd->btdd_new(tdd->btdd_ts);
     if (tdd->btdd_ctx) {
         tdd->btdd_delete(tdd->btdd_ctx);
-        result = BUT_SUCCESS;
+        result = UTK_SUCCESS;
     }
 
     return result;
 }
 
 
-static but_result
+static utk_result
 test_is_valid_context(void *data)
 {
-    but_result          result = BUT_FAIL;
+    utk_result          result = UTK_FAIL;
     but_test_driver_data      *tdd = (but_test_driver_data*)data;
 
     tdd->btdd_ctx = tdd->btdd_new(tdd->btdd_ts);
     if (tdd->btdd_ctx) {
         if (tdd->btdd_is_valid(tdd->btdd_ctx)) {
-            result = BUT_SUCCESS;
+            result = UTK_SUCCESS;
         }
 
         tdd->btdd_delete(tdd->btdd_ctx);
@@ -302,14 +302,14 @@ test_is_valid_context(void *data)
 
 /**
  * @todo - This is not a good test. It can fail in too many ways. If it doesn't
- * return BUT_SUCCESS, it will take more effort than necessary to figure out
+ * return UTK_SUCCESS, it will take more effort than necessary to figure out
  * why and where it failed.
  */
-static but_result
+static utk_result
 test_next_index_more(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
-    but_result      result = BUT_FAIL;
+    utk_result      result = UTK_FAIL;
 
     if (tdd->btdd_get_count(tdd->btdd_ctx) > 0) {
         tdd->btdd_next(tdd->btdd_ctx);
@@ -317,7 +317,7 @@ test_next_index_more(void *data)
             if (tdd->btdd_more(tdd->btdd_ctx) == 1) {
                 tdd->btdd_next(tdd->btdd_ctx);
                 if (FALSE == tdd->btdd_more(tdd->btdd_ctx)) {
-                    result = BUT_SUCCESS;
+                    result = UTK_SUCCESS;
                 }
             }
         }
@@ -327,11 +327,11 @@ test_next_index_more(void *data)
 }
 
 
-static but_result
+static utk_result
 test_name_case(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
-    but_result      result = BUT_FAIL;
+    utk_result      result = UTK_FAIL;
     const ch8      *name;
 
     name = tdd->btdd_get_name_case(tdd->btdd_ctx);
@@ -340,7 +340,7 @@ test_name_case(void *data)
         tdd->btdd_next(tdd->btdd_ctx);
         name = tdd->btdd_get_name_case(tdd->btdd_ctx);
         if (name && 0 == strcmp(name, BTC_NAME_FAIL)) {
-            result = BUT_SUCCESS;
+            result = UTK_SUCCESS;
         }
     }
 
@@ -348,11 +348,11 @@ test_name_case(void *data)
 }
 
 
-static but_result
+static utk_result
 test_name_suite(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
-    but_result      result = BUT_FAIL;
+    utk_result      result = UTK_FAIL;
     const ch8      *name;
 
     name = tdd->btdd_get_name_suite(tdd->btdd_ctx);
@@ -360,7 +360,7 @@ test_name_suite(void *data)
         tdd->btdd_next(tdd->btdd_ctx);
         name = tdd->btdd_get_name_suite(tdd->btdd_ctx);
         if (name && 0 == strcmp(name, SUITE_NAME)) {
-            result = BUT_SUCCESS;
+            result = UTK_SUCCESS;
         }
     }
 
@@ -368,18 +368,18 @@ test_name_suite(void *data)
 }
 
 
-static but_result
+static utk_result
 test_index(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
-    but_result      result = BUT_FAIL;
+    utk_result      result = UTK_FAIL;
     size_t          index;
 
     index = tdd->btdd_get_index(tdd->btdd_ctx);
     if (0 == index) {
         tdd->btdd_next(tdd->btdd_ctx);
         if (tdd->btdd_get_index(tdd->btdd_ctx) == 1) {
-            result = BUT_SUCCESS;
+            result = UTK_SUCCESS;
         }
     }
 
@@ -387,25 +387,25 @@ test_index(void *data)
 }
 
 
-static but_result
+static utk_result
 test_count(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
-    but_result      result = BUT_FAIL;
+    utk_result      result = UTK_FAIL;
 
     if (tdd->btdd_get_count(tdd->btdd_ctx) == 2) {
-        result = BUT_SUCCESS;
+        result = UTK_SUCCESS;
     }
 
     return result;
 }
 
 
-static but_result
+static utk_result
 test_run(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
-    but_result      result = BUT_FAIL;
+    utk_result      result = UTK_FAIL;
 
     tdd->btdd_run_current(tdd->btdd_ctx);
     tdd->btdd_next(tdd->btdd_ctx);
@@ -415,19 +415,19 @@ test_run(void *data)
         && tdd->btdd_get_count_failed(tdd->btdd_ctx) == 1
         && tdd->btdd_get_count_failed_setup(tdd->btdd_ctx) == 0
         && tdd->btdd_get_count_results(tdd->btdd_ctx) == 1) {
-        result = BUT_SUCCESS;
+        result = UTK_SUCCESS;
     }
 
     return result;
 }
 
 
-static but_result
+static utk_result
 test_results(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
     but_context*    ctx = tdd->btdd_ctx;
-    but_result      result = BUT_FAIL;
+    utk_result      result = UTK_FAIL;
 
     tdd->btdd_run_current(ctx);
     tdd->btdd_next(ctx);
@@ -436,7 +436,7 @@ test_results(void *data)
     // zero is a successful test, so we expect BUT_PASSED and BUT_FAILED
     if (tdd->btdd_get_result(ctx, 0) == BTR_PASSED
         && tdd->btdd_get_result(ctx, 1) == BTR_FAILED) {
-        result = BUT_SUCCESS;
+        result = UTK_SUCCESS;
     }
 
     return result;

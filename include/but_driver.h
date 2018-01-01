@@ -19,7 +19,7 @@ BEGIN_EXTERN_C
 DllExport b32 but_is_valid(but_context *ctx);
 
 /** @brief make a new test context for the given test suite */
-DllExport but_context *but_new(but_test_suite *bts);
+DllExport but_context *but_new(utk_test_suite *bts);
 
 /** @brief release a test context */
 DllExport void but_delete(but_context *ctx);
