@@ -34,25 +34,25 @@ typedef but_test_result (*get_result)(but_context*, size_t);
 // Test driver's data
 struct but_test_driver_data
 {
-    but_context            *btdd_ctx;
-    utk_test_suite         *btdd_ts;
-    get_version_str         btdd_get_version_str;
-    get_version_num         btdd_get_version_num;
-    but_context_new         btdd_new;
-    but_context_delete      btdd_delete;
-    is_valid                btdd_is_valid;
-    next                    btdd_next;
-    more                    btdd_more;
-    get_name_case           btdd_get_name_case;
-    get_name_suite          btdd_get_name_suite;
-    get_index               btdd_get_index;
-    get_count               btdd_get_count;
-    run_current             btdd_run_current;
-    get_count_passed        btdd_get_count_passed;
-    get_count_failed        btdd_get_count_failed;
-    get_count_failed_setup  btdd_get_count_failed_setup;
-    get_count_results       btdd_get_count_results;
-    get_result              btdd_get_result;
+    but_context            *tdd_ctx;
+    utk_test_suite         *tdd_ts;
+    get_version_str         tdd_get_version_str;
+    get_version_num         tdd_get_version_num;
+    but_context_new         tdd_new;
+    but_context_delete      tdd_delete;
+    is_valid                tdd_is_valid;
+    next                    tdd_next;
+    more                    tdd_more;
+    get_name_case           tdd_get_name_case;
+    get_name_suite          tdd_get_name_suite;
+    get_index               tdd_get_index;
+    get_count               tdd_get_count;
+    run_current             tdd_run_current;
+    get_count_passed        tdd_get_count_passed;
+    get_count_failed        tdd_get_count_failed;
+    get_count_failed_setup  tdd_get_count_failed_setup;
+    get_count_results       tdd_get_count_results;
+    get_result              tdd_get_result;
 };
 typedef struct but_test_driver_data but_test_driver_data;
 

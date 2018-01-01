@@ -58,8 +58,9 @@ INTERNAL_FUNCTION void
 grow_capacity(but_context *ctx)
 {
     result_context *new_results;
-    size_t          new_capacity, count;
-    size_t const    increment = 10;
+    size_t new_capacity;
+    size_t count;
+    size_t const increment = 10;
 
     // Calculate a new capacity, but make it no more than
     // the number of test cases in the test suite
@@ -103,28 +104,6 @@ insert_result(but_context *ctx, but_test_result result, int error_code)
  * Public functions
  */
 
-/**
- * @brief validate the test context
- * A valid test context is one where the magic number is the address of the
- * context, it has a non-null pointer to a test suite, and its index is no
- * greater than count.
- */
-b32
-but_is_valid(but_context* ctx)
-{
-    b32 result = FALSE;
-
-    if (ctx) {
-        if (ctx->magic == (intptr_t)ctx
-            && ctx->test_suite != NULL
-            && ctx->index <= ctx->test_suite->count) {
-            result = TRUE;
-        }
-    }
-
-    return result;
-}
-
 but_context*
 but_new(utk_test_suite *bts)
 {
@@ -147,6 +126,28 @@ but_delete(but_context *ctx)
     }
 
     free(ctx);
+}
+
+/**
+ * @brief validate the test context
+ * A valid test context is one where the magic number is the address of the
+ * context, it has a non-null pointer to a test suite, and its index is no
+ * greater than count.
+ */
+b32
+but_is_valid(but_context* ctx)
+{
+    b32 result = FALSE;
+
+    if (ctx) {
+        if (ctx->magic == (intptr_t)ctx
+            && ctx->test_suite != NULL
+            && ctx->index <= ctx->test_suite->count) {
+            result = TRUE;
+        }
+    }
+
+    return result;
 }
 
 void
@@ -199,13 +200,13 @@ but_run(but_context *ctx)
     if (but_more_test_cases(ctx)) {
         utk_test_case *tc = ctx->test_suite->test_cases[ctx->index];
         utk_result result_setup = UTK_SUCCESS;
-        utk_result result_test = UTK_FAIL;
+        utk_result result_test = UTK_SUCCESS;
 
         // a setup routine is optional
         if (tc->setup) {
             // non-zero is an error
             result_setup = tc->setup(tc->test_data);
-            if (UTK_FAIL == result_setup) {
+            if (result_setup != UTK_SUCCESS) {
                 insert_result(ctx, BTR_FAILED_SETUP, result_setup);
                 ++ctx->count_failed_setup;
             }
@@ -213,7 +214,7 @@ but_run(but_context *ctx)
 
         if (UTK_SUCCESS == result_setup) {
             result_test = tc->run(tc->test_data);
-            if (UTK_FAIL == result_test) {
+            if (result_test != UTK_SUCCESS) {
                 insert_result(ctx, BTR_FAILED, result_test);
                 ++ctx->count_failed;
             } else {

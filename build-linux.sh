@@ -20,7 +20,7 @@ else
     fi
 fi
 
-BUILD_ROOT=obj-linux
+BUILD_ROOT=obj/linux
 PLATFORM=x64
 BUILD_PATH=$BUILD_ROOT/$PLATFORM/$BUILD_CONFIG
 
@@ -58,20 +58,20 @@ ar rcs $BUILD_PATH/but_driver.a $BUILD_PATH/but_driver.o \
 gcc $COMPILER_FLAGS src/linux_but_driver.c src/but_test_driver.c \
     -o $BUILD_PATH/linux_but_driver $LINKER_FLAGS $BUILD_PATH/but_driver.a -ldl
 
-## test_driver shared library to test the but driver
-gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/but_test.c -o $BUILD_PATH/but_test.o
-
+## test_driver shared library to test the but_driver.a
 gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
     -c but/test_but_driver.c -o $BUILD_PATH/test_but_driver.o
 
 gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
     -c but/but_test_suite.c -o $BUILD_PATH/but_test_suite.o
 
+gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
+    -c but/but_test.c -o $BUILD_PATH/but_test.o
+
 ## Create a shared library from the object files
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_but_driver.so.1 \
-    -o $BUILD_PATH/libtest_but_driver.so.1.0 $BUILD_PATH/but_test.o \
-    $BUILD_PATH/test_but_driver.o $BUILD_PATH/but_test_suite.o \
+    -o $BUILD_PATH/libtest_but_driver.so.1.0 $BUILD_PATH/test_but_driver.o \
+    $BUILD_PATH/but_test.o $BUILD_PATH/but_test_suite.o \
     $BUILD_PATH/but_driver.a
 
 
@@ -80,8 +80,11 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libtest_but_driver.so.1 \
 ##
 
 ## Build the static library for the UTE driver: ute_driver.a
+gcc $COMPILER_FLAGS -c -fpic src/ute_driver.c -o $BUILD_PATH/ute_driver.o
 gcc $COMPILER_FLAGS -c -fpic src/ute_version.c -o $BUILD_PATH/ute_version.o
-ar rcs $BUILD_PATH/ute_driver.a $BUILD_PATH/ute_version.o
+gcc $COMPILER_FLAGS -c -fpic src/ute_counter.c -o $BUILD_PATH/ute_counter.o
+ar rcs $BUILD_PATH/ute_driver.a $BUILD_PATH/ute_driver.o \
+   $BUILD_PATH/ute_version.o  $BUILD_PATH/ute_counter.o
 
 ## compile the components of test_ute_driver.so that tests ute_driver.a
 gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \

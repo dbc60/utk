@@ -14,7 +14,7 @@
 #define TEST_NAME_NULL_DATA  "Null Data"
 #define TEST_NAME_STR_DATA   "String Data"
 
-#define TEST_DATA_STR "Data"
+#define BTR_STR "Data"
 
 INTERNAL_FUNCTION utk_result but_test_data_null(void *data);
 INTERNAL_FUNCTION utk_result but_test_data_str(void *data);
@@ -22,9 +22,15 @@ INTERNAL_FUNCTION utk_result but_test_data_str(void *data);
 utk_test_case test_case_null = {TEST_NAME_NULL_DATA, NULL, but_test_data_null, NULL, NULL};
 
 utk_test_case test_case_str = {
-    TEST_NAME_STR_DATA, NULL, but_test_data_str, NULL, (void*)TEST_DATA_STR
+    TEST_NAME_STR_DATA, NULL, but_test_data_str, NULL, (void*)BTR_STR
 };
 
+enum but_test_data_results {
+    BTR_SUCCESS = UTK_SUCCESS,
+    BTR_UNEXPECTED_NON_NULL,
+    BTR_UNEXPECTED_NULL,
+    BTR_INVALID
+};
 
 /**
  * @brief Verify the utk_test_case "test_data" field  is null.
@@ -32,10 +38,10 @@ utk_test_case test_case_str = {
 INTERNAL_FUNCTION utk_result
 but_test_data_null(void *data)
 {
-    utk_result result = UTK_FAIL;
+    utk_result result = BTR_SUCCESS;
 
-    if (NULL == data) {
-        result = UTK_SUCCESS;
+    if (data != NULL) {
+        result = BTR_UNEXPECTED_NON_NULL;
     }
 
     return result;
@@ -48,11 +54,12 @@ but_test_data_null(void *data)
 INTERNAL_FUNCTION utk_result
 but_test_data_str(void *data)
 {
-    utk_result result = UTK_FAIL;
+    utk_result result = BTR_SUCCESS;
 
-    if (data != NULL &&
-        0 == strncmp((char*)data, TEST_DATA_STR, sizeof (TEST_DATA_STR) - 1)) {
-        result = UTK_SUCCESS;
+    if (NULL == data) {
+        result = BTR_UNEXPECTED_NULL;
+    } else if (0 != strncmp((char*)data, BTR_STR, sizeof (BTR_STR) - 1)) {
+        result = BTR_INVALID;
     }
 
     return result;

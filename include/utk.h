@@ -18,11 +18,9 @@
 
 BEGIN_EXTERN_C
 
-enum utk_results {
-    UTK_FAIL,
-    UTK_SUCCESS
-};
-typedef enum utk_results utk_result;
+// zero is success, all other values are error codes
+typedef s32 utk_result;
+enum utk_results {UTK_SUCCESS};
 
 typedef utk_result  (utk_method_setup)(void *data);
 typedef utk_result  (utk_method_run)(void *data);

@@ -92,7 +92,7 @@ if    "%1" == ""          set BUILD_CONFIG=Debug
 if /i "%1" == "Debug"     set BUILD_CONFIG=Debug
 if /i "%1" == "Release"   set BUILD_CONFIG=Release
 
-set BUILD_ROOT=obj-win
+set BUILD_ROOT=obj\win
 set PROJECT_PATH=%cd%
 
 if "%BUILD_CONFIG%" == "Debug" (
@@ -170,32 +170,16 @@ IF NOT EXIST "%BUILD_PATH%" md "%BUILD_PATH%"
 
 del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 
-:: old way to create a new shared library. Use %random% instead
-:: set datetime=%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~0,2%%time:~3,2%%time:~6,2%
-:: set datetime=%datetime: =0%
-
-:: build the live-loadable shared library
-
-:: echo WAITING FOR PDB > lock.tmp
-:: set random_value=%random%
-:: cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\%PROJECT_NAME%.cpp" ^
-::    /Fm%PROJECT_NAME%.map /LD /link /incremental:no /opt:ref ^
-::    /PDB:%PROJECT_NAME%_%random_value%.pdb
-:: del lock.tmp
-
-:: build the executable that will live-load a shared library
-:: cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\win32_%PROJECT_NAME%.cpp" ^
-::    /Fmwin32_%PROJECT_NAME%.map  /link %LINKER_FLAGS%
-
-
 ::
 :: Basic Unit Test (BUT)
 ::
 
 :: build the static library for the BUT driver: but_driver.lib
-cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch /Fd%BUILD_PATH%\but_driver.pdb src\but_driver.c src\but_version.c
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch ^
+   /Fd%BUILD_PATH%\but_driver.pdb src\but_driver.c src\but_version.c
 
-lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
+lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
 
 :: build win32_but_driver.exe from win32_but_driver.c, but_test_driver.c, and
 :: but_driver.lib
@@ -220,9 +204,13 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" 
 ::
 
 :: build the static library for the UTE driver: ute_driver.lib
-cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch /Fd%BUILD_PATH%\ute_driver.pdb src\ute_version.c
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch ^
+   /Fd%BUILD_PATH%\ute_driver.pdb src\ute_driver.c src\ute_version.c ^
+   src\ute_counter.c
 
-lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO %BUILD_PATH%\ute_version.obj
+lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\ute_driver.obj %BUILD_PATH%\ute_version.obj ^
+    %BUILD_PATH%\ute_counter.obj
 
 :: compile the components of test_ute_driver.dll that tests ute_driver.lib
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^

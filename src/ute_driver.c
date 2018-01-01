@@ -22,7 +22,6 @@
 
 
 // Record the invalid address passed to free
-typedef
 struct invalid_free
 {
     void   *block;
@@ -49,10 +48,10 @@ typedef struct ute_result_context ute_result_context;
 
 
 
-struct ute_test_context
+struct ute_context
 {
     intptr_t        magic;              // indicates a valid context
-    ute_test_suite *testSuite;          // suite under test
+    utk_test_suite *test_suite;         // suite under test
     memory_index    index;              // index of the current test case
     size_t          count_run;          // number of tests run
     size_t          count_passed;       // number of tests that ran and passed
@@ -63,4 +62,109 @@ struct ute_test_context
     ute_result_context *results;        // array of test results.
     ute_counter     counter;
 };
-typedef struct ute_test_context ute_test_context;
+typedef struct ute_context ute_context;
+
+/**
+ *  Local functions
+ */
+
+//INTERNAL_FUNCTION void
+//grow_capacity(ute_context *ctx)
+//{
+//    ute_result_context *new_results;
+//    size_t new_capacity;
+//    size_t count;
+//    size_t const increment = 10;
+//
+//    // Calculate a new capacity, but make it no more than
+//    // the number of test cases in the test suite
+//    if (ctx->capacity + increment > (size_t)ctx->test_suite->count) {
+//        new_capacity = ctx->test_suite->count;
+//        count = ctx->test_suite->count - ctx->capacity;
+//    } else {
+//        new_capacity = ctx->capacity + increment;
+//        count = increment;
+//    }
+//
+//    new_results = realloc(ctx->results,
+//                          new_capacity * sizeof(ute_result_context));
+//    if (new_results) {
+//        // Initialize new memory block
+//        memset(&new_results[ctx->capacity],
+//               0,
+//               count * sizeof(ute_result_context));
+//        ctx->capacity = new_capacity;
+//        ctx->results = new_results;
+//    }
+//}
+
+
+//INTERNAL_FUNCTION void
+//insert_result(ute_context *ctx, ute_test_result result, int error_code)
+//{
+//    if (ctx->count_results == ctx->capacity) {
+//        grow_capacity(ctx);
+//    }
+//
+//    if ((size_t)ctx->count_results < ctx->capacity) {
+//        ctx->results[ctx->count_results].index = ctx->index;
+//        ctx->results[ctx->count_results].result = result;
+//        ctx->results[ctx->count_results].error_code = error_code;
+//        ++ctx->count_results;
+//    }
+//}
+
+
+/**
+ * Public functions
+ */
+
+ute_context*
+ute_new(utk_test_suite *ts)
+{
+    ute_context *result;
+
+    result = calloc(1, sizeof(ute_context));
+    if (result != NULL) {
+        result->magic = (intptr_t)result;
+        result->test_suite = ts;
+        ute_counter_init(&result->counter, result);
+    }
+
+    return result;
+}
+
+void
+ute_delete(ute_context *ctx)
+{
+    if (ctx->results) {
+        free(ctx->results);
+    }
+
+    free(ctx);
+}
+
+
+/**
+ * @brief validate the test context
+ * A valid test context is one where the magic number is the address of the
+ * context, it has a non-null pointer to a test suite, and its index is no
+ * greater than count.
+ */
+b32
+ute_is_valid(ute_context* ctx)
+{
+    b32 result = FALSE;
+
+    if (ctx) {
+        ute_context * counter_ctx = ute_counter_get_context(&ctx->counter);
+        if (ctx->magic == (intptr_t)ctx
+            && ctx->test_suite != NULL
+            && ctx->index <= ctx->test_suite->count
+            && ctx == counter_ctx) {
+            result = TRUE;
+        }
+    }
+
+    return result;
+}
