@@ -168,3 +168,48 @@ ute_is_valid(ute_context* ctx)
 
     return result;
 }
+
+b32
+ute_is_end(ute_context *ctx)
+{
+    return ctx->index == ctx->test_suite->count;
+}
+
+void
+ute_next(ute_context *ctx)
+{
+    if (ctx->index < ctx->test_suite->count) {
+        ++ctx->index;
+    }
+}
+
+const ch8 *
+ute_get_name_test_suite(ute_context *ctx)
+{
+    return ctx->test_suite->name;
+}
+
+const ch8 *
+ute_get_name_test_case(ute_context *ctx)
+{
+    const ch8* result = NULL;
+
+    if (ctx->index < ctx->test_suite->count) {
+        result = ctx->test_suite->test_cases[ctx->index]->name;
+    }
+
+    return result;
+}
+
+size_t
+ute_get_index(ute_context *ctx)
+{
+    return ctx->index;
+}
+
+size_t
+ute_get_count_test_cases(ute_context *ctx)
+{
+    return ctx->test_suite->count;
+}
+

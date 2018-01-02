@@ -17,7 +17,12 @@ LOCAL_VARIABLE utk_test_case *tca[] =
     // UTE driver tests
     &test_case_valid_version,
     &test_case_new_delete,
-    &test_case_valid_context
+    &test_case_valid_context,
+    &test_case_index_next_end,
+    &test_case_name_case,
+    &test_case_name_suite,
+    &test_case_index,
+    &test_case_count
 };
 
 LOCAL_VARIABLE

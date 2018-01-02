@@ -24,12 +24,26 @@
 #define TC_NAME_VALIDATE_VERSION   "Validate Version"
 #define TC_NAME_NEW_DELETE         "New and Delete Context"
 #define TC_NAME_IS_VALID           "Validate Context"
+#define TC_NAME_NEXT_INDEX_END     "Next/Index/End"
+#define TC_NAME_CASE_NAME          "Case Name"
+#define TC_NAME_SUITE_NAME         "Suite Name"
+#define TC_NAME_INDEX              "Index"
+#define TC_NAME_COUNT              "Count"
 
 ute_test_driver_data test_data;
+
+static utk_result context_setup(void *data);
+static void context_teardown(void *data);
 
 static utk_result test_is_valid_version(void *data);
 static utk_result test_new_delete(void *data);
 static utk_result test_is_valid_context(void *data);
+static utk_result test_next_index_next_end(void *data);
+static utk_result test_name_case(void *data);
+static utk_result test_name_suite(void *data);
+static utk_result test_index(void *data);
+static utk_result test_count(void *data);
+
 static utk_test_suite test_suite_success_fail;
 
 utk_result
@@ -41,6 +55,13 @@ driver_setup(void *data) {
     tdd->tdd_new = &ute_new;
     tdd->tdd_delete = &ute_delete;
     tdd->tdd_is_valid = &ute_is_valid;
+    tdd->tdd_next = &ute_next;
+    tdd->tdd_is_end = &ute_is_end;
+    tdd->tdd_get_name_case = &ute_get_name_test_case;
+    tdd->tdd_get_name_suite = &ute_get_name_test_suite;
+    tdd->tdd_get_index = &ute_get_index;
+    tdd->tdd_get_count = &ute_get_count_test_cases;
+
     tdd->tdd_ts = &test_suite_success_fail;
 
     return UTK_SUCCESS;
@@ -74,6 +95,52 @@ utk_test_case test_case_valid_context =
     (void*)&test_data
 };
 
+utk_test_case test_case_index_next_end =
+{
+    TC_NAME_NEXT_INDEX_END,
+    driver_setup,
+    test_next_index_next_end,
+    NULL,
+    (void*)&test_data
+};
+
+utk_test_case test_case_name_case =
+{
+    TC_NAME_CASE_NAME,
+    context_setup,
+    test_name_case,
+    context_teardown,
+    (void*)&test_data
+};
+
+utk_test_case test_case_name_suite =
+{
+    TC_NAME_SUITE_NAME,
+    context_setup,
+    test_name_suite,
+    context_teardown,
+    (void*)&test_data
+};
+
+utk_test_case test_case_index =
+{
+    TC_NAME_INDEX,
+    context_setup,
+    test_index,
+    context_teardown,
+    (void*)&test_data
+};
+
+utk_test_case test_case_count =
+{
+    TC_NAME_COUNT,
+    context_setup,
+    test_count,
+    context_teardown,
+    (void*)&test_data
+};
+
+
 enum test_driver_results {
     TDR_SUCCESS = UTK_SUCCESS,
     TDR_EXPECTED_FAIL,
@@ -82,7 +149,45 @@ enum test_driver_results {
     TDR_VERSION_STR_INVALID,
     TDR_VERSION_NUM_INVALID,
     TDR_UNEXPECTED_NULL,
+    TDR_UNEXPECTED_COUNT,
+    TDR_UNEXPECTED_INDEX_1,
+    TDR_UNEXPECTED_INDEX_2,
+    TDR_UNEXPECTED_END,
+    TDR_UNEXPECTED_MORE,
+    TDR_UNEXPECTED_NAME_1,
+    TDR_UNEXPECTED_NAME_2,
+    TDR_UNEXPECTED_RESULT_1,
+    TDR_UNEXPECTED_RESULT_2
 };
+
+
+static utk_result
+context_setup(void *data)
+{
+    ute_test_driver_data *tdd = (ute_test_driver_data*)data;
+    utk_result result = 0;
+
+    result = driver_setup(data);
+    if (TDR_SUCCESS == result) {
+        tdd->tdd_ctx = tdd->tdd_new(tdd->tdd_ts);
+    
+        if (!tdd->tdd_is_valid(tdd->tdd_ctx)) {
+            result = TDR_CONTEXT_INVALID;
+        }
+    }
+
+    return result;
+}
+
+
+static void
+context_teardown(void *data)
+{
+    ute_test_driver_data *tdd = (ute_test_driver_data*)data;
+
+    tdd->tdd_delete(tdd->tdd_ctx);
+}
+
 
 /**
  * @brief exported unit tests
@@ -147,6 +252,119 @@ test_is_valid_context(void *data)
     return result;
 }
 
+static utk_result
+test_next_index_next_end(void *data)
+{
+    utk_result result = TDR_SUCCESS;
+    ute_test_driver_data * tdd = (ute_test_driver_data*)data;
+
+    if (tdd->tdd_get_count(tdd->tdd_ctx) == 0) {
+        result = TDR_UNEXPECTED_COUNT;
+    } else {
+        tdd->tdd_next(tdd->tdd_ctx);
+        if (tdd->tdd_get_index(tdd->tdd_ctx) != 1) {
+            result = TDR_UNEXPECTED_INDEX_1;
+        } else if (tdd->tdd_is_end(tdd->tdd_ctx)) {
+            result = TDR_UNEXPECTED_END;
+        } else {
+            tdd->tdd_next(tdd->tdd_ctx);
+            if (tdd->tdd_is_end(tdd->tdd_ctx) == FALSE) {
+                result = TDR_UNEXPECTED_MORE;
+            }
+        }
+    }
+
+    return result;
+}
+
+
+static utk_result
+test_name_case(void *data)
+{
+    ute_test_driver_data * tdd = (ute_test_driver_data*)data;
+    utk_result result = TDR_SUCCESS;
+    const ch8  * name;
+
+    name = tdd->tdd_get_name_case(tdd->tdd_ctx);
+
+    if (NULL == name) {
+        result = TDR_UNEXPECTED_NULL;
+    } else if (strcmp(name, TC_NAME_SUCCESS)) {
+        result = TDR_UNEXPECTED_NAME_1;
+    } else {
+        tdd->tdd_next(tdd->tdd_ctx);
+        name = tdd->tdd_get_name_case(tdd->tdd_ctx);
+        if (NULL == name) {
+            result = TDR_UNEXPECTED_NULL;
+        } else if (strcmp(name, TC_NAME_FAIL)) {
+            result = TDR_UNEXPECTED_NAME_2;
+        }
+    }
+
+    return result;
+}
+
+
+static utk_result
+test_name_suite(void *data)
+{
+    ute_test_driver_data * tdd = (ute_test_driver_data*)data;
+    utk_result result = TDR_SUCCESS;
+    const ch8 *name;
+
+    name = tdd->tdd_get_name_suite(tdd->tdd_ctx);
+    if (NULL == name) {
+        result = TDR_UNEXPECTED_NULL;
+    } else if (strcmp(name, SUITE_NAME)) {
+        result = TDR_UNEXPECTED_NAME_1;
+    } else {
+        tdd->tdd_next(tdd->tdd_ctx);
+        name = tdd->tdd_get_name_suite(tdd->tdd_ctx);
+        if (NULL == name) {
+            result = TDR_UNEXPECTED_NULL;
+        } else if (strcmp(name, SUITE_NAME)) {
+            result = TDR_UNEXPECTED_NAME_2;
+        }
+    }
+
+    return result;
+}
+
+
+static utk_result
+test_index(void *data)
+{
+    ute_test_driver_data * tdd = (ute_test_driver_data*)data;
+    utk_result result = TDR_SUCCESS;
+    size_t index;
+
+    index = tdd->tdd_get_index(tdd->tdd_ctx);
+    if (index != 0) {
+        result = TDR_UNEXPECTED_INDEX_1;
+    } else {
+        tdd->tdd_next(tdd->tdd_ctx);
+        index = tdd->tdd_get_index(tdd->tdd_ctx);
+        if (index != 1) {
+            result = TDR_UNEXPECTED_INDEX_2;
+        }
+    }
+
+    return result;
+}
+
+
+static utk_result
+test_count(void *data)
+{
+    ute_test_driver_data  *tdd = (ute_test_driver_data*)data;
+    utk_result      result = TDR_SUCCESS;
+
+    if (tdd->tdd_get_count(tdd->tdd_ctx) != 2) {
+        result = TDR_UNEXPECTED_COUNT;
+    }
+
+    return result;
+}
 
 
 static utk_result test_success(void *data) {

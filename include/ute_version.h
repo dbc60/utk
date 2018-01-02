@@ -17,7 +17,7 @@
 #include "platform.h"
 
 #define UTE_VERSION_MAJOR 0
-#define UTE_VERSION_MINOR 1
+#define UTE_VERSION_MINOR 2
 #define UTE_VERSION_PATCH 0
 #define UTE_VERSION_NUM ((UTE_VERSION_MAJOR << 16) | \
                          (UTE_VERSION_MINOR << 8) | \

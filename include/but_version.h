@@ -16,9 +16,9 @@
 
 #include "platform.h"
 
-#define BUT_VERSION_MAJOR 1
+#define BUT_VERSION_MAJOR 2
 #define BUT_VERSION_MINOR 0
-#define BUT_VERSION_PATCH 1
+#define BUT_VERSION_PATCH 0
 #define BUT_VERSION_NUM ((BUT_VERSION_MAJOR << 16) | \
                          (BUT_VERSION_MINOR << 8) | \
                          BUT_VERSION_PATCH)
