@@ -10,13 +10,13 @@
 #include <but_version.h>
 
 const ch8 *
-but_version(void)
+but_get_version_str(void)
 {
     return BUT_VERSION_STR;
 }
 
-s32
-but_version_num(void)
+u32
+but_get_version_num(void)
 {
     return BUT_VERSION_NUM;
 }

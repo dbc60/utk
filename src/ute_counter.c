@@ -6,14 +6,17 @@
  * ========================================================================
  */
 
-#pragma once
+#include "ute_counter.h"
+#include <string.h>
 
-#include <but.h>
+void
+ute_counter_init(ute_counter * uc, ute_context * ctx)
+{
+    memset(uc, 0, sizeof *uc);
+    uc->context = ctx;
+}
 
-// Test the include guards
-#ifndef BUT_H_INCLUDED
-#error BUT_H_INCLUDED must be defined
-#endif
-
-extern utk_test_case test_case_null;
-extern utk_test_case test_case_str;
+ute_context *
+ute_counter_get_context(ute_counter * uc) {
+    return uc->context;
+}

@@ -15,24 +15,14 @@
 #define BUT_H_INCLUDED
 
 #include "platform.h"
+#include "utk.h"
+
 
 BEGIN_EXTERN_C
 // Basic Unit Test (BUT)
 
-#ifdef PROJECT_WIN32
-#define DllImport   __declspec(dllimport)
-#define DllExport   __declspec(dllexport)
-#else
-#define DllImport
-#define DllExport
-#endif
-
-// Forward declarations of "opaque" types
-typedef void* test_data;
+/** @brief the test context */
 typedef struct but_context but_context;
-typedef struct but_test_case but_test_case;
-typedef struct but_test_suite but_test_suite;
-
 
 enum but_test_results {
     BTR_PASSED,         // The test case was run and it returned successfully
@@ -44,56 +34,6 @@ enum but_test_results {
 };
 typedef enum but_test_results but_test_result;
 
-enum but_results {
-    BUT_FAIL,
-    BUT_SUCCESS
-};
-typedef enum but_results but_result;
-
-typedef but_result  (but_method_setup)(void *data);
-typedef but_result  (but_method_run)(void *data);
-typedef void        (but_method_teardown)(void *data);
-
-// Test case interface
-struct but_test_case
-{
-    const ch8           *name;
-    but_method_setup    *setup;
-    but_method_run      *run;
-    but_method_teardown *teardown;
-    void                *test_data;
-};
-typedef struct but_test_case but_test_case;
-
-
-/**
- * return the test case at index, or null if the index is not in the range of
- * zero to (count - 1).
- */
-//typedef struct but_test_case* (*but_method_get)(size_t index);
-
-struct but_test_suite
-{
-    const ch8          *name;
-    size_t              count;
-    but_test_case     **test_cases;
-};
-typedef struct but_test_suite but_test_suite;
-
-
-/**
- * A pointer to a function that will return the address of a ButTestSuite.
- * This is the only function that a shared/dynamic-link library (DLL) must
- * export so the test driver can retrieve the test suite.
- * 
- * Yes, you do have to write test cases if you want something more than an
- * empty test suite.
- */
-typedef but_test_suite* (but_test_suite_load)(void);
-
-// This is the only function that a Basic Unit Test DLL must export.
-#define TEST_SUITE_LOAD_NAME "test_suite_load"
-DllExport but_test_suite_load test_suite_load;
 
 END_EXTERN_C
 

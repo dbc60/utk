@@ -15,15 +15,14 @@
 
 BEGIN_EXTERN_C
 
-DllExport int but_is_valid(but_context *ctx);
-
-/** @brief Test Context routines */
-
 /** @brief make a new test context for the given test suite */
-DllExport but_context *but_new(but_test_suite *bts);
+DllExport but_context *but_new(utk_test_suite *bts);
 
 /** @brief release a test context */
 DllExport void but_delete(but_context *ctx);
+
+/** @brief validate the test context */
+DllExport b32 but_is_valid(but_context *ctx);
 
 /** @brief make the next test case the current one.
  * The most this will increment is to one past the last test case.

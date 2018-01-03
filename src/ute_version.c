@@ -6,14 +6,17 @@
  * ========================================================================
  */
 
-#pragma once
+#include <platform.h>
+#include <ute_version.h>
 
-#include <but.h>
+const ch8 *
+ute_get_version_str(void)
+{
+    return UTE_VERSION_STR;
+}
 
-// Test the include guards
-#ifndef BUT_H_INCLUDED
-#error BUT_H_INCLUDED must be defined
-#endif
-
-extern utk_test_case test_case_null;
-extern utk_test_case test_case_str;
+u32
+ute_get_version_num(void)
+{
+    return UTE_VERSION_NUM;
+}

@@ -138,38 +138,44 @@ typedef real64  r64;
 #define STRINGIFY_HELPER(X) #X
 #define STRINGIFY(X) STRINGIFY_HELPER(X)
 
-/** @note: Originally, these three macros defined different usages of the
- * keyword static as 'internal', 'local_persist' and 'global_variable'. I've
- * changed them to all-caps and changed 'internal' to 'INTERNAL_FUNCTION,
- * because 'internal' is used as a field name in some Windows structures. For
- * example, see line 64 of the C++ header file "c:/Program Files
- * (x86)/Microsoft Visual Studio 14.0/VC/include/xiosbase".
- *
- * NOTE that the xiobase header file is included if your code includes the C++
- * <string> header. It may be included in other situations, too.
- */
+/** @brief: These macros define different usages of the keyword static */
 #define INTERNAL_FUNCTION static
 #define LOCAL_VARIABLE static
 #define GLOBAL_VARIABLE static
 
-// NOTE: '(Value - Value)' forces integral promotion to the size of Value
-#define ALIGN_POW2(Value, Alignment)    \
-    ((Value + ((Alignment) - 1)) & ~((Value - Value) + (Alignment) - 1))
+/** @brief round up Value to the next multiple of AlignPow2
+ * where AlignPow2 is a positive power of 2 (i.e., 2, 4, 8, 16, 32, etc.).
+ * NOTE: '(Value - Value)' forces integral promotion to the size of Value.
+ */
+#define ALIGN_POW2(Value, AlignPow2)    \
+    ((Value + ((AlignPow2) - 1)) & ~((Value - Value) + (AlignPow2) - 1))
+
+/** @brief round Value to the next multiple of 4 */
 #define ALIGN4(Value) ((Value + 3) & ~3)
+
+/** @brief round Value to the next multiple of 8 */
 #define ALIGN8(Value) ((Value + 7) & ~7)
+
+/** @brief round Value to the next multiple of 16 */
 #define ALIGN16(Value) ((Value + 15) & ~15)
 
-/**
- * This is a convenience macro for generating opaque handles.
- *
- * This macro creates a forward declaration of a struct and defines a pointer
- * type to it. The pointer type is then usable as an opaque handle to specific
- * instances of the struct.
+/** @brief use to prevent warnings about unreferenced parameters.
+ * Sometimes functions have parameters that aren't used, but have to exist so
+ * their signatures match some prototype or typedef. Unused parameters can
+ * cause spurious compiler warnings. This macro can be used to mark such
+ * parameters and thus stifle these noisy compiler warnings.
  */
-#define DEFINE_HANDLE(name) typedef struct name name
-
 #ifndef UNREFERENCED
 #define UNREFERENCED(name) ((void)(name))
+#endif
+
+/** @brief if PROJECT_WIN32 is defined, then define import/export macros */
+#ifdef PROJECT_WIN32
+#define DllImport   __declspec(dllimport)
+#define DllExport   __declspec(dllexport)
+#else
+#define DllImport
+#define DllExport
 #endif
 
 END_EXTERN_C

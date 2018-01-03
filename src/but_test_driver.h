@@ -6,9 +6,11 @@
  * ========================================================================
  */
 
+#pragma once
+
 #include <platform.h>
 #include <but.h>
 #include <but_driver.h>
 
 void test_driver_display_test_case(but_context *ctx);
-int but_test_driver(but_test_suite *bts);
+int but_test_driver(utk_test_suite *bts);

@@ -37,7 +37,7 @@ typedef struct result_context result_context;
 struct but_context
 {
     intptr_t        magic;              // indicates a valid context
-    but_test_suite *test_suite;         // suite under test
+    utk_test_suite *test_suite;         // suite under test
     memory_index    index;              // index of the current test case
     size_t          count_run;          // number of tests run
     size_t          count_passed;       // number of tests that ran and passed
@@ -54,12 +54,13 @@ typedef struct but_context but_context;
  *  Local functions
  */
 
-static void
+INTERNAL_FUNCTION void
 grow_capacity(but_context *ctx)
 {
     result_context *new_results;
-    size_t          new_capacity, count;
-    size_t const    increment = 10;
+    size_t new_capacity;
+    size_t count;
+    size_t const increment = 10;
 
     // Calculate a new capacity, but make it no more than
     // the number of test cases in the test suite
@@ -83,7 +84,7 @@ grow_capacity(but_context *ctx)
 }
 
 
-static void
+INTERNAL_FUNCTION void
 insert_result(but_context *ctx, but_test_result result, int error_code)
 {
     if (ctx->count_results == ctx->capacity) {
@@ -102,6 +103,30 @@ insert_result(but_context *ctx, but_test_result result, int error_code)
 /**
  * Public functions
  */
+
+but_context*
+but_new(utk_test_suite *bts)
+{
+    but_context *result;
+
+    result = calloc(1, sizeof(but_context));
+    if (result != NULL) {
+        result->magic = (intptr_t)result;
+        result->test_suite = bts;
+    }
+
+    return result;
+}
+
+void
+but_delete(but_context *ctx)
+{
+    if (ctx->results) {
+        free(ctx->results);
+    }
+
+    free(ctx);
+}
 
 /**
  * @brief validate the test context
@@ -123,30 +148,6 @@ but_is_valid(but_context* ctx)
     }
 
     return result;
-}
-
-but_context*
-but_new(but_test_suite *bts)
-{
-    but_context *result;
-
-    result = calloc(1, sizeof(but_context));
-    if (result != NULL) {
-        result->magic = (intptr_t)result;
-        result->test_suite = bts;
-    }
-
-    return result;
-}
-
-void
-but_delete(but_context *ctx)
-{
-    if (ctx->results) {
-        free(ctx->results);
-    }
-
-    free(ctx);
 }
 
 void
@@ -197,23 +198,23 @@ void
 but_run(but_context *ctx)
 {
     if (but_more_test_cases(ctx)) {
-        but_test_case *tc = ctx->test_suite->test_cases[ctx->index];
-        but_result result_setup = BUT_SUCCESS;
-        but_result result_test = BUT_FAIL;
+        utk_test_case *tc = ctx->test_suite->test_cases[ctx->index];
+        utk_result result_setup = UTK_SUCCESS;
+        utk_result result_test = UTK_SUCCESS;
 
         // a setup routine is optional
         if (tc->setup) {
             // non-zero is an error
             result_setup = tc->setup(tc->test_data);
-            if (BUT_FAIL == result_setup) {
+            if (result_setup != UTK_SUCCESS) {
                 insert_result(ctx, BTR_FAILED_SETUP, result_setup);
                 ++ctx->count_failed_setup;
             }
         }
 
-        if (BUT_SUCCESS == result_setup) {
+        if (UTK_SUCCESS == result_setup) {
             result_test = tc->run(tc->test_data);
-            if (BUT_FAIL == result_test) {
+            if (result_test != UTK_SUCCESS) {
                 insert_result(ctx, BTR_FAILED, result_test);
                 ++ctx->count_failed;
             } else {
