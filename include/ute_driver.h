@@ -45,6 +45,9 @@ DllExport size_t ute_get_index(ute_context *ctx);
 /** @brief get the number of test cases in the test suite */
 DllExport size_t ute_get_count_test_cases(ute_context *ctx);
 
+/** @brief run the current test case */
+DllExport void ute_run(ute_context *ctx);
+
 END_EXTERN_C
 
 #endif  /* UTE_DRIVER_H_INCLUDED */

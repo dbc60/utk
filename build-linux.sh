@@ -63,7 +63,7 @@ gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
     -c but/test_but_driver.c -o $BUILD_PATH/test_but_driver.o
 
 gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/but_test_suite.c -o $BUILD_PATH/but_test_suite.o
+    -c but/test_suite_but.c -o $BUILD_PATH/test_suite_but.o
 
 gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
     -c but/but_test.c -o $BUILD_PATH/but_test.o
@@ -71,7 +71,7 @@ gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
 ## Create a shared library from the object files
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_but_driver.so.1 \
     -o $BUILD_PATH/libtest_but_driver.so.1.0 $BUILD_PATH/test_but_driver.o \
-    $BUILD_PATH/but_test.o $BUILD_PATH/but_test_suite.o \
+    $BUILD_PATH/but_test.o $BUILD_PATH/test_suite_but.o \
     $BUILD_PATH/but_driver.a
 
 
@@ -90,9 +90,30 @@ ar rcs $BUILD_PATH/ute_driver.a $BUILD_PATH/ute_driver.o \
 gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
     -c but/test_ute_driver.c -o $BUILD_PATH/test_ute_driver.o
 gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/ute_test_suite.c -o $BUILD_PATH/ute_test_suite.o
+    -c but/test_suite_ute.c -o $BUILD_PATH/test_suite_ute.o
 
-## build test_ute_driver.so - the unit test for ute_driver.a
+## build libtest_ute_driver.so - the unit test for ute_driver.a
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_driver.so.1 \
     -o $BUILD_PATH/libtest_ute_driver.so.1.0 $BUILD_PATH/test_ute_driver.o \
-    $BUILD_PATH/ute_test_suite.o $BUILD_PATH/ute_driver.a
+    $BUILD_PATH/test_suite_ute.o $BUILD_PATH/ute_driver.a
+
+
+##
+## Exception Handling Module (EHM)
+##
+
+## Build the static library for EHM: ehm.a
+gcc $COMPILER_FLAGS -c -fpic src/ehm.c -o $BUILD_PATH/ehm.o
+gcc $COMPILER_FLAGS -c -fpic src/ehm_assert.c -o $BUILD_PATH/ehm_assert.o
+ar rcs $BUILD_PATH/ehm.a $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
+
+## compile the components of test_ehm.so that tests ehm.a
+gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
+    -c but/test_ehm.c -o $BUILD_PATH/test_ehm.o
+gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
+    -c but/test_suite_ehm.c -o $BUILD_PATH/test_suite_ehm.o
+
+## build libtest_ehm.so - the unit test for ehm.a
+gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ehm.so.1 \
+    -o $BUILD_PATH/libtest_ehm.so.1.0 $BUILD_PATH/test_ehm.o \
+    $BUILD_PATH/test_suite_ehm.o $BUILD_PATH/ehm.a

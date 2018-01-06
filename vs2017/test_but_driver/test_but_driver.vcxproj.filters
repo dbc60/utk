@@ -18,7 +18,7 @@
     <ClCompile Include="..\..\but\but_test.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\but\but_test_suite.c">
+    <ClCompile Include="..\..\but\test_suite_but.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\but\test_but_driver.c">

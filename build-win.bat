@@ -117,9 +117,12 @@ if "%Architecture%" == "x86" (
 
 set BUILD_PATH=%BUILD_ROOT%\%PLATFORM%\%BUILD_CONFIG%
 
+:: C4456: "declaration of 'identifier' hides previous local declaration". This
+:: happens when exceptions from the EHM module are nested.
+set SUPPRESSED_COMPILER_WARNINGS=/wd4456
 set COMMON_COMPILER_FLAGS=/nologo /Zc:wchar_t /fp:fast /Gm- /GR- /GS /EHa- ^
-    /WX /W4 /Zc:inline /FC /Z7 /Oi /D _UNICODE /D UNICODE ^
-    /D PROJECT_WIN32=1 /Iinclude /Fa%BUILD_PATH%\ /Fo%BUILD_PATH%\
+    /WX /W4 %SUPPRESSED_COMPILER_WARNINGS% /Zc:inline /FC /Z7 /Oi /D _UNICODE ^
+    /D UNICODE /D PROJECT_WIN32=1 /Iinclude /Fa%BUILD_PATH%\ /Fo%BUILD_PATH%\
 
 set COMPILER_FLAGS=%COMMON_COMPILER_FLAGS% %COMPILER_BUILD_FLAGS%
 
@@ -170,6 +173,7 @@ IF NOT EXIST "%BUILD_PATH%" md "%BUILD_PATH%"
 
 del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 
+
 ::
 :: Basic Unit Test (BUT)
 ::
@@ -191,13 +195,14 @@ cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\win32_but_driver.c" ^
 :: compile the components of test_but_driver.dll that tests but_driver.lib
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_but_driver.pch ^
    /Fd%BUILD_PATH%\test_but_driver.pdb "%PROJECT_PATH%\but\test_but_driver.c" ^
-   "%PROJECT_PATH%\but\but_test_suite.c" "%PROJECT_PATH%\but\but_test.c"
+   "%PROJECT_PATH%\but\test_suite_but.c" "%PROJECT_PATH%\but\but_test.c"
 
 :: build test_but_driver.dll - the unit test for but_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
      /PDB:%BUILD_PATH%\test_but_driver.pdb "%BUILD_PATH%\test_but_driver.obj" ^
-     "%BUILD_PATH%\but_test_suite.obj" "%BUILD_PATH%\but_test.obj" ^
+     "%BUILD_PATH%\test_suite_but.obj" "%BUILD_PATH%\but_test.obj" ^
      "%BUILD_PATH%\but_driver.lib"
+
 
 ::
 :: Unit Test Extended (UTE)
@@ -215,13 +220,37 @@ lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
 :: compile the components of test_ute_driver.dll that tests ute_driver.lib
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
    /Fd%BUILD_PATH%\test_ute_driver.pdb "%PROJECT_PATH%\but\test_ute_driver.c" ^
-   "%PROJECT_PATH%\but\ute_test_suite.c"
+   "%PROJECT_PATH%\but\test_suite_ute.c"
 
 :: build test_ute_driver.dll - the unit test for ute_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
      /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
-     "%BUILD_PATH%\ute_test_suite.obj" "%BUILD_PATH%\ute_driver.lib"
+     "%BUILD_PATH%\test_suite_ute.obj" "%BUILD_PATH%\ute_driver.lib"
 
+
+::
+:: Exception Handling Module (EHM)
+::
+
+:: build the static library for EHM: ehm.lib
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ehm.pch ^
+   /Fd%BUILD_PATH%\ehm.pdb src\ehm.c src\ehm_assert.c
+
+lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\ehm.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\ehm.obj %BUILD_PATH%\ehm_assert.obj
+
+:: compile the components of test_ehm.dll that tests ehm.lib
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ehm.pch ^
+   /Fd%BUILD_PATH%\test_ehm.pdb "%PROJECT_PATH%\but\test_ehm.c" ^
+   "%PROJECT_PATH%\but\test_suite_ehm.c"
+
+:: build test_ehm.dll - the unit test for ehm.lib
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
+     /PDB:%BUILD_PATH%\test_ehm.pdb "%BUILD_PATH%\test_ehm.obj" ^
+     "%BUILD_PATH%\test_suite_ehm.obj" "%BUILD_PATH%\ehm.lib"
+
+
+:: Build complete
 goto :EOF
 
 

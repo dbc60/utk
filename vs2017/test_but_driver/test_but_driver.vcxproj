@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\but\but_test.c" />
-    <ClCompile Include="..\..\but\but_test_suite.c" />
+    <ClCompile Include="..\..\but\test_suite_but.c" />
     <ClCompile Include="..\..\but\test_but_driver.c" />
   </ItemGroup>
   <ItemGroup>

@@ -15,15 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\but\test_ute_driver.c">
+    <ClCompile Include="..\..\src\ehm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\but\test_suite_ute.c">
+    <ClCompile Include="..\..\src\ehm_assert.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\but\test_ute_driver.h">
+    <ClInclude Include="..\..\include\ehm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ehm_assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

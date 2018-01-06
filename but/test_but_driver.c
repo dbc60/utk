@@ -265,7 +265,7 @@ context_teardown(void *data)
 
 
 /**
- * @brief exported unit tests
+ * @brief unit tests
  */
 
 static utk_result
