@@ -14,9 +14,9 @@
 #include "ehm.h"
 #include "ehm_assert.h"
 
-const ehm_exception ehm_assert_failed = {"Assertion failed"};
+const DLL_EXPORT ehm_exception ehm_assert_failed = {"Assertion failed"};
 
-void ehm_assert(int e) {
+void DLL_EXPORT ehm_assert(int e) {
     EHM_ASSERT(e);
 }
 

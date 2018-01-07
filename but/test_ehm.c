@@ -8,12 +8,28 @@
 
 #include "test_ehm.h"
 
+#define TC_NAME_UNHANDLED "Unhandled Exception"
 #define TC_NAME_CATCH_UNHANDLED "Catch Unhandled Exception"
 
-const ehm_exception exc_dont_catch = {"Don't Catch"};
+const ehm_exception exc_dont_catch = {"Catch Me If You Can!"};
 const ehm_exception exc_catch_me = {"Catch Me"};
 
+static utk_result test_unhandled_exception(void *data);
 static utk_result test_catch_unhandled_exception(void *data);
+
+
+/** @brief EHM test cases
+ */
+
+utk_test_case test_case_unhandled_exception =
+{
+    TC_NAME_UNHANDLED,
+    NULL,
+    &test_unhandled_exception,
+    NULL,
+    NULL
+};
+
 
 utk_test_case test_case_catch_unhandled_exception =
 {
@@ -40,6 +56,20 @@ enum test_ehm_results {
 * @brief unit tests
 */
 
+static utk_result
+test_unhandled_exception(void *data)
+{
+    utk_result result = EHM_ABJECT_FAILURE;
+    UNREFERENCED(data);
+    
+    EHM_TRY {
+        EHM_THROW(exc_dont_catch);
+    } EHM_CATCH(exc_catch_me) {
+        result = EHM_UNEXPECTED_CATCH;
+    } EHM_ENDTRY;
+
+    return result;
+}
 
 static utk_result
 test_catch_unhandled_exception(void *data) {

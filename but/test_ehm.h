@@ -11,4 +11,5 @@
 #include <but.h>
 #include <ehm.h>
 
+extern utk_test_case test_case_unhandled_exception;
 extern utk_test_case test_case_catch_unhandled_exception;

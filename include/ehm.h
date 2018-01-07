@@ -19,7 +19,7 @@
 
 struct ehm_exception
 {
-    const char *reason;
+    const ch8 *reason;
 };
 typedef struct ehm_exception ehm_exception;
 
@@ -27,14 +27,15 @@ struct ehm_frame
 {
     jmp_buf env;
     struct ehm_frame *prev;
-    const char *file;
-    const char *function;
+    const ch8 *file;
+    const ch8 *function;
     const ehm_exception *exception;
     u32 line;
 };
 typedef struct ehm_frame ehm_frame;
 
-extern ehm_frame *ehm_stack;
+PROJECTAPI ehm_frame *ehm_stack;
+
 
 /** @brief there are four states within a TRY block */
 enum ehm_states
@@ -123,6 +124,9 @@ typedef enum ehm_states ehm_state;
 #define EHM_LINE (ehm_exc.line)
 #define EHM_FUNC (ehm_exc.function)
 
+EXTERN_C PROJECTAPI void
+ehm_throw(const ehm_exception *e, const ch8 *file, u32 line, const ch8 *func);
+
 /** @brief throw an exception.
 * capture file name, line number, and function name, and pass them to the
 * throw method.
@@ -134,7 +138,5 @@ typedef enum ehm_states ehm_state;
               ehm_exc.file,      \
               ehm_exc.line,      \
               ehm_exc.function)
-
-void ehm_throw(const ehm_exception *e, const char *file, u32 line, const char *func);
 
 #endif // EHM_H_INCLUDED

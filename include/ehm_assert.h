@@ -16,13 +16,15 @@
 
 #ifdef NDEBUG
 #define EHM_ASSERT(e) ((void)0)
-#else
+#else   // NDEBUG
+#include "platform.h"
 #include "ehm.h"
 
-extern void ehm_assert(int e);
-#define EHM_ASSERT(e) ((void)((e) || (EHM_THROW(ehm_assert_failed),0)))
-#endif
+EXTERN_C PROJECTAPI void ehm_assert(int e);
 
-extern const ehm_exception ehm_assert_failed;
+#define EHM_ASSERT(e) ((void)((e) || (EHM_THROW(ehm_assert_failed),0)))
+#endif  // NOT NDEBUG
+
+EXTERN_C const PROJECTAPI ehm_exception ehm_assert_failed;
 
 #endif  // EHM_ASSERT_H_INCLUDED

@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\src\ute_version.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\platform.h" />
     <ClInclude Include="..\..\include\ute.h" />
     <ClInclude Include="..\..\include\ute_driver.h" />
     <ClInclude Include="..\..\include\ute_version.h" />

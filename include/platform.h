@@ -171,12 +171,21 @@ typedef real64  r64;
 
 /** @brief if PROJECT_WIN32 is defined, then define import/export macros */
 #ifdef PROJECT_WIN32
-#define DllImport   __declspec(dllimport)
-#define DllExport   __declspec(dllexport)
+#define DLL_IMPORT   __declspec(dllimport)
+#define DLL_EXPORT  __declspec(dllexport)
+
+#ifdef PROJECTLIBRARY_EXPORTS
+#define PROJECTAPI __declspec(dllexport)
 #else
-#define DllImport
-#define DllExport
+#define PROJECTAPI __declspec(dllimport)
 #endif
+
+#else   // PROJECT_WIN32
+#define DLL_IMPORT
+#define DLL_EXPORT
+#define PROJECTAPI
+#endif  // PROJECT_WIN32
+
 
 END_EXTERN_C
 

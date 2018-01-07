@@ -43,6 +43,7 @@ struct but_context
     size_t          count_passed;       // number of tests that ran and passed
     size_t          count_failed;       // number of tests that ran and failed
     size_t          count_failed_setup; // number of tests that failed setup
+    size_t          count_unhandled_exceptions; // bad test!
     size_t          count_results;      // number of test results
     size_t          capacity;           // number of results that can be stored
     result_context *results;            // array of test results.
@@ -84,7 +85,7 @@ grow_capacity(but_context *ctx)
 }
 
 
-INTERNAL_FUNCTION void
+void
 insert_result(but_context *ctx, but_test_result result, int error_code)
 {
     if (ctx->count_results == ctx->capacity) {
@@ -96,6 +97,11 @@ insert_result(but_context *ctx, but_test_result result, int error_code)
         ctx->results[ctx->count_results].result = result;
         ctx->results[ctx->count_results].error_code = error_code;
         ++ctx->count_results;
+    }
+
+    // Handle insertion of an exception failure
+    if (BTR_UNHANDLED_EXCEPTION == result) {
+        ++ctx->count_unhandled_exceptions;
     }
 }
 
@@ -213,6 +219,7 @@ but_run(but_context *ctx)
         }
 
         if (UTK_SUCCESS == result_setup) {
+            ++ctx->count_run;
             result_test = tc->run(tc->test_data);
             if (result_test != UTK_SUCCESS) {
                 insert_result(ctx, BTR_FAILED, result_test);
@@ -226,8 +233,6 @@ but_run(but_context *ctx)
                 tc->teardown(tc->test_data);
             }
         }
-
-        ++ctx->count_run;
     }
 }
 
@@ -253,6 +258,12 @@ size_t
 but_get_count_failed_setup(but_context *ctx)
 {
     return ctx->count_failed_setup;
+}
+
+size_t
+but_get_count_unhandled_exceptions(but_context *ctx)
+{
+    return ctx->count_unhandled_exceptions;
 }
 
 size_t

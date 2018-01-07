@@ -15,6 +15,7 @@
 LOCAL_VARIABLE utk_test_case *tca[] =
 {
     // EHM tests
+    &test_case_unhandled_exception,
     &test_case_catch_unhandled_exception
 };
 
@@ -23,7 +24,7 @@ utk_test_suite ts_ehm = {TS_NAME_EHM,
                          ARRAY_COUNT(tca),
                          tca};
 
-DllExport utk_test_suite *
+DLL_EXPORT utk_test_suite *
 test_suite_load(void)
 {
     return &ts_ehm;
