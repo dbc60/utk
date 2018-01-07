@@ -213,3 +213,20 @@ ute_get_count_test_cases(ute_context *ctx)
     return ctx->test_suite->count;
 }
 
+
+/** @brief run the current test case, including the setup and teardown methods
+ * if they exist
+ */
+void
+ute_run(ute_context *ctx)
+{
+    ute_counter counter;
+    //u64 count_start;
+    b32 thrown = FALSE;
+
+    ute_counter_init(&counter, ctx);
+    do {
+        //count_start = ute_get_count_allocation(&counter);
+        ute_increment_count_throw(&counter);
+    } while (thrown);
+}

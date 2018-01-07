@@ -18,7 +18,7 @@
     <ClCompile Include="..\..\but\but_test.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\but\but_test_suite.c">
+    <ClCompile Include="..\..\but\test_suite_but.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\but\test_but_driver.c">
@@ -42,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\but\test_but_driver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\utk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -93,7 +93,6 @@ if /i "%1" == "Debug"     set BUILD_CONFIG=Debug
 if /i "%1" == "Release"   set BUILD_CONFIG=Release
 
 set BUILD_ROOT=obj\win
-set PROJECT_PATH=%cd%
 
 if "%BUILD_CONFIG%" == "Debug" (
     set COMPILER_BUILD_FLAGS=/Od /D PROJECT_INTERNAL=1 ^
@@ -117,9 +116,12 @@ if "%Architecture%" == "x86" (
 
 set BUILD_PATH=%BUILD_ROOT%\%PLATFORM%\%BUILD_CONFIG%
 
+:: C4456: "declaration of 'identifier' hides previous local declaration". This
+:: happens when exceptions from the EHM module are nested.
+set SUPPRESSED_COMPILER_WARNINGS=/wd4456
 set COMMON_COMPILER_FLAGS=/nologo /Zc:wchar_t /fp:fast /Gm- /GR- /GS /EHa- ^
-    /WX /W4 /Zc:inline /FC /Z7 /Oi /D _UNICODE /D UNICODE ^
-    /D PROJECT_WIN32=1 /Iinclude /Fa%BUILD_PATH%\ /Fo%BUILD_PATH%\
+    /WX /W4 %SUPPRESSED_COMPILER_WARNINGS% /Zc:inline /FC /Z7 /Oi /D _UNICODE ^
+    /D UNICODE /D PROJECT_WIN32=1 /Iinclude /Fa%BUILD_PATH%\ /Fo%BUILD_PATH%\
 
 set COMPILER_FLAGS=%COMMON_COMPILER_FLAGS% %COMPILER_BUILD_FLAGS%
 
@@ -170,6 +172,7 @@ IF NOT EXIST "%BUILD_PATH%" md "%BUILD_PATH%"
 
 del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 
+
 ::
 :: Basic Unit Test (BUT)
 ::
@@ -178,26 +181,8 @@ del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch ^
    /Fd%BUILD_PATH%\but_driver.pdb src\but_driver.c src\but_version.c
 
-lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO ^
+lib /OUT:"%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO ^
     %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
-
-:: build win32_but_driver.exe from win32_but_driver.c, but_test_driver.c, and
-:: but_driver.lib
-cl %COMPILER_FLAGS% "%PROJECT_PATH%\src\win32_but_driver.c" ^
-   "%PROJECT_PATH%\src\but_test_driver.c" /Fe%BUILD_PATH%\win32_but_driver.exe ^
-   /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% ^
-   %BUILD_PATH%\but_driver.lib
-
-:: compile the components of test_but_driver.dll that tests but_driver.lib
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_but_driver.pch ^
-   /Fd%BUILD_PATH%\test_but_driver.pdb "%PROJECT_PATH%\but\test_but_driver.c" ^
-   "%PROJECT_PATH%\but\but_test_suite.c" "%PROJECT_PATH%\but\but_test.c"
-
-:: build test_but_driver.dll - the unit test for but_driver.lib
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
-     /PDB:%BUILD_PATH%\test_but_driver.pdb "%BUILD_PATH%\test_but_driver.obj" ^
-     "%BUILD_PATH%\but_test_suite.obj" "%BUILD_PATH%\but_test.obj" ^
-     "%BUILD_PATH%\but_driver.lib"
 
 ::
 :: Unit Test Extended (UTE)
@@ -208,20 +193,85 @@ cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch ^
    /Fd%BUILD_PATH%\ute_driver.pdb src\ute_driver.c src\ute_version.c ^
    src\ute_counter.c
 
-lib /OUT:"%PROJECT_PATH%\%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
+lib /OUT:"%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
     %BUILD_PATH%\ute_driver.obj %BUILD_PATH%\ute_version.obj ^
     %BUILD_PATH%\ute_counter.obj
 
 :: compile the components of test_ute_driver.dll that tests ute_driver.lib
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
-   /Fd%BUILD_PATH%\test_ute_driver.pdb "%PROJECT_PATH%\but\test_ute_driver.c" ^
-   "%PROJECT_PATH%\but\ute_test_suite.c"
+   /Fd%BUILD_PATH%\test_ute_driver.pdb "but\test_ute_driver.c" ^
+   "but\test_suite_ute.c"
 
 :: build test_ute_driver.dll - the unit test for ute_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
      /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
-     "%BUILD_PATH%\ute_test_suite.obj" "%BUILD_PATH%\ute_driver.lib"
+     "%BUILD_PATH%\test_suite_ute.obj" "%BUILD_PATH%\ute_driver.lib"
 
+
+::
+:: Exception Handling Module (EHM)
+::
+
+:: build the static library for EHM: ehm.lib
+cl %COMPILER_FLAGS% /D PROJECTLIBRARY_EXPORTS /c /Fp%BUILD_PATH%\ehm.pch ^
+   /Fd%BUILD_PATH%\ehm.pdb src\ehm.c src\ehm_assert.c
+
+lib /OUT:"%BUILD_PATH%\ehm.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\ehm.obj %BUILD_PATH%\ehm_assert.obj
+
+::
+:: win32_ehm.dll and win32_ehm.lib (the import link-library)
+::
+cl %COMPILER_FLAGS% /D PROJECTLIBRARY_EXPORTS /c /Fp%BUILD_PATH%\win32_ehm.pch ^
+   /Fd%BUILD_PATH%\win32_ehm.pdb src\win32_ehm.c
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\win32_ehm.dll" ^
+     /PDB:%BUILD_PATH%\win32_ehm.pdb "%BUILD_PATH%\win32_ehm.obj" ^
+     "%BUILD_PATH%\ehm.lib"
+
+::
+:: win32_but_driver.exe
+::
+
+:: build win32_but_driver.exe from win32_but_driver.c, but_test_driver.c,
+:: but_driver.lib, and win32_ehm.lib
+cl %COMPILER_FLAGS% "src\win32_but_driver.c" ^
+   "src\but_test_driver.c" /Fe%BUILD_PATH%\win32_but_driver.exe ^
+   /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% ^
+   %BUILD_PATH%\but_driver.lib %BUILD_PATH%\win32_ehm.lib
+
+
+::
+:: test_but_driver.dll
+::
+
+:: compile the components of test_but_driver.dll that tests but_driver.lib
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_but_driver.pch ^
+   /Fd%BUILD_PATH%\test_but_driver.pdb "but\test_but_driver.c" ^
+   "but\test_suite_but.c" "but\but_test.c"
+
+:: build test_but_driver.dll - the unit test for but_driver.lib
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
+     /PDB:%BUILD_PATH%\test_but_driver.pdb "%BUILD_PATH%\test_but_driver.obj" ^
+     "%BUILD_PATH%\test_suite_but.obj" "%BUILD_PATH%\but_test.obj" ^
+     "%BUILD_PATH%\but_driver.lib"
+
+
+::
+:: test_ehm.dll
+::
+
+:: compile the components of test_ehm.dll that tests win32_ehm.lib
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ehm.pch ^
+   /Fd%BUILD_PATH%\test_ehm.pdb "but\test_ehm.c" ^
+   "but\test_suite_ehm.c"
+
+:: build test_ehm.dll - the unit test for win32_ehm.lib
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
+     /PDB:%BUILD_PATH%\test_ehm.pdb "%BUILD_PATH%\test_ehm.obj" ^
+     "%BUILD_PATH%\test_suite_ehm.obj" "%BUILD_PATH%\win32_ehm.lib"
+
+
+:: Build complete
 goto :EOF
 
 

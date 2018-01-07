@@ -8,37 +8,30 @@
 
 #include <platform.h>
 #include <but.h>
-#include "test_but_driver.h"
-#include "but_test.h"
+#include "test_ute_driver.h"
 
-#define BUT_TS_NAME "BUT"
+#define UTE_TS_NAME "UTE"
 
 LOCAL_VARIABLE utk_test_case *tca[] = 
 {
-    // basic BUT tests
-    &test_case_null,
-    &test_case_str,
-
-    // BUT driver tests
+    // UTE driver tests
     &test_case_valid_version,
     &test_case_new_delete,
     &test_case_valid_context,
-    &test_case_next,
+    &test_case_index_next_end,
     &test_case_name_case,
     &test_case_name_suite,
     &test_case_index,
-    &test_case_count,
-    &test_case_run,
-    &test_case_results
+    &test_case_count
 };
 
 LOCAL_VARIABLE
-utk_test_suite but_ts = {BUT_TS_NAME, 
+utk_test_suite ute_ts = {UTE_TS_NAME, 
                          ARRAY_COUNT(tca),
                          tca};
 
-DllExport utk_test_suite *
+DLL_EXPORT utk_test_suite *
 test_suite_load(void)
 {
-    return &but_ts;
+    return &ute_ts;
 }

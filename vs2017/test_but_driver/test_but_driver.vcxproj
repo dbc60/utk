@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\but\but_test.c" />
-    <ClCompile Include="..\..\but\but_test_suite.c" />
+    <ClCompile Include="..\..\but\test_suite_but.c" />
     <ClCompile Include="..\..\but\test_but_driver.c" />
   </ItemGroup>
   <ItemGroup>
@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\include\but_driver.h" />
     <ClInclude Include="..\..\include\but_version.h" />
     <ClInclude Include="..\..\include\platform.h" />
+    <ClInclude Include="..\..\include\utk.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

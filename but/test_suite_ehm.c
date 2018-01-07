@@ -8,30 +8,28 @@
 
 #include <platform.h>
 #include <but.h>
-#include "test_ute_driver.h"
+#include "test_ehm.h"
 
-#define UTE_TS_NAME "UTE"
+#define TS_NAME_EHM "EHM"
 
-LOCAL_VARIABLE utk_test_case *tca[] = 
+LOCAL_VARIABLE utk_test_case *tca[] =
 {
-    // UTE driver tests
-    &test_case_valid_version,
-    &test_case_new_delete,
-    &test_case_valid_context,
-    &test_case_index_next_end,
-    &test_case_name_case,
-    &test_case_name_suite,
-    &test_case_index,
-    &test_case_count
+    // EHM tests
+    &test_case_unhandled_exception,
+    &test_case_catch_unhandled_exception,
+    &test_case_catch,
+    &test_case_catch_all,
+    &test_case_catch_finally,
+    &test_case_catch_all_finally
 };
 
 LOCAL_VARIABLE
-utk_test_suite ute_ts = {UTE_TS_NAME, 
+utk_test_suite ts_ehm = {TS_NAME_EHM, 
                          ARRAY_COUNT(tca),
                          tca};
 
-DllExport utk_test_suite *
+DLL_EXPORT utk_test_suite *
 test_suite_load(void)
 {
-    return &ute_ts;
+    return &ts_ehm;
 }

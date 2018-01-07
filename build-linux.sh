@@ -27,7 +27,6 @@ BUILD_PATH=$BUILD_ROOT/$PLATFORM/$BUILD_CONFIG
 ## Ensure the build path exists
 [ -d "$BUILD_PATH" ] || mkdir -p "$BUILD_PATH"
 
-PROJECT_PATH=`pwd`
 COMMON_COMPILER_FLAGS="-Wall -Werror -Iinclude"
 
 if [ "$BUILD_CONFIG" == "debug" ]; then
@@ -53,25 +52,19 @@ gcc $COMPILER_FLAGS -c -fpic src/but_version.c -o $BUILD_PATH/but_version.o
 ar rcs $BUILD_PATH/but_driver.a $BUILD_PATH/but_driver.o \
     $BUILD_PATH/but_version.o
 
-## -ldl will link against libdl to resolve dlopen, dlclose, etc.
-## Note that "-ldl" must trail the file names for gcc.
-gcc $COMPILER_FLAGS src/linux_but_driver.c src/but_test_driver.c \
-    -o $BUILD_PATH/linux_but_driver $LINKER_FLAGS $BUILD_PATH/but_driver.a -ldl
-
 ## test_driver shared library to test the but_driver.a
-gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/test_but_driver.c -o $BUILD_PATH/test_but_driver.o
+gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_but_driver.c -o \
+    $BUILD_PATH/test_but_driver.o
 
-gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/but_test_suite.c -o $BUILD_PATH/but_test_suite.o
+gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_suite_but.c -o \
+    $BUILD_PATH/test_suite_but.o
 
-gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/but_test.c -o $BUILD_PATH/but_test.o
+gcc $COMPILER_FLAGS -c -fpic -Isrc but/but_test.c -o $BUILD_PATH/but_test.o
 
 ## Create a shared library from the object files
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_but_driver.so.1 \
     -o $BUILD_PATH/libtest_but_driver.so.1.0 $BUILD_PATH/test_but_driver.o \
-    $BUILD_PATH/but_test.o $BUILD_PATH/but_test_suite.o \
+    $BUILD_PATH/but_test.o $BUILD_PATH/test_suite_but.o \
     $BUILD_PATH/but_driver.a
 
 
@@ -80,6 +73,7 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libtest_but_driver.so.1 \
 ##
 
 ## Build the static library for the UTE driver: ute_driver.a
+echo Building static library ute_driver.a
 gcc $COMPILER_FLAGS -c -fpic src/ute_driver.c -o $BUILD_PATH/ute_driver.o
 gcc $COMPILER_FLAGS -c -fpic src/ute_version.c -o $BUILD_PATH/ute_version.o
 gcc $COMPILER_FLAGS -c -fpic src/ute_counter.c -o $BUILD_PATH/ute_counter.o
@@ -87,12 +81,64 @@ ar rcs $BUILD_PATH/ute_driver.a $BUILD_PATH/ute_driver.o \
    $BUILD_PATH/ute_version.o  $BUILD_PATH/ute_counter.o
 
 ## compile the components of test_ute_driver.so that tests ute_driver.a
-gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/test_ute_driver.c -o $BUILD_PATH/test_ute_driver.o
-gcc $COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS -fpic -Isrc \
-    -c but/ute_test_suite.c -o $BUILD_PATH/ute_test_suite.o
+echo Building components of shared library libtest_ute_driver.so.1.0
+gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_ute_driver.c -o \
+    $BUILD_PATH/test_ute_driver.o
+gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_suite_ute.c -o \
+    $BUILD_PATH/test_suite_ute.o
 
-## build test_ute_driver.so - the unit test for ute_driver.a
+## build libtest_ute_driver.so - the unit test for ute_driver.a
+echo Building shared library libtest_ute_driver.so.1.0
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_driver.so.1 \
     -o $BUILD_PATH/libtest_ute_driver.so.1.0 $BUILD_PATH/test_ute_driver.o \
-    $BUILD_PATH/ute_test_suite.o $BUILD_PATH/ute_driver.a
+    $BUILD_PATH/test_suite_ute.o $BUILD_PATH/ute_driver.a
+
+
+##
+## Exception Handling Module (EHM)
+##
+
+## Build the static library for EHM: ehm.a
+echo Building static lib ehm.a
+gcc $COMPILER_FLAGS -c -fpic src/ehm.c -o $BUILD_PATH/ehm.o
+gcc $COMPILER_FLAGS -c -fpic src/ehm_assert.c -o $BUILD_PATH/ehm_assert.o
+ar rcs $BUILD_PATH/ehm.a $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
+
+##
+## libehm.so.1 - the shared EHM library
+##
+
+echo Building shared lib liblinux_ehm.so
+gcc $COMPILER_FLAGS -c -fpic src/linux_ehm.c -o $BUILD_PATH/linux_ehm.o
+gcc -shared -Wl,-soname,$BUILD_PATH/liblinux_ehm.so \
+    $BUILD_PATH/linux_ehm.o -o $BUILD_PATH/liblinux_ehm.so $BUILD_PATH/ehm.a
+
+##
+## linux_but_driver app
+##
+
+## -ldl will link against libdl to resolve dlopen, dlclose, etc.
+## Note that "-l<library>" must trail the file names for gcc.
+echo Building executable linux_but_driver
+gcc $COMPILER_FLAGS src/linux_but_driver.c src/but_test_driver.c \
+    -o $BUILD_PATH/linux_but_driver $LINKER_FLAGS $BUILD_PATH/but_driver.a \
+    -L $BUILD_PATH -llinux_ehm -ldl
+
+
+##
+## libtest_ehm.so.1 - the shared library for testing ehm.a
+##
+
+## compile the components of test_ehm.so that tests libehm.so.1
+echo Building components of libtest_ehm.so
+gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_ehm.c -o $BUILD_PATH/test_ehm.o
+gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_suite_ehm.c \
+    -o $BUILD_PATH/test_suite_ehm.o
+
+## build libtest_ehm.so - the unit test for ehm.a
+echo building shared library libtest_ehm.so
+gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ehm.so.1 \
+    -o $BUILD_PATH/libtest_ehm.so.1.0 $BUILD_PATH/test_ehm.o \
+    $BUILD_PATH/test_suite_ehm.o -L$BUILD_PATH -llinux_ehm
+
+echo build complete
