@@ -38,6 +38,7 @@ ute_increment_count_throw(ute_counter *uc)
     ++uc->count_throw;
     uc->throw_test_exception = TRUE;
 }
+
 u64
 ute_get_count_allocation(ute_counter *uc)
 {
