@@ -48,6 +48,21 @@ DLL_EXPORT size_t ute_get_count_test_cases(ute_context *ctx);
 /** @brief run the current test case */
 DLL_EXPORT void ute_run(ute_context *ctx);
 
+/** @brief retrieve the number of tests that passed */
+DLL_EXPORT size_t ute_get_count_passed(ute_context *ctx);
+
+/** @brief retrieve the number of tests that passed */
+DLL_EXPORT size_t ute_get_count_failed(ute_context *ctx);
+
+/** @brief retrieve the number of tests that passed */
+DLL_EXPORT size_t ute_get_count_failed_setup(ute_context *ctx);
+
+/** @brief retrieve the number of tests that passed */
+DLL_EXPORT size_t ute_get_count_results(ute_context *ctx);
+
+/** @brief retrieve the number of tests that passed */
+DLL_EXPORT ute_test_result ute_get_result(ute_context *ctx, size_t index);
+
 END_EXTERN_C
 
 #endif  /* UTE_DRIVER_H_INCLUDED */

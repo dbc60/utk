@@ -10,6 +10,8 @@
 #include <ute.h>
 #include <ute_driver.h>
 #include "ute_counter.h"
+#include <ehm.h>
+
 
 // malloc prototypes
 #include <stdlib.h> 
@@ -62,57 +64,57 @@ struct ute_context
     ute_result_context *results;        // array of test results.
     ute_counter     counter;
 };
-typedef struct ute_context ute_context;
+
 
 /**
  *  Local functions
  */
 
-//INTERNAL_FUNCTION void
-//grow_capacity(ute_context *ctx)
-//{
-//    ute_result_context *new_results;
-//    size_t new_capacity;
-//    size_t count;
-//    size_t const increment = 10;
-//
-//    // Calculate a new capacity, but make it no more than
-//    // the number of test cases in the test suite
-//    if (ctx->capacity + increment > (size_t)ctx->test_suite->count) {
-//        new_capacity = ctx->test_suite->count;
-//        count = ctx->test_suite->count - ctx->capacity;
-//    } else {
-//        new_capacity = ctx->capacity + increment;
-//        count = increment;
-//    }
-//
-//    new_results = realloc(ctx->results,
-//                          new_capacity * sizeof(ute_result_context));
-//    if (new_results) {
-//        // Initialize new memory block
-//        memset(&new_results[ctx->capacity],
-//               0,
-//               count * sizeof(ute_result_context));
-//        ctx->capacity = new_capacity;
-//        ctx->results = new_results;
-//    }
-//}
+INTERNAL_FUNCTION void
+grow_capacity(ute_context *ctx)
+{
+    ute_result_context *new_results;
+    size_t new_capacity;
+    size_t count;
+    size_t const increment = 10;
+
+    // Calculate a new capacity, but make it no more than
+    // the number of test cases in the test suite
+    if (ctx->capacity + increment > (size_t)ctx->test_suite->count) {
+        new_capacity = ctx->test_suite->count;
+        count = ctx->test_suite->count - ctx->capacity;
+    } else {
+        new_capacity = ctx->capacity + increment;
+        count = increment;
+    }
+
+    new_results = realloc(ctx->results,
+                          new_capacity * sizeof(ute_result_context));
+    if (new_results) {
+        // Initialize new memory block
+        memset(&new_results[ctx->capacity],
+               0,
+               count * sizeof(ute_result_context));
+        ctx->capacity = new_capacity;
+        ctx->results = new_results;
+    }
+}
 
 
-//INTERNAL_FUNCTION void
-//insert_result(ute_context *ctx, ute_test_result result, int error_code)
-//{
-//    if (ctx->count_results == ctx->capacity) {
-//        grow_capacity(ctx);
-//    }
-//
-//    if ((size_t)ctx->count_results < ctx->capacity) {
-//        ctx->results[ctx->count_results].index = ctx->index;
-//        ctx->results[ctx->count_results].result = result;
-//        ctx->results[ctx->count_results].error_code = error_code;
-//        ++ctx->count_results;
-//    }
-//}
+INTERNAL_FUNCTION void
+insert_result(ute_context *ctx, ute_test_result result, int error_code)
+{
+    if (ctx->count_results == ctx->capacity) {
+        grow_capacity(ctx);
+    }
+
+    if ((size_t)ctx->count_results < ctx->capacity) {
+        ctx->results[ctx->count_results].index = ctx->index;
+        ctx->results[ctx->count_results].result = result;
+        ctx->results[ctx->count_results].error_code = error_code;
+        ++ctx->count_results;
+    }
+}
 
 
 /**
@@ -152,12 +154,12 @@ ute_delete(ute_context *ctx)
  * greater than count.
  */
 b32
-ute_is_valid(ute_context* ctx)
+ute_is_valid(ute_context *ctx)
 {
     b32 result = FALSE;
 
     if (ctx) {
-        ute_context * counter_ctx = ute_counter_get_context(&ctx->counter);
+        ute_context *counter_ctx = ute_counter_get_context(&ctx->counter);
         if (ctx->magic == (intptr_t)ctx
             && ctx->test_suite != NULL
             && ctx->index <= ctx->test_suite->count
@@ -214,19 +216,134 @@ ute_get_count_test_cases(ute_context *ctx)
 }
 
 
-/** @brief run the current test case, including the setup and teardown methods
- * if they exist
+/**
+ * @brief run the current test case for each exception point.
+ * Run the setup and teardown methods if they exist. When no test exception is
+ * thrown, we have a valid test result to record. For each exception point, we
+ * record memory leaks.
  */
 void
 ute_run(ute_context *ctx)
 {
     ute_counter counter;
-    //u64 count_start;
+    utk_test_suite *ts = ctx->test_suite;
+    utk_test_case *tc = ts->test_cases[ctx->index];
+    u64 count_start;
+    utk_result result_setup = UTR_PASSED;
+    utk_result result_test = UTR_PASSED;
     b32 thrown = FALSE;
+    u64 count_leaks;
 
     ute_counter_init(&counter, ctx);
     do {
-        //count_start = ute_get_count_allocation(&counter);
+        count_start = ute_get_count_allocation(&counter);
         ute_increment_count_throw(&counter);
+
+        EHM_TRY {
+            if (tc->setup) {
+                result_setup = tc->setup(tc->test_data);
+                if (result_setup != UTR_PASSED) {
+                    insert_result(ctx, UTR_SETUP_FAILED, result_setup);
+                    ++ctx->count_failed_setup;
+                }
+            }
+
+            if (UTR_PASSED == result_setup) {
+                ++ctx->count_run;
+                result_test = tc->run(tc->test_data);
+            }
+        } EHM_CATCH(exception_ute_test) {
+            // Do nothing
+        } EHM_ENDTRY;
+
+        thrown = ute_thrown(&counter);
+        ute_throw_disable(&counter);
+
+        /**
+         * If an exception_ute_test was NOT thrown, then we have a valid result
+         * to record.
+         */
+        if (!thrown) {
+            if (result_setup != UTR_PASSED) {
+                insert_result(ctx, UTR_SETUP_FAILED, result_setup);
+                ++ctx->count_failed_setup;
+
+                // Copy result_setup to result_test to return an error code
+                result_test = result_setup;
+            }
+
+            if (result_test != UTR_PASSED) {
+                insert_result(ctx, UTR_FAILED, result_test);
+                ++ctx->count_failed;
+            } else {
+                ++ctx->count_passed;
+            }
+        }
+
+        count_leaks = ute_get_count_allocation(&counter);
+        if (count_leaks > 0) {
+            if (!thrown && result_test != UTR_PASSED) {
+                /**
+                 * If the test result was UTR_PASS???
+                 */
+            }
+        }
     } while (thrown);
 }
+
+
+size_t
+ute_get_count_passed(ute_context *ctx)
+{
+    return ctx->count_passed;
+}
+
+
+/** @brief retrieve the number of tests that passed */
+size_t
+ute_get_count_failed(ute_context *ctx)
+{
+    return ctx->count_failed;
+}
+
+
+/** @brief retrieve the number of tests that passed */
+size_t
+ute_get_count_failed_setup(ute_context *ctx)
+{
+    return ctx->count_failed_setup;
+}
+
+
+/** @brief retrieve the number of tests that passed */
+size_t
+ute_get_count_results(ute_context *ctx)
+{
+    return ctx->count_results;
+}
+
+/** @brief retrieve the number of tests that passed */
+ute_test_result
+ute_get_result(ute_context *ctx, size_t index)
+{
+    ute_test_result result = UTR_PASSED;
+    size_t i = 0;
+
+    if (ctx->count_run <= index) {
+        // the test wasn't run
+        result = UTR_NOT_RUN;
+    } else if (ctx->count_results > 0) {
+        // Search the results and see if there's on matching the index
+        while (i < ctx->count_results && ctx->results[i].index < index) {
+            ++i;
+        }
+
+        if (i < ctx->count_results && ctx->results[i].index == index) {
+            // We have a match
+            result = ctx->results[i].result;
+        }
+    }
+
+    return result;
+}
+

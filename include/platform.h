@@ -67,6 +67,7 @@ typedef uint32_t uint32;
 typedef uint64_t uint64;
 
 typedef size_t memory_index;
+typedef size_t counter;
 
 typedef uintptr_t   umm;
 typedef intptr_t    smm;

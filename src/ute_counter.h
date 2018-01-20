@@ -10,7 +10,9 @@
 
 #include <platform.h>
 #include <ute.h>
+#include <ehm.h>
 
+extern ehm_exception exception_ute_test;
 
 struct ute_counter
 {
@@ -47,21 +49,21 @@ struct ute_counter
     u64 count_invalid_free;
 
     // The current test context
-    ute_context * context;
+    ute_context *context;
 };
 typedef struct ute_counter ute_counter;
 
-void ute_counter_init(ute_counter * uc, ute_context * ctx);
-ute_context * ute_counter_get_context(ute_counter * uc);
-void ute_throw_try(ute_counter * uc);
-u64 ute_get_count_throw(ute_counter * uc);
-void ute_increment_count_throw(ute_counter * uc);
-void ute_throw_disable(ute_counter * uc);
-void ute_throw_enable(ute_counter * uc);
-b32 ute_throw_enabled(ute_counter * uc);
-b32 ute_thrown(ute_counter * uc);
-void ute_memory_allocated(ute_counter * uc, void * mem);
-void ute_memory_released(ute_counter * uc, void * mem);
-void ute_memory_invalid_free(ute_counter * uc, void * mem);
-u64 ute_get_count_allocation(ute_counter * uc);
-u64 ute_get_count_exception_point(ute_counter * uc);
+void ute_counter_init(ute_counter *uc, ute_context *ctx);
+ute_context* ute_counter_get_context(ute_counter *uc);
+void ute_throw_try(ute_counter *uc);
+u64 ute_get_count_throw(ute_counter *uc);
+void ute_increment_count_throw(ute_counter *uc);
+void ute_throw_disable(ute_counter *uc);
+void ute_throw_enable(ute_counter *uc);
+b32 ute_throw_is_enabled(const ute_counter *uc);
+b32 ute_thrown(const ute_counter *uc);
+void ute_memory_allocated(ute_counter *uc, void *mem);
+void ute_memory_released(ute_counter *uc, void *mem);
+void ute_memory_invalid_free(ute_counter *uc, void *mem);
+u64 ute_get_count_allocation(ute_counter *uc);
+u64 ute_get_count_exception_point(ute_counter *uc);

@@ -21,6 +21,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_ute_driver", "vs2017\test_ute_driver\test_ute_driver.vcxproj", "{5D529169-D034-496D-A2C7-0B25D93F1072}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BD017356-0F3C-4CDB-A0BE-D03E27962BE5} = {BD017356-0F3C-4CDB-A0BE-D03E27962BE5}
+		{ACD0A3D4-862D-44E3-9A8E-DFBBA14140BC} = {ACD0A3D4-862D-44E3-9A8E-DFBBA14140BC}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_ehm", "vs2017\test_ehm\test_ehm.vcxproj", "{B8F969D9-BDEE-4312-9147-1FB4623589B3}"

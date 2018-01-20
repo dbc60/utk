@@ -188,6 +188,10 @@ lib /OUT:"%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO ^
 :: Unit Test Extended (UTE)
 ::
 
+::
+:: ute_driver.lib
+::
+
 :: build the static library for the UTE driver: ute_driver.lib
 cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch ^
    /Fd%BUILD_PATH%\ute_driver.pdb src\ute_driver.c src\ute_version.c ^
@@ -196,16 +200,6 @@ cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch ^
 lib /OUT:"%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
     %BUILD_PATH%\ute_driver.obj %BUILD_PATH%\ute_version.obj ^
     %BUILD_PATH%\ute_counter.obj
-
-:: compile the components of test_ute_driver.dll that tests ute_driver.lib
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
-   /Fd%BUILD_PATH%\test_ute_driver.pdb "but\test_ute_driver.c" ^
-   "but\test_suite_ute.c"
-
-:: build test_ute_driver.dll - the unit test for ute_driver.lib
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
-     /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
-     "%BUILD_PATH%\test_suite_ute.obj" "%BUILD_PATH%\ute_driver.lib"
 
 
 ::
@@ -269,6 +263,22 @@ cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ehm.pch ^
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
      /PDB:%BUILD_PATH%\test_ehm.pdb "%BUILD_PATH%\test_ehm.obj" ^
      "%BUILD_PATH%\test_suite_ehm.obj" "%BUILD_PATH%\win32_ehm.lib"
+
+
+::
+:: test_ute_driver.lib test suite
+::
+
+:: compile the components of test_ute_driver.dll that tests ute_driver.lib
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
+   /Fd%BUILD_PATH%\test_ute_driver.pdb "but\test_ute_driver.c" ^
+   "but\test_suite_ute.c"
+
+:: build test_ute_driver.dll - the unit test for ute_driver.lib
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
+     /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
+     "%BUILD_PATH%\test_suite_ute.obj" "%BUILD_PATH%\ute_driver.lib" ^
+     "%BUILD_PATH%\win32_ehm.lib"
 
 
 :: Build complete

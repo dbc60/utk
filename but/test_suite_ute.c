@@ -22,7 +22,8 @@ LOCAL_VARIABLE utk_test_case *tca[] =
     &test_case_name_case,
     &test_case_name_suite,
     &test_case_index,
-    &test_case_count
+    &test_case_count,
+    &test_case_run
 };
 
 LOCAL_VARIABLE

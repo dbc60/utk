@@ -205,23 +205,23 @@ but_run(but_context *ctx)
 {
     if (but_more_test_cases(ctx)) {
         utk_test_case *tc = ctx->test_suite->test_cases[ctx->index];
-        utk_result result_setup = UTK_SUCCESS;
-        utk_result result_test = UTK_SUCCESS;
+        utk_result result_setup = BTR_PASSED;
+        utk_result result_test = BTR_PASSED;
 
         // a setup routine is optional
         if (tc->setup) {
             // non-zero is an error
             result_setup = tc->setup(tc->test_data);
-            if (result_setup != UTK_SUCCESS) {
+            if (result_setup != BTR_PASSED) {
                 insert_result(ctx, BTR_FAILED_SETUP, result_setup);
                 ++ctx->count_failed_setup;
             }
         }
 
-        if (UTK_SUCCESS == result_setup) {
+        if (BTR_PASSED == result_setup) {
             ++ctx->count_run;
             result_test = tc->run(tc->test_data);
-            if (result_test != UTK_SUCCESS) {
+            if (result_test != BTR_PASSED) {
                 insert_result(ctx, BTR_FAILED, result_test);
                 ++ctx->count_failed;
             } else {

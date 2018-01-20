@@ -25,7 +25,7 @@ BEGIN_EXTERN_C
 typedef struct but_context but_context;
 
 enum but_test_results {
-    BTR_PASSED,                 // The test case was run and it returned successfully
+    BTR_PASSED = UTK_SUCCESS,   // The test case was run and it returned successfully
     BTR_FAILED,                 // The test case was run and it returned a failure
     BTR_FAILED_EXC,             // The main test passed, but an exception path failed
     BTR_FAILED_SETUP,           // The setup function reported a failure
