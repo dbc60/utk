@@ -10,7 +10,7 @@
 #include <string.h>
 
 
-ehm_exception exception_ute_test;
+ehm_exception exception_ute_test = {"UTE Test Exception"};
 
 
 void
@@ -37,7 +37,6 @@ ute_increment_count_throw(ute_counter *uc)
     uc->count_exception_point = 0;
     ++uc->count_throw;
     uc->throw_test_exception = TRUE;
-
 }
 u64
 ute_get_count_allocation(ute_counter *uc)
@@ -49,7 +48,7 @@ void
 ute_throw_try(ute_counter *uc)
 {
     if (uc->throw_test_exception
-        && ++uc->count_exception_point == uc->count_throw) {
+        && ++(uc->count_exception_point) == uc->count_throw) {
         EHM_THROW(exception_ute_test);
     }
 }
@@ -76,4 +75,16 @@ b32
 ute_throw_is_enabled(const ute_counter *uc)
 {
     return uc->throw_test_exception;
+}
+
+u64
+ute_get_count_throw(ute_counter *uc)
+{
+    return uc->count_throw;
+}
+
+u64
+ute_get_count_exception_point(ute_counter *uc)
+{
+    return uc->count_exception_point;
 }

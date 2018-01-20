@@ -22,7 +22,6 @@
 // memset prototype
 #include <memory.h>
 
-
 // Record the invalid address passed to free
 struct invalid_free
 {
@@ -280,12 +279,19 @@ ute_run(ute_context *ctx)
             }
         }
 
-        count_leaks = ute_get_count_allocation(&counter);
+        count_leaks = ute_get_count_allocation(&counter) - count_start;
         if (count_leaks > 0) {
             if (!thrown && result_test != UTR_PASSED) {
                 /**
-                 * If the test result was UTR_PASS???
+                 * If the test result was UTR_PASSED, then change it to
+                 * UTR_EXC_FAILED.
                  */
+                utk_result result = ute_get_result(ctx, ctx->index);
+                if (UTR_PASSED == result) {
+                    insert_result(ctx, UTR_EXC_FAILED, result);
+                }
+            } else {
+                insert_result(ctx, UTR_EXC_FAILED, result_test);
             }
         }
     } while (thrown);

@@ -50,13 +50,12 @@ IF %PROJECT_PATH:~-1%==\ SET PROJECT_PATH=%PROJECT_PATH:~0,-1%
 
 FOR %%f in ("%PROJECT_PATH%") DO SET PROJECT_NAME=%%~nxf
 TITLE %PROJECT_NAME% Project: Build %Architecture%
-
 goto :EOF
 
 :errArch
 echo Error: "%1" is not a valid platform architecture. Please select amd64 (default), x86, arm64, or arm.
-
 goto :EOF
 
 :errHostArch
 echo Error: "%2" is not a valid host architecture. Please select amd64 (default), or x86.
+goto :EOF

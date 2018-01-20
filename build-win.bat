@@ -87,6 +87,9 @@
 ::                       1995 = C95, 1999 = C99, 2011 = C11.
 :: Optimization switches /O2 /Oi /fp:fast
 
+:: Ensure the environment has bee set
+if "%PROJECT_PATH%" == "" goto errProjectPath
+
 set BUILD_CONFIG=Debug
 if    "%1" == ""          set BUILD_CONFIG=Debug
 if /i "%1" == "Debug"     set BUILD_CONFIG=Debug
@@ -174,7 +177,7 @@ del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 
 
 ::
-:: Basic Unit Test (BUT)
+:: but_driver.lib
 ::
 
 :: build the static library for the BUT driver: but_driver.lib
@@ -184,9 +187,6 @@ cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch ^
 lib /OUT:"%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO ^
     %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
 
-::
-:: Unit Test Extended (UTE)
-::
 
 ::
 :: ute_driver.lib
@@ -235,15 +235,15 @@ cl %COMPILER_FLAGS% "src\win32_but_driver.c" ^
 
 
 ::
-:: test_but_driver.dll
+:: test_but_driver.dll test suite
 ::
 
-:: compile the components of test_but_driver.dll that tests but_driver.lib
+:: compile the components of test_but_driver.dll
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_but_driver.pch ^
    /Fd%BUILD_PATH%\test_but_driver.pdb "but\test_but_driver.c" ^
    "but\test_suite_but.c" "but\but_test.c"
 
-:: build test_but_driver.dll - the unit test for but_driver.lib
+:: Link the components and libraries to create the  test suite
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
      /PDB:%BUILD_PATH%\test_but_driver.pdb "%BUILD_PATH%\test_but_driver.obj" ^
      "%BUILD_PATH%\test_suite_but.obj" "%BUILD_PATH%\but_test.obj" ^
@@ -251,7 +251,7 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" 
 
 
 ::
-:: test_ehm.dll
+:: test_ehm.dll test suite
 ::
 
 :: compile the components of test_ehm.dll that tests win32_ehm.lib
@@ -266,7 +266,7 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
 
 
 ::
-:: test_ute_driver.lib test suite
+:: test_ute_driver.dll test suite
 ::
 
 :: compile the components of test_ute_driver.dll that tests ute_driver.lib
@@ -295,3 +295,6 @@ goto :EOF
 echo cleaning %BUILD_ROOT%
 rd /s /q %BUILD_ROOT% 1>nul 2>&1
 goto :EOF
+
+:errProjectPath
+echo Error: The build environment is not set. Run either 'misc\shell-vs2015.bat' or 'misc\shell-vs2017.bat'?

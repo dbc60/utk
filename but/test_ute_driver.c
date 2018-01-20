@@ -579,34 +579,41 @@ context_setup_counter_throw_1(void *data)
 /**
 * @brief test that UTE counters are initialized properly
 */
-static utk_result test_counter_throw_1(void *data)
+static utk_result
+test_counter_throw_1(void *data)
 {
     ute_counter *ctr = (ute_counter*)data;
     utk_result result = UTK_SUCCESS;
-
-    const counter count_throw = 1;
-    const counter count_max = 3;
-    counter i;
+    const counter32 count_throw = 3;
+    counter32 count_throw_attempts = count_throw;
 
     EHM_TRY {
         EHM_TRY {
             // bump the exception point to count_throw
-            for (i = 0; i < count_throw; ++i) {
+            for (count_throw_attempts = 0; count_throw_attempts < count_throw; ++count_throw_attempts) {
                 ute_increment_count_throw(ctr);
             }
 
-            for (i = 1; i < count_max; ++i) {
+            count_throw_attempts = 0;
+            while (count_throw_attempts < count_throw) {
+                ++count_throw_attempts;
                 ute_throw_try(ctr);
             }
 
             // We should NOT get here
             result = TDR_UNEXPECTED_NO_THROW;
         } EHM_CATCH(exception_ute_test) {
-            if (i != count_throw || !ute_thrown(ctr)) {
+            /**
+             * Linux (gcc 5.4.0 20160609) restores count_throw_attempts to its
+             * initialized value. Windows (VS2017) does not. The only reason
+             * this test works on Windows is ute_throw_try(ctr) throws the test
+             * exception when count_throw_attempts == 1.
+             */
+            if (count_throw_attempts != count_throw || !ute_thrown(ctr)) {
                 result = TDR_UNEXPECTED_CATCH;
             }
         } EHM_ENDTRY;
-    } EHM_CATCH_ALL{
+    } EHM_CATCH_ALL {
         result = TDR_UNEXPECTED_CATCH;
     } EHM_ENDTRY;
 

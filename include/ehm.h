@@ -17,6 +17,7 @@
 #include "platform.h"
 #include <setjmp.h>
 
+
 struct ehm_exception
 {
     const ch8 *reason;
@@ -36,6 +37,14 @@ typedef struct ehm_frame ehm_frame;
 
 PROJECTAPI ehm_frame *ehm_stack;
 
+#define EHM_FRAME_INIT(frame, stack, flag)  \
+    (frame).prev = (stack);                 \
+    (frame).file = NULL;                    \
+    (frame).function = NULL;                \
+    (frame).exception = NULL;               \
+    (frame).line = 0;                       \
+    (stack) = &(frame);                     \
+    (flag) = setjmp((frame).env)
 
 /** @brief there are four states within a TRY block */
 enum ehm_states
@@ -61,22 +70,21 @@ typedef enum ehm_states ehm_state;
     default:                                \
         return
 
+
 #define EHM_TRY                         \
     do                                  \
     {                                   \
         volatile ehm_state ehm_flag;    \
-        ehm_frame ehm_exc;              \
-        ehm_exc.prev = ehm_stack;       \
-        ehm_stack = &ehm_exc;           \
-        ehm_flag = setjmp(ehm_exc.env); \
+        ehm_frame ehm_exc;                \
+        EHM_FRAME_INIT(ehm_exc, ehm_stack, ehm_flag);   \
         if (EHM_ENTERED == ehm_flag)    \
         {
 
 #define EHM_CATCH(e)                    \
-    if (EHM_ENTERED == ehm_flag)        \
-    {                                   \
-        ehm_stack = ehm_stack->prev;    \
-    }                                   \
+        if (EHM_ENTERED == ehm_flag)        \
+        {                                   \
+            ehm_stack = ehm_stack->prev;    \
+        }                               \
     }                                   \
     else if (&(e) == ehm_exc.exception) \
     {                                   \

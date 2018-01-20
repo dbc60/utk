@@ -13,6 +13,7 @@
 
 extern utk_test_case test_case_unhandled_exception;
 extern utk_test_case test_case_catch_unhandled_exception;
+extern utk_test_case test_case_catch_nested;
 extern utk_test_case test_case_catch;
 extern utk_test_case test_case_catch_all;
 extern utk_test_case test_case_catch_finally;

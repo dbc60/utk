@@ -17,6 +17,7 @@ LOCAL_VARIABLE utk_test_case *tca[] =
     // EHM tests
     &test_case_unhandled_exception,
     &test_case_catch_unhandled_exception,
+    &test_case_catch_nested,
     &test_case_catch,
     &test_case_catch_all,
     &test_case_catch_finally,

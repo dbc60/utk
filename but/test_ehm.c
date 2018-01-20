@@ -10,6 +10,7 @@
 
 #define TC_NAME_UNHANDLED "Unhandled Exception"
 #define TC_NAME_CATCH_UNHANDLED "Catch Unhandled Exception"
+#define TC_NAME_NESTED_CATCH "Nested Catch"
 #define TC_NAME_CATCH "Catch"
 #define TC_NAME_CATCH_ALL "Catch All"
 #define TC_NAME_CATCH_FINALLY "Catch Finally"
@@ -20,6 +21,7 @@ const ehm_exception exc_catch_me = {"Catch Me"};
 
 static utk_result test_unhandled_exception(void *data);
 static utk_result test_catch_unhandled_exception(void *data);
+static utk_result test_catch_nested(void *data);
 static utk_result test_catch(void *data);
 static utk_result test_catch_all(void *data);
 static utk_result test_catch_finally(void *data);
@@ -43,6 +45,15 @@ utk_test_case test_case_catch_unhandled_exception =
     TC_NAME_CATCH_UNHANDLED,
     NULL,
     &test_catch_unhandled_exception,
+    NULL,
+    NULL
+};
+
+utk_test_case test_case_catch_nested = 
+{
+    TC_NAME_NESTED_CATCH,
+    NULL,
+    &test_catch_nested,
     NULL,
     NULL
 };
@@ -90,6 +101,7 @@ utk_test_case test_case_catch_all_finally =
 enum test_ehm_results {
     EHM_SUCCESS = UTK_SUCCESS,
     EHM_ABJECT_FAILURE,
+    EHM_MISSED_CATCH,
     EHM_UNEXPECTED_CATCH,
     EHM_CATCH_BUT_NO_FINALLY,
     EHM_FINALLY_BUT_NO_CATCH
@@ -152,6 +164,34 @@ test_catch_unhandled_exception(void *data) {
     } else {
         // no catch, no catch all, no finally
         result = EHM_ABJECT_FAILURE;
+    }
+
+    return result;
+}
+
+static utk_result
+test_catch_nested(void *data)
+{
+    utk_result result = EHM_SUCCESS;
+    b32 wrong_catch = FALSE;
+    b32 nested_catch = FALSE;
+
+    UNREFERENCED(data);
+
+    EHM_TRY{
+        EHM_TRY{
+        EHM_THROW(exc_catch_me);
+        } EHM_CATCH(exc_catch_me) {
+            nested_catch = TRUE;
+        } EHM_ENDTRY;
+    } EHM_CATCH_ALL {
+        wrong_catch = TRUE;
+    } EHM_ENDTRY;
+
+    if (wrong_catch) {
+        result = EHM_UNEXPECTED_CATCH;
+    } else if (!nested_catch) {
+        result = EHM_MISSED_CATCH;
     }
 
     return result;
