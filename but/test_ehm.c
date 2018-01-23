@@ -8,6 +8,7 @@
 
 #include "test_ehm.h"
 
+// The names of our test cases
 #define TC_NAME_UNHANDLED "Unhandled Exception"
 #define TC_NAME_CATCH_UNHANDLED "Catch Unhandled Exception"
 #define TC_NAME_NESTED_CATCH "Nested Catch"
@@ -16,16 +17,18 @@
 #define TC_NAME_CATCH_FINALLY "Catch Finally"
 #define TC_NAME_CATCH_ALL_FINALLY "Catch All Finally"
 
+// Exceptions to catch or not to catch, as needed.
 const ehm_exception exc_dont_catch = {"Catch Me If You Can!"};
 const ehm_exception exc_catch_me = {"Catch Me"};
 
-static utk_result test_unhandled_exception(void *data);
-static utk_result test_catch_unhandled_exception(void *data);
-static utk_result test_catch_nested(void *data);
-static utk_result test_catch(void *data);
-static utk_result test_catch_all(void *data);
-static utk_result test_catch_finally(void *data);
-static utk_result test_catch_all_finally(void *data);
+// Test methods
+INTERNAL_FUNCTION utk_result test_unhandled_exception(void *data);
+INTERNAL_FUNCTION utk_result test_catch_unhandled_exception(void *data);
+INTERNAL_FUNCTION utk_result test_catch_nested(void *data);
+INTERNAL_FUNCTION utk_result test_catch(void *data);
+INTERNAL_FUNCTION utk_result test_catch_all(void *data);
+INTERNAL_FUNCTION utk_result test_catch_finally(void *data);
+INTERNAL_FUNCTION utk_result test_catch_all_finally(void *data);
 
 
 /** @brief EHM test cases

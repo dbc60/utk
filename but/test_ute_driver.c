@@ -12,23 +12,13 @@
 #include <ute_driver.h>
 #include <ute_counter.h>
 
-
 // For NULL
 #include <stddef.h>
 // For strncmp()
 #include <string.h>
 
-// Internal test case for testing the driver
-#define TC_NAME_SUCCESS "Test Success"
-#define TC_NAME_FAIL "Test Fail"
-#define SUITE_NAME_SUCCESS_FAIL "Suite Success Fail"
 
-// Testing malloc for UTE
-#define TC_NAME_COUNTER_INIT "Test Counter Init"
-#define TC_NAME_COUNTER_THROW_1 "Test Counter Throw 1"
-#define SUITE_NAME_UTE_COUNTER "Suite Counter"
-
-// Names of test cases
+// The names of our test cases
 #define TC_NAME_VALIDATE_VERSION    "UTE Validate Version"
 #define TC_NAME_NEW_DELETE          "UTE New and Delete Context"
 #define TC_NAME_IS_VALID            "UTE Validate Context"
@@ -38,6 +28,13 @@
 #define TC_NAME_INDEX               "UTE Index"
 #define TC_NAME_COUNT               "UTE Count"
 #define TC_NAME_RUN                 "UTE Run"
+
+// The names of internal test cases
+#define TC_NAME_SUCCESS "Test Success"
+#define TC_NAME_FAIL "Test Fail"
+#define TC_NAME_COUNTER_INIT "Test Counter Init"
+#define TC_NAME_COUNTER_THROW_1 "Test Counter Throw 1"
+#define SUITE_NAME_INTERNAL "Suite Internal"
 
 ute_test_driver_inf test_data;
 
@@ -54,8 +51,7 @@ static utk_result test_index(void *data);
 static utk_result test_count(void *data);
 static utk_result test_run(void *data);
 
-static utk_test_suite test_suite_success_fail;
-static utk_test_suite test_suite_counter;
+static utk_test_suite test_suite_internal;
 
 enum test_driver_results {
     TDR_SUCCESS = UTK_SUCCESS,
@@ -125,7 +121,7 @@ driver_setup_success_fail(void *data)
 {
     ute_test_driver_inf *tdd = (ute_test_driver_inf*)data;
 
-    return driver_setup(tdd, &test_suite_success_fail);
+    return driver_setup(tdd, &test_suite_internal);
 }
 
 
@@ -150,7 +146,7 @@ context_setup_success_fail(void *data)
     ute_test_driver_inf *tdd = (ute_test_driver_inf*)data;
     utk_result result = TDR_SUCCESS;
 
-    result = driver_setup(tdd, &test_suite_success_fail);
+    result = driver_setup(tdd, &test_suite_internal);
     if (TDR_SUCCESS == result) {
         context_setup(tdd);
     }
@@ -165,7 +161,7 @@ context_setup_counter(void *data)
     ute_test_driver_inf *tdd = (ute_test_driver_inf*)data;
     utk_result result = TDR_SUCCESS;
 
-    result = driver_setup(tdd, &test_suite_counter);
+    result = driver_setup(tdd, &test_suite_internal);
     if (TDR_SUCCESS == result) {
         context_setup(tdd);
     }
@@ -341,11 +337,6 @@ test_next_index_next_end(void *data)
             result = TDR_UNEXPECTED_INDEX_1;
         } else if (tdd->tdd_is_end(tdd->tdd_ctx)) {
             result = TDR_UNEXPECTED_END;
-        } else {
-            tdd->tdd_next(tdd->tdd_ctx);
-            if (tdd->tdd_is_end(tdd->tdd_ctx) == FALSE) {
-                result = TDR_UNEXPECTED_MORE;
-            }
         }
     }
 
@@ -390,14 +381,14 @@ test_name_suite(void *data)
     name = tdd->tdd_get_name_suite(tdd->tdd_ctx);
     if (NULL == name) {
         result = TDR_UNEXPECTED_NULL;
-    } else if (strcmp(name, SUITE_NAME_SUCCESS_FAIL)) {
+    } else if (strcmp(name, SUITE_NAME_INTERNAL)) {
         result = TDR_UNEXPECTED_NAME_1;
     } else {
         tdd->tdd_next(tdd->tdd_ctx);
         name = tdd->tdd_get_name_suite(tdd->tdd_ctx);
         if (NULL == name) {
             result = TDR_UNEXPECTED_NULL;
-        } else if (strcmp(name, SUITE_NAME_SUCCESS_FAIL)) {
+        } else if (strcmp(name, SUITE_NAME_INTERNAL)) {
             result = TDR_UNEXPECTED_NAME_2;
         }
     }
@@ -427,60 +418,6 @@ test_index(void *data)
     return result;
 }
 
-
-static utk_result
-test_count(void *data)
-{
-    ute_test_driver_inf  *tdd = (ute_test_driver_inf*)data;
-    utk_result result = TDR_SUCCESS;
-
-    if (tdd->tdd_get_count(tdd->tdd_ctx) != 2) {
-        result = TDR_UNEXPECTED_COUNT;
-    }
-
-    return result;
-}
-
-
-static utk_result
-test_run(void *data)
-{
-    ute_test_driver_inf *tdd = (ute_test_driver_inf*)data;
-    ute_context *ctx = tdd->tdd_ctx;
-    utk_result  result = TDR_SUCCESS;
-    u64 count_passed;
-    u64 count_failed;
-    u64 count_failed_setup;
-    u64 count_results;
-
-    while (!tdd->tdd_is_end(ctx)) {
-        tdd->tdd_run_current(ctx);
-        tdd->tdd_next(ctx);
-    }
-
-    count_passed = tdd->tdd_get_count_passed(ctx);
-    count_failed = tdd->tdd_get_count_failed(ctx);
-    count_failed_setup = tdd->tdd_get_count_failed_setup(ctx);
-    count_results = tdd->tdd_get_count_results(ctx);
-
-    if (tdd->tdd_is_end(ctx)) {
-        if (count_passed != 2) {
-            result = TDR_UNEXPECTED_COUNT_PASSED;
-        } else if (count_failed != 0) {
-            result = TDR_UNEXPECTED_COUNT_FAILED;
-        } else if (count_failed_setup != 0) {
-            result = TDR_UNEXPECTED_COUNT_FAILED_SETUP;
-        } else if (count_results != 0) {
-            result = TDR_UNEXPECTED_COUNT_RESULTS;
-        }
-    } else {
-        result = TDR_UNEXPECTED_MORE;
-    }
-
-    return result;
-}
-
-
 static utk_result test_success(void *data) {
     UNREFERENCED(data);
     return TDR_SUCCESS;
@@ -507,19 +444,6 @@ static utk_test_case test_case_fail =
     test_fail,
     NULL,
     NULL
-};
-
-static utk_test_case *tca[] =
-{
-    &test_case_success,
-    &test_case_fail
-};
-
-static utk_test_suite test_suite_success_fail =
-{
-    SUITE_NAME_SUCCESS_FAIL,
-    ARRAY_COUNT(tca),
-    tca
 };
 
 
@@ -633,15 +557,76 @@ static utk_test_case test_case_counter_throw_1 =
     &test_data_ute_counter
 };
 
-static utk_test_case *test_counter[] = 
+static utk_test_case *test_case_internal_array[] =
 {
+    &test_case_success,
+    &test_case_fail,
     &test_case_counter_init,
     &test_case_counter_throw_1
 };
 
-static utk_test_suite test_suite_counter =
+static utk_result
+test_count(void *data)
 {
-    SUITE_NAME_UTE_COUNTER,
-    ARRAY_COUNT(test_counter),
-    test_counter
+    ute_test_driver_inf  *tdd = (ute_test_driver_inf*)data;
+    utk_result result = TDR_SUCCESS;
+
+    if (tdd->tdd_get_count(tdd->tdd_ctx)
+        != ARRAY_COUNT(test_case_internal_array)) {
+        result = TDR_UNEXPECTED_COUNT;
+    }
+
+    return result;
+}
+
+
+static utk_result
+test_run(void *data)
+{
+    ute_test_driver_inf *tdd = (ute_test_driver_inf*)data;
+    ute_context *ctx = tdd->tdd_ctx;
+    utk_result  result = TDR_SUCCESS;
+    u64 count_passed;
+    u64 count_failed;
+    u64 count_failed_setup;
+    u64 count_results;
+
+    while (!tdd->tdd_is_end(ctx)) {
+        tdd->tdd_run_current(ctx);
+        tdd->tdd_next(ctx);
+    }
+
+    count_passed = tdd->tdd_get_count_passed(ctx);
+    count_failed = tdd->tdd_get_count_failed(ctx);
+    count_failed_setup = tdd->tdd_get_count_failed_setup(ctx);
+    count_results = tdd->tdd_get_count_results(ctx);
+
+    if (tdd->tdd_is_end(ctx)) {
+        if (count_passed
+            != ARRAY_COUNT(test_case_internal_array) - 1) {
+            // Correct as long as this is the last test case
+            result = TDR_UNEXPECTED_COUNT_PASSED;
+        } else if (count_failed != 1) {
+            // There is one failing test, so we shouldn't be here
+            result = TDR_UNEXPECTED_COUNT_FAILED;
+        } else if (count_failed_setup != 0) {
+            // No setup methods should fail
+            result = TDR_UNEXPECTED_COUNT_FAILED_SETUP;
+        } else if (count_results != 1) {
+            // There is one failing test, so we shouldn't be here
+            result = TDR_UNEXPECTED_COUNT_RESULTS;
+        }
+    } else {
+        result = TDR_UNEXPECTED_MORE;
+    }
+
+    return result;
+}
+
+
+static utk_test_suite test_suite_internal =
+{
+    SUITE_NAME_INTERNAL,
+    ARRAY_COUNT(test_case_internal_array),
+    test_case_internal_array
 };

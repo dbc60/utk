@@ -281,6 +281,20 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" 
      "%BUILD_PATH%\win32_ehm.lib"
 
 
+::
+:: test_ute_counter.dll test suite
+::
+
+:: compile the components of test_ute_counter.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_counter.pch ^
+   /Fd%BUILD_PATH%\test_ute_counter.pdb "but\test_ute_counter.c"
+
+:: build test_ute_driver.dll - the unit test for ute_driver.lib
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_counter.dll" ^
+     /PDB:%BUILD_PATH%\test_ute_counter.pdb "%BUILD_PATH%\test_ute_counter.obj" ^
+     "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\win32_ehm.lib"
+
+
 :: Build complete
 goto :EOF
 
