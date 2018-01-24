@@ -352,4 +352,3 @@ ute_get_result(ute_context *ctx, size_t index)
 
     return result;
 }
-

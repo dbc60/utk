@@ -240,13 +240,11 @@ cl %COMPILER_FLAGS% "src\win32_but_driver.c" ^
 
 :: compile the components of test_but_driver.dll
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_but_driver.pch ^
-   /Fd%BUILD_PATH%\test_but_driver.pdb "but\test_but_driver.c" ^
-   "but\test_suite_but.c" "but\but_test.c"
+   /Fd%BUILD_PATH%\test_but_driver.pdb "but\test_but_driver.c"
 
 :: Link the components and libraries to create the  test suite
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
      /PDB:%BUILD_PATH%\test_but_driver.pdb "%BUILD_PATH%\test_but_driver.obj" ^
-     "%BUILD_PATH%\test_suite_but.obj" "%BUILD_PATH%\but_test.obj" ^
      "%BUILD_PATH%\but_driver.lib"
 
 
@@ -256,13 +254,12 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" 
 
 :: compile the components of test_ehm.dll that tests win32_ehm.lib
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ehm.pch ^
-   /Fd%BUILD_PATH%\test_ehm.pdb "but\test_ehm.c" ^
-   "but\test_suite_ehm.c"
+   /Fd%BUILD_PATH%\test_ehm.pdb "but\test_ehm.c"
 
 :: build test_ehm.dll - the unit test for win32_ehm.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
      /PDB:%BUILD_PATH%\test_ehm.pdb "%BUILD_PATH%\test_ehm.obj" ^
-     "%BUILD_PATH%\test_suite_ehm.obj" "%BUILD_PATH%\win32_ehm.lib"
+     "%BUILD_PATH%\win32_ehm.lib"
 
 
 ::
@@ -271,14 +268,12 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
 
 :: compile the components of test_ute_driver.dll that tests ute_driver.lib
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
-   /Fd%BUILD_PATH%\test_ute_driver.pdb "but\test_ute_driver.c" ^
-   "but\test_suite_ute.c"
+   /Fd%BUILD_PATH%\test_ute_driver.pdb "but\test_ute_driver.c"
 
 :: build test_ute_driver.dll - the unit test for ute_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
      /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
-     "%BUILD_PATH%\test_suite_ute.obj" "%BUILD_PATH%\ute_driver.lib" ^
-     "%BUILD_PATH%\win32_ehm.lib"
+     "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\win32_ehm.lib"
 
 
 ::

@@ -18,6 +18,9 @@
 #include <string.h>
 
 
+// The name of the exported test suite
+#define UTE_TS_NAME "UTE"
+
 // The names of our test cases
 #define TC_NAME_VALIDATE_VERSION    "UTE Validate Version"
 #define TC_NAME_NEW_DELETE          "UTE New and Delete Context"
@@ -630,3 +633,29 @@ static utk_test_suite test_suite_internal =
     ARRAY_COUNT(test_case_internal_array),
     test_case_internal_array
 };
+
+
+LOCAL_VARIABLE utk_test_case *tca[] = 
+{
+    // UTE driver tests
+    &test_case_valid_version,
+    &test_case_new_delete,
+    &test_case_valid_context,
+    &test_case_index_next_end,
+    &test_case_name_case,
+    &test_case_name_suite,
+    &test_case_index,
+    &test_case_count,
+    &test_case_run
+};
+
+LOCAL_VARIABLE
+utk_test_suite ute_ts = {UTE_TS_NAME, 
+                         ARRAY_COUNT(tca),
+                         tca};
+
+DLL_EXPORT utk_test_suite *
+test_suite_load(void)
+{
+    return &ute_ts;
+}
