@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\but\test_ute_driver.c" />
-    <ClCompile Include="..\..\but\test_suite_ute.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\but\test_ute_driver.h" />

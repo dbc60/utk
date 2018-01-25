@@ -18,9 +18,6 @@
     <ClCompile Include="..\..\but\test_ute_driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\but\test_suite_ute.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\but\test_ute_driver.h">
