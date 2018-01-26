@@ -27,3 +27,5 @@ void teardown_counter(void *data);
 // Test methods
 extern utk_result test_initialization(void *data);
 extern utk_result test_get_context(void *data);
+extern utk_result test_increment_count_throw(void *data);
+extern utk_result test_throw_try(void *data);

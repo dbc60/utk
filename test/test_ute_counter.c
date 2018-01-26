@@ -16,11 +16,13 @@
 
 // The names of our test cases
 #define TEST_NAME_INIT  "Initialize Counter"
+#define TEST_NAME_GET_CONTEXT "Get Context"
+#define TEST_NAME_INCREMENT_COUNT_THROW "Increment Count Throw"
+#define TEST_NAME_THROW_TRY "Throw Try"
 
 // The name of the test suite and a forward reference to it.
 #define UTE_TS_NAME "UTE Counter"
 LOCAL_VARIABLE utk_test_suite ute_ts;
-
 LOCAL_VARIABLE ute_counter_data test_data;
 
 /** @brief test cases for the UTE Counter implementation */
@@ -36,12 +38,31 @@ utk_test_case test_case_counter_init =
 
 utk_test_case test_case_counter_get_context =
 {
-    TEST_NAME_INIT,
+    TEST_NAME_GET_CONTEXT,
     setup_counter,
-    test_initialization,
+    test_get_context,
     teardown_counter,
     &test_data
 };
+
+utk_test_case test_case_counter_increment_count_throw = 
+{
+    TEST_NAME_INCREMENT_COUNT_THROW,
+    setup_counter,
+    test_increment_count_throw,
+    teardown_counter,
+    &test_data
+};
+
+utk_test_case test_case_throw_try =
+{
+    TEST_NAME_THROW_TRY,
+    setup_counter,
+    test_throw_try,
+    teardown_counter,
+    &test_data
+};
+
 
 enum test_results {
     CTR_SUCCESS = UTK_SUCCESS,
@@ -50,7 +71,12 @@ enum test_results {
     CTR_INVALID_THROW_TEST_EXCEPTION_INITIAL,
     CTR_INVALID_COUNT_ALLOCATIONS_INITIAL,
     CTR_INVALID_COUNT_INVALID_FREE_INITIAL,
-    CTR_INVALID_CONTEXT
+    CTR_INVALID_CONTEXT,
+    CTR_INVALID_COUNT_THROW,
+    CTR_FAILED_TO_THROW,
+    CTR_FAILED_TO_THROW2,
+    CTR_INVALID_THROW,
+    CTR_FAILED
 };
 
 
@@ -111,12 +137,64 @@ utk_result
 test_get_context(void *data)
 {
     ute_counter_data *ctr_data = (ute_counter_data*)data;
-    utk_result  result = CTR_SUCCESS;
+    utk_result result = CTR_SUCCESS;
     ute_context *ctx = ute_counter_get_context(&ctr_data->ctr);
 
     if (ctr_data->ctx != ctx) {
         result = CTR_INVALID_CONTEXT;
     }
+
+    return result;
+}
+
+
+utk_result
+test_increment_count_throw(void *data)
+{
+    ute_counter_data *ctr_data = (ute_counter_data*)data;
+    utk_result result = CTR_SUCCESS;
+    u64 expected = 0;
+    u64 actual = ute_get_count_throw(&ctr_data->ctr);
+
+    if (expected != actual) {
+        result = CTR_INVALID_COUNT_THROW_INITIAL;
+    } else {
+        ute_increment_count_throw(&ctr_data->ctr);
+        ++expected;
+        actual = ute_get_count_throw(&ctr_data->ctr);
+        if (expected != actual) {
+            result = CTR_INVALID_COUNT_THROW;
+        }
+    }
+
+    return result;
+}
+
+
+utk_result
+test_throw_try(void *data)
+{
+    ute_counter_data *ctr_data = (ute_counter_data*)data;
+    utk_result result = CTR_FAILED;
+
+    ute_increment_count_throw(&ctr_data->ctr);
+    EHM_TRY {
+        ute_throw_try(&ctr_data->ctr);
+        result = CTR_FAILED_TO_THROW;
+    } EHM_CATCH(exception_ute_test) {
+        ute_increment_count_throw(&ctr_data->ctr);
+        EHM_TRY {
+            ute_throw_try(&ctr_data->ctr);
+            EHM_TRY {
+                ute_throw_try(&ctr_data->ctr);
+                result = CTR_FAILED_TO_THROW2;
+            } EHM_CATCH(exception_ute_test) {
+                result = CTR_SUCCESS;
+            } EHM_ENDTRY;
+        } EHM_CATCH(exception_ute_test) {
+            result = CTR_INVALID_THROW;
+        } EHM_ENDTRY;
+    } EHM_ENDTRY;
 
     return result;
 }
@@ -128,7 +206,9 @@ utk_test_case *tca[] =
 {
     // UTE driver tests
     &test_case_counter_init,
-    &test_case_counter_get_context
+    &test_case_counter_get_context,
+    &test_case_counter_increment_count_throw,
+    &test_case_throw_try
 };
 
 LOCAL_VARIABLE
