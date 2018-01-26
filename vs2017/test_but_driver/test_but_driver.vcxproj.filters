@@ -15,12 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\but\test_but_driver.c">
+    <ClCompile Include="..\..\test\test_but_driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\but\but_test.h">
+    <ClInclude Include="..\..\test\but_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\but.h">
@@ -35,7 +35,7 @@
     <ClInclude Include="..\..\include\but_driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\but\test_but_driver.h">
+    <ClInclude Include="..\..\test\test_but_driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\utk.h">

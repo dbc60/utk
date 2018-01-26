@@ -32,6 +32,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ehm", "vs2017\ehm\ehm.vcxproj", "{ACD0A3D4-862D-44E3-9A8E-DFBBA14140BC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ehmDll", "vs2017\ehmDll\ehmDll.vcxproj", "{DD39D370-6946-4564-BEDF-7B7EEDD910C6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ACD0A3D4-862D-44E3-9A8E-DFBBA14140BC} = {ACD0A3D4-862D-44E3-9A8E-DFBBA14140BC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_ute_counter", "vs2017\test_ute_counter\test_ute_counter.vcxproj", "{F8D4DB27-51C3-4C7F-BE5F-0D4ED5887F9E}"
 	ProjectSection(ProjectDependencies) = postProject

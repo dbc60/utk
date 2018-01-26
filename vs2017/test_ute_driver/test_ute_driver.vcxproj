@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\but\test_ute_driver.c" />
+    <ClCompile Include="..\..\test\test_ute_driver.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\but\test_ute_driver.h" />
+    <ClInclude Include="..\..\test\test_ute_driver.h" />
     <ClInclude Include="..\..\include\but.h" />
     <ClInclude Include="..\..\include\platform.h" />
     <ClInclude Include="..\..\include\ute.h" />

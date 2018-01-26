@@ -95,7 +95,7 @@ gcc $COMPILER_FLAGS src/linux_but_driver.c src/but_test_driver.c \
 
 ## Compile the components of libtest_but_driver.so
 echo Building the test suite libtest_but_driver.so
-gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_but_driver.c -o \
+gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_but_driver.c -o \
     $BUILD_PATH/test_but_driver.o
 
 ## Link the components and libraries to create the  test suite
@@ -110,7 +110,7 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libtest_but_driver.so.1 \
 
 ## compile the components of test_ehm.so that tests libehm.so.1
 echo Building components of libtest_ehm.so
-gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_ehm.c -o $BUILD_PATH/test_ehm.o
+gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ehm.c -o $BUILD_PATH/test_ehm.o
 
 ## build libtest_ehm.so - the unit test for ehm.a
 echo building shared library libtest_ehm.so
@@ -125,7 +125,7 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ehm.so.1 \
 
 ## compile the components of test_ute_driver.so that tests ute_driver.a
 echo Building components of shared library libtest_ute_driver.so.1.0
-gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_ute_driver.c -o \
+gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ute_driver.c -o \
     $BUILD_PATH/test_ute_driver.o
 
 ## build libtest_ute_driver.so - the unit test for ute_driver.a
@@ -141,7 +141,7 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_driver.so.1 \
 
 ## compile the components of libtest_ute_counter.so
 echo Building components of libtest_ute_counter.so
-gcc $COMPILER_FLAGS -c -fpic -Isrc but/test_ute_counter.c -o \
+gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ute_counter.c -o \
     $BUILD_PATH/test_ute_counter.o
 
 ## build libtest_ute_counter.so - the unit tests for ute_counter.o

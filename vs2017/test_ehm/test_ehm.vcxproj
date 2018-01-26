@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\but\test_ehm.c" />
+    <ClCompile Include="..\..\test\test_ehm.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\but\test_ehm.h" />
+    <ClInclude Include="..\..\test\test_ehm.h" />
     <ClInclude Include="..\..\include\but.h" />
     <ClInclude Include="..\..\include\ehm.h" />
     <ClInclude Include="..\..\include\platform.h" />

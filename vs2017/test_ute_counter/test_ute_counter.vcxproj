@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\but\test_ute_counter.c" />
+    <ClCompile Include="..\..\test\test_ute_counter.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\but\test_ute_counter.h" />
+    <ClInclude Include="..\..\test\test_ute_counter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
