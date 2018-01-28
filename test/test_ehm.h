@@ -9,11 +9,12 @@
 #pragma once
 
 #include <but.h>
+#include <ehm.h>
 
-// Test the include guards
-#ifndef BUT_H_INCLUDED
-#error BUT_H_INCLUDED must be defined
-#endif
-
-extern utk_test_case test_case_null;
-extern utk_test_case test_case_str;
+extern utk_test_case test_case_unhandled_exception;
+extern utk_test_case test_case_catch_unhandled_exception;
+extern utk_test_case test_case_catch_nested;
+extern utk_test_case test_case_catch;
+extern utk_test_case test_case_catch_all;
+extern utk_test_case test_case_catch_finally;
+extern utk_test_case test_case_catch_all_finally;

@@ -55,15 +55,3 @@ struct but_test_driver_data
     get_result              tdd_get_result;
 };
 typedef struct but_test_driver_data but_test_driver_data;
-
-extern utk_test_case test_case_driver_load;
-extern utk_test_case test_case_valid_version;
-extern utk_test_case test_case_new_delete;
-extern utk_test_case test_case_valid_context;
-extern utk_test_case test_case_next;
-extern utk_test_case test_case_name_case;
-extern utk_test_case test_case_name_suite;
-extern utk_test_case test_case_index;
-extern utk_test_case test_case_count;
-extern utk_test_case test_case_run;
-extern utk_test_case test_case_results;

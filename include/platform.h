@@ -47,7 +47,18 @@ typedef int8_t  int8;
 typedef int8_t  int08;
 typedef int16_t int16;
 typedef int32_t int32;
+
+/** A bit of gcc insanity
+ * The size of int64_t and "long long int" are both 8 bytes. However, when it
+ * comes to printf format strings, gcc insists int64_t variables use "%ld",
+ * and "long long int" use "%lld". Under Visual Studio, both are formatted with
+ * "%lld".
+ */
+#ifdef __GNUC__
+typedef long long int int64;
+#else
 typedef int64_t int64;
+#endif
 
 /**
  * the intent of bool32 is to be zero for false and non-zero for true.
@@ -64,9 +75,20 @@ typedef uint8_t  uint8;
 typedef uint8_t  uint08;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
+/** A bit of gcc insanity
+ * The size of uint64_t and "long long unsigned int" are both 8 bytes. However,
+ * when it comes to printf format strings, gcc insists uint64_t variables use
+ * "%lu", and "long long unsigned int" use "%llu". Under Visual Studio, both
+ * are formatted with "%lld".
+*/
+#ifdef __GNUC__
+typedef long long unsigned int uint64;
+#else
 typedef uint64_t uint64;
+#endif
 
 typedef size_t memory_index;
+typedef uint32 counter32;
 
 typedef uintptr_t   umm;
 typedef intptr_t    smm;

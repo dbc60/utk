@@ -8,22 +8,30 @@
 
 #include "test_ehm.h"
 
+// The name of the exported test suite
+#define TS_NAME_EHM "EHM"
+
+// The names of our test cases
 #define TC_NAME_UNHANDLED "Unhandled Exception"
 #define TC_NAME_CATCH_UNHANDLED "Catch Unhandled Exception"
+#define TC_NAME_NESTED_CATCH "Nested Catch"
 #define TC_NAME_CATCH "Catch"
 #define TC_NAME_CATCH_ALL "Catch All"
 #define TC_NAME_CATCH_FINALLY "Catch Finally"
 #define TC_NAME_CATCH_ALL_FINALLY "Catch All Finally"
 
+// Exceptions to catch or not to catch, as needed.
 const ehm_exception exc_dont_catch = {"Catch Me If You Can!"};
 const ehm_exception exc_catch_me = {"Catch Me"};
 
-static utk_result test_unhandled_exception(void *data);
-static utk_result test_catch_unhandled_exception(void *data);
-static utk_result test_catch(void *data);
-static utk_result test_catch_all(void *data);
-static utk_result test_catch_finally(void *data);
-static utk_result test_catch_all_finally(void *data);
+// Test methods
+INTERNAL_FUNCTION utk_result test_unhandled_exception(void *data);
+INTERNAL_FUNCTION utk_result test_catch_unhandled_exception(void *data);
+INTERNAL_FUNCTION utk_result test_catch_nested(void *data);
+INTERNAL_FUNCTION utk_result test_catch(void *data);
+INTERNAL_FUNCTION utk_result test_catch_all(void *data);
+INTERNAL_FUNCTION utk_result test_catch_finally(void *data);
+INTERNAL_FUNCTION utk_result test_catch_all_finally(void *data);
 
 
 /** @brief EHM test cases
@@ -43,6 +51,15 @@ utk_test_case test_case_catch_unhandled_exception =
     TC_NAME_CATCH_UNHANDLED,
     NULL,
     &test_catch_unhandled_exception,
+    NULL,
+    NULL
+};
+
+utk_test_case test_case_catch_nested = 
+{
+    TC_NAME_NESTED_CATCH,
+    NULL,
+    &test_catch_nested,
     NULL,
     NULL
 };
@@ -90,6 +107,7 @@ utk_test_case test_case_catch_all_finally =
 enum test_ehm_results {
     EHM_SUCCESS = UTK_SUCCESS,
     EHM_ABJECT_FAILURE,
+    EHM_MISSED_CATCH,
     EHM_UNEXPECTED_CATCH,
     EHM_CATCH_BUT_NO_FINALLY,
     EHM_FINALLY_BUT_NO_CATCH
@@ -100,7 +118,10 @@ enum test_ehm_results {
 */
 
 /** @brief Throw an unhandled exception.
- * The test driver will have to catch it and display a nice error message.
+ * This is really a test of the driver that is executing the test cases. While
+ * it can verify the EHM module actually throws exceptions, its primary purpose
+ * is to verify the test driver can catch a misbehaving test case. If the
+ * driver doesn't catch this exception, then it will probably crash.
  */
 static utk_result
 test_unhandled_exception(void *data)
@@ -152,6 +173,34 @@ test_catch_unhandled_exception(void *data) {
     } else {
         // no catch, no catch all, no finally
         result = EHM_ABJECT_FAILURE;
+    }
+
+    return result;
+}
+
+static utk_result
+test_catch_nested(void *data)
+{
+    utk_result result = EHM_SUCCESS;
+    b32 wrong_catch = FALSE;
+    b32 nested_catch = FALSE;
+
+    UNREFERENCED(data);
+
+    EHM_TRY{
+        EHM_TRY{
+        EHM_THROW(exc_catch_me);
+        } EHM_CATCH(exc_catch_me) {
+            nested_catch = TRUE;
+        } EHM_ENDTRY;
+    } EHM_CATCH_ALL {
+        wrong_catch = TRUE;
+    } EHM_ENDTRY;
+
+    if (wrong_catch) {
+        result = EHM_UNEXPECTED_CATCH;
+    } else if (!nested_catch) {
+        result = EHM_MISSED_CATCH;
     }
 
     return result;
@@ -231,4 +280,28 @@ test_catch_all_finally(void *data)
     }
 
     return result;
+}
+
+
+LOCAL_VARIABLE utk_test_case *tca[] =
+{
+    // EHM tests
+    &test_case_unhandled_exception,
+    &test_case_catch_unhandled_exception,
+    &test_case_catch_nested,
+    &test_case_catch,
+    &test_case_catch_all,
+    &test_case_catch_finally,
+    &test_case_catch_all_finally
+};
+
+LOCAL_VARIABLE
+utk_test_suite ts_ehm = {TS_NAME_EHM, 
+                         ARRAY_COUNT(tca),
+                         tca};
+
+DLL_EXPORT utk_test_suite *
+test_suite_load(void)
+{
+    return &ts_ehm;
 }

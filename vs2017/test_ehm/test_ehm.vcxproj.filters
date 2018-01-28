@@ -15,10 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\but\test_suite_ehm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\but\test_ehm.c">
+    <ClCompile Include="..\..\test\test_ehm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +29,7 @@
     <ClInclude Include="..\..\include\utk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\but\test_ehm.h">
+    <ClInclude Include="..\..\test\test_ehm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ehm.h">

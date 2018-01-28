@@ -26,15 +26,15 @@ typedef const ch8 * (*get_name_case)(ute_context*);
 typedef const ch8 * (*get_name_suite)(ute_context*);
 typedef size_t (*get_index)(ute_context* handle);
 typedef size_t (*get_count)(ute_context* handle);
-//typedef void (*run_current)(ute_context* handle);
-//typedef size_t (*get_count_passed)(ute_context*);
-//typedef size_t (*get_count_failed)(ute_context*);
-//typedef size_t (*get_count_failed_setup)(ute_context*);
-//typedef size_t (*get_count_results)(ute_context*);
-//typedef ute_test_result (*get_result)(ute_context*, size_t);
+typedef void (*run_current)(ute_context* handle);
+typedef size_t (*get_count_passed)(ute_context*);
+typedef size_t (*get_count_failed)(ute_context*);
+typedef size_t (*get_count_failed_setup)(ute_context*);
+typedef size_t (*get_count_results)(ute_context*);
+typedef ute_test_result (*get_result)(ute_context*, size_t);
 
 // Test driver's data
-struct ute_test_driver_data
+struct ute_test_driver_inf
 {
     ute_context            *tdd_ctx;
     utk_test_suite         *tdd_ts;
@@ -49,25 +49,11 @@ struct ute_test_driver_data
     get_name_suite          tdd_get_name_suite;
     get_index               tdd_get_index;
     get_count               tdd_get_count;
-//    run_current             tdd_run_current;
-//    get_count_passed        tdd_get_count_passed;
-//    get_count_failed        tdd_get_count_failed;
-//    get_count_failed_setup  tdd_get_count_failed_setup;
-//    get_count_results       tdd_get_count_results;
-//    get_result              tdd_get_result;
+    run_current             tdd_run_current;
+    get_count_passed        tdd_get_count_passed;
+    get_count_failed        tdd_get_count_failed;
+    get_count_failed_setup  tdd_get_count_failed_setup;
+    get_count_results       tdd_get_count_results;
+    get_result              tdd_get_result;
 };
-typedef struct ute_test_driver_data ute_test_driver_data;
-
-extern utk_test_case test_case_valid_version;
-extern utk_test_case test_case_new_delete;
-extern utk_test_case test_case_valid_context;
-extern utk_test_case test_case_is_end;
-extern utk_test_case test_case_index_next_end;
-extern utk_test_case test_case_name_case;
-extern utk_test_case test_case_name_suite;
-extern utk_test_case test_case_index;
-extern utk_test_case test_case_count;
-//extern utk_test_case test_case_run;
-//extern utk_test_case test_case_results;
-//extern utk_test_case test_case_driver_load;
-
+typedef struct ute_test_driver_inf ute_test_driver_inf;

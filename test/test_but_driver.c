@@ -6,49 +6,59 @@
  * ========================================================================
  */
 
+#include <platform.h>
 #include "test_but_driver.h"
 #include <but_driver.h>
 #include <but_version.h>
+#include <utk.h>
 
 // For NULL
 #include <stddef.h>
 // For strncmp()
 #include <string.h>
 
+// The name of the exported test suite
+#define TS_NAME_BUT "BUT"
+
+#define BTR_STR "Data"
+
+
 // Internal test case for testing the driver
-#define TC_NAME_SUCCESS    "Test Success"
-#define TC_NAME_FAIL       "Test Fail"
-#define SUITE_NAME          "Driver"
+#define TC_NAME_SUCCESS "Test Success"
+#define TC_NAME_FAIL    "Test Fail"
+#define SUITE_NAME      "Driver"
 
 // Names of test cases
-#define TC_NAME_VALIDATE_VERSION   "Validate Version"
-#define TC_NAME_LOAD_DRIVER        "Load Driver"
-#define TC_NAME_NEW_DELETE         "New and Delete Context"
-#define TC_NAME_IS_VALID           "Validate Context"
-#define TC_NAME_NEXT_INDEX_MORE    "Next/Index/More"
-#define TC_NAME_CASE_NAME          "Case Name"
-#define TC_NAME_SUITE_NAME         "Suite Name"
-#define TC_NAME_INDEX              "Index"
-#define TC_NAME_COUNT              "Count"
-#define TC_NAME_RUN                "Run"
-#define TC_NAME_RESULTS            "Results"
+#define TC_NAME_NULL_DATA         "Null Data"
+#define TC_NAME_STR_DATA          "String Data"
+#define TC_NAME_VALIDATE_VERSION    "Validate Version"
+#define TC_NAME_LOAD_DRIVER         "Load Driver"
+#define TC_NAME_NEW_DELETE          "New and Delete Context"
+#define TC_NAME_IS_VALID            "Validate Context"
+#define TC_NAME_NEXT_INDEX_MORE     "Next/Index/More"
+#define TC_NAME_CASE_NAME           "Case Name"
+#define TC_NAME_SUITE_NAME          "Suite Name"
+#define TC_NAME_INDEX               "Index"
+#define TC_NAME_COUNT               "Count"
+#define TC_NAME_RUN                 "Run"
+#define TC_NAME_RESULTS             "Results"
 
 but_test_driver_data test_data;
 
-static utk_result context_setup(void *data);
-static void context_teardown(void *data);
+utk_result context_setup(void *data);
+void context_teardown(void *data);
 
-static utk_result test_is_valid_version(void *data);
-static utk_result test_new_delete(void *data);
-static utk_result test_is_valid_context(void *data);
-static utk_result test_next_index_more(void *data);
-static utk_result test_name_case(void *data);
-static utk_result test_name_suite(void *data);
-static utk_result test_index(void *data);
-static utk_result test_count(void *data);
-static utk_result test_run(void *data);
-static utk_result test_results(void *data);
-static utk_test_suite test_suite_success_fail;
+utk_result test_is_valid_version(void *data);
+utk_result test_new_delete(void *data);
+utk_result test_is_valid_context(void *data);
+utk_result test_next_index_more(void *data);
+utk_result test_name_case(void *data);
+utk_result test_name_suite(void *data);
+utk_result test_index(void *data);
+utk_result test_count(void *data);
+utk_result test_run(void *data);
+utk_result test_results(void *data);
+utk_test_suite test_suite_success_fail;
 
 
 enum test_driver_results {
@@ -99,6 +109,60 @@ driver_setup(void *data) {
     tdd->tdd_ts = &test_suite_success_fail;
 
     return TDR_SUCCESS;
+}
+
+
+/**
+ * @brief a coupld of simple test cases for Basic Unit Test
+ */
+utk_result but_test_data_null(void *data);
+utk_result but_test_data_str(void *data);
+
+enum but_test_data_results {
+    BTR_SUCCESS = UTK_SUCCESS,
+    BTR_UNEXPECTED_NON_NULL,
+    BTR_UNEXPECTED_NULL,
+    BTR_INVALID
+};
+
+/**
+* @brief Verify the utk_test_case "test_data" field  is the assigned string.
+*/
+utk_result
+but_test_data_str(void *data)
+{
+    utk_result result = BTR_SUCCESS;
+
+    if (NULL == data) {
+        result = BTR_UNEXPECTED_NULL;
+    } else if (0 != strncmp((char*)data, BTR_STR, sizeof (BTR_STR) - 1)) {
+        result = BTR_INVALID;
+    }
+
+    return result;
+}
+
+utk_test_case test_case_null = {
+    TC_NAME_NULL_DATA, NULL, but_test_data_null, NULL, NULL
+};
+
+utk_test_case test_case_str = {
+    TC_NAME_STR_DATA, NULL, but_test_data_str, NULL, (void*)BTR_STR
+};
+
+/**
+ * @brief Verify the utk_test_case "test_data" field  is null.
+ */
+utk_result
+but_test_data_null(void *data)
+{
+    utk_result result = BTR_SUCCESS;
+
+    if (data != NULL) {
+        result = BTR_UNEXPECTED_NON_NULL;
+    }
+
+    return result;
 }
 
 
@@ -194,17 +258,17 @@ utk_test_case test_case_results =
 };
 
 
-static utk_result test_success(void *data) {
+utk_result test_success(void *data) {
     UNREFERENCED(data);
     return TDR_SUCCESS;
 }
 
-static utk_result test_fail(void *data) {
+utk_result test_fail(void *data) {
     UNREFERENCED(data);
     return TDR_EXPECTED_FAIL;
 }
 
-static utk_test_case test_case_success =
+utk_test_case test_case_success =
 {
     TC_NAME_SUCCESS,
     NULL,
@@ -213,7 +277,7 @@ static utk_test_case test_case_success =
     NULL
 };
 
-static utk_test_case test_case_fail =
+utk_test_case test_case_fail =
 {
     TC_NAME_FAIL,
     NULL,
@@ -222,21 +286,21 @@ static utk_test_case test_case_fail =
     NULL
 };
 
-static utk_test_case *tca[] =
+LOCAL_VARIABLE utk_test_case *tca_internal[] =
 {
     &test_case_success,
     &test_case_fail
 };
 
-static utk_test_suite test_suite_success_fail =
+utk_test_suite test_suite_success_fail =
 {
     SUITE_NAME,
-    ARRAY_COUNT(tca),
-    tca
+    ARRAY_COUNT(tca_internal),
+    tca_internal
 };
 
 
-static utk_result
+utk_result
 context_setup(void *data)
 {
     but_test_driver_data *tdd = (but_test_driver_data*)data;
@@ -255,7 +319,7 @@ context_setup(void *data)
 }
 
 
-static void
+void
 context_teardown(void *data)
 {
     but_test_driver_data *tdd = (but_test_driver_data*)data;
@@ -268,7 +332,7 @@ context_teardown(void *data)
  * @brief unit tests
  */
 
-static utk_result
+utk_result
 test_is_valid_version(void *data)
 {
     utk_result result = TDR_SUCCESS;
@@ -292,7 +356,7 @@ test_is_valid_version(void *data)
 }
 
 
-static utk_result
+utk_result
 test_new_delete(void *data)
 {
     utk_result result = TDR_SUCCESS;
@@ -309,7 +373,7 @@ test_new_delete(void *data)
 }
 
 
-static utk_result
+utk_result
 test_is_valid_context(void *data)
 {
     utk_result result = TDR_SUCCESS;
@@ -332,7 +396,7 @@ test_is_valid_context(void *data)
  * return UTK_SUCCESS, it will take more effort than necessary to figure out
  * why and where it failed.
  */
-static utk_result
+utk_result
 test_next_index_more(void *data)
 {
     but_test_driver_data  * tdd = (but_test_driver_data*)data;
@@ -358,7 +422,7 @@ test_next_index_more(void *data)
 }
 
 
-static utk_result
+utk_result
 test_name_case(void *data)
 {
     but_test_driver_data * tdd = (but_test_driver_data*)data;
@@ -385,7 +449,7 @@ test_name_case(void *data)
 }
 
 
-static utk_result
+utk_result
 test_name_suite(void *data)
 {
     but_test_driver_data * tdd = (but_test_driver_data*)data;
@@ -411,7 +475,7 @@ test_name_suite(void *data)
 }
 
 
-static utk_result
+utk_result
 test_index(void *data)
 {
     but_test_driver_data * tdd = (but_test_driver_data*)data;
@@ -433,7 +497,7 @@ test_index(void *data)
 }
 
 
-static utk_result
+utk_result
 test_count(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
@@ -447,7 +511,7 @@ test_count(void *data)
 }
 
 
-static utk_result
+utk_result
 test_run(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
@@ -471,7 +535,7 @@ test_run(void *data)
 }
 
 
-static utk_result
+utk_result
 test_results(void *data)
 {
     but_test_driver_data  *tdd = (but_test_driver_data*)data;
@@ -490,4 +554,35 @@ test_results(void *data)
     }
 
     return result;
+}
+
+
+LOCAL_VARIABLE utk_test_case *tca[] = 
+{
+    // basic BUT tests
+    &test_case_null,
+    &test_case_str,
+
+    // BUT driver tests
+    &test_case_valid_version,
+    &test_case_new_delete,
+    &test_case_valid_context,
+    &test_case_next,
+    &test_case_name_case,
+    &test_case_name_suite,
+    &test_case_index,
+    &test_case_count,
+    &test_case_run,
+    &test_case_results
+};
+
+LOCAL_VARIABLE
+utk_test_suite but_ts = {TS_NAME_BUT, 
+                         ARRAY_COUNT(tca),
+                         tca};
+
+DLL_EXPORT utk_test_suite *
+test_suite_load(void)
+{
+    return &but_ts;
 }
