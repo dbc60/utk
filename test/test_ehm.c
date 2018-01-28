@@ -118,7 +118,10 @@ enum test_ehm_results {
 */
 
 /** @brief Throw an unhandled exception.
- * The test driver will have to catch it and display a nice error message.
+ * This is really a test of the driver that is executing the test cases. While
+ * it can verify the EHM module actually throws exceptions, its primary purpose
+ * is to verify the test driver can catch a misbehaving test case. If the
+ * driver doesn't catch this exception, then it will probably crash.
  */
 static utk_result
 test_unhandled_exception(void *data)

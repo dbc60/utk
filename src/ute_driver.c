@@ -227,15 +227,16 @@ ute_run(ute_context *ctx)
     ute_counter counter;
     utk_test_suite *ts = ctx->test_suite;
     utk_test_case *tc = ts->test_cases[ctx->index];
-    u64 count_start;
+    u64 count_start = 0;
     utk_result result_setup = UTR_PASSED;
     utk_result result_test = UTR_PASSED;
     b32 thrown = FALSE;
-    u64 count_leaks;
+    u64 count_leaks = 0;
 
     ute_counter_init(&counter, ctx);
     do {
-        count_start = ute_get_count_allocation(&counter);
+        //count_start = utm_get_count_allocation(&counter);
+        UNREFERENCED(count_start);
         ute_increment_count_throw(&counter);
 
         EHM_TRY {
@@ -279,7 +280,7 @@ ute_run(ute_context *ctx)
             }
         }
 
-        count_leaks = ute_get_count_allocation(&counter) - count_start;
+        //count_leaks = ute_get_count_allocation(&counter) - count_start;
         if (count_leaks > 0) {
             if (!thrown && result_test != UTR_PASSED) {
                 /**

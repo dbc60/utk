@@ -43,10 +43,10 @@ struct ute_counter
      * has been passed to free/delete. This value should be zero when the test
      * is over.
      */
-    u64 count_allocations;
+    //u64 count_allocations;
     
     // the number of invalid pointers passed to free/delete
-    u64 count_invalid_free;
+    //u64 count_invalid_free;
 
     // The current test context
     ute_context *context;
@@ -62,8 +62,4 @@ void ute_throw_disable(ute_counter *uc);
 void ute_throw_enable(ute_counter *uc);
 b32 ute_throw_is_enabled(const ute_counter *uc);
 b32 ute_thrown(const ute_counter *uc);
-void ute_memory_allocated(ute_counter *uc, void *mem);
-void ute_memory_released(ute_counter *uc, void *mem);
-void ute_memory_invalid_free(ute_counter *uc, void *mem);
-u64 ute_get_count_allocation(ute_counter *uc);
 u64 ute_get_count_exception_point(ute_counter *uc);
