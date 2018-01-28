@@ -76,6 +76,13 @@ gcc $COMPILER_FLAGS -c -fpic src/ehm.c -o $BUILD_PATH/ehm.o
 gcc $COMPILER_FLAGS -c -fpic src/ehm_assert.c -o $BUILD_PATH/ehm_assert.o
 ar rcs $BUILD_PATH/ehm.a $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
 
+##
+## linux_ehm.a and linux_ehm.lib (the shared and import libraries)
+##
+echo Building shared lib liblinuxehm.so
+gcc $COMPILER_FLAGS -c -fpic -Isrc src/linux_ehm.c -o $BUILD_PATH/linux_ehm.o
+gcc -shared -Wl,-soname,$BUILD_PATH/liblinuxehm.so -o $BUILD_PATH/liblinuxehm.so \
+    $BUILD_PATH/linux_ehm.o $BUILD_PATH/ehm.a
 
 ##
 ## linux_but_driver application
@@ -86,8 +93,7 @@ ar rcs $BUILD_PATH/ehm.a $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
 echo Building executable linux_but_driver
 gcc $COMPILER_FLAGS src/linux_but_driver.c src/but_test_driver.c \
     -o $BUILD_PATH/linux_but_driver $LINKER_FLAGS $BUILD_PATH/but_driver.a \
-    $BUILD_PATH/ehm.a -ldl
-
+    -L$BUILD_PATH -llinuxehm -ldl
 
 ##
 ## libtest_but_driver.so test suite
@@ -116,7 +122,7 @@ gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ehm.c -o $BUILD_PATH/test_ehm.o
 echo building shared library libtest_ehm.so
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ehm.so.1 \
     -o $BUILD_PATH/libtest_ehm.so.1.0 $BUILD_PATH/test_ehm.o \
-    $BUILD_PATH/ehm.a
+    -L$BUILD_PATH -llinuxehm
 
 
 ##
@@ -132,7 +138,7 @@ gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ute_driver.c -o \
 echo Building shared library libtest_ute_driver.so.1.0
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_driver.so.1 \
     -o $BUILD_PATH/libtest_ute_driver.so.1.0 $BUILD_PATH/test_ute_driver.o \
-    $BUILD_PATH/ute_driver.a $BUILD_PATH/ehm.a
+    $BUILD_PATH/ute_driver.a -L$BUILD_PATH -llinuxehm
 
 
 ##
@@ -147,7 +153,7 @@ gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ute_counter.c -o \
 ## build libtest_ute_counter.so - the unit tests for ute_counter.o
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_counter.so.1.0 \
     -o $BUILD_PATH/libtest_ute_counter.so.1.0 $BUILD_PATH/test_ute_counter.o \
-    $BUILD_PATH/ute_counter.o $BUILD_PATH/ute_driver.a $BUILD_PATH/ehm.a
+    $BUILD_PATH/ute_counter.o $BUILD_PATH/ute_driver.a -L$BUILD_PATH -llinuxehm
 
 
 echo build complete
