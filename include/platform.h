@@ -116,6 +116,7 @@ typedef uint64  u64;
 
 typedef bool32  b32;
 typedef char    ch8;
+typedef signed char sch;
 typedef unsigned char uch;
 typedef wchar_t wch;
 typedef real32  r32;
@@ -188,7 +189,7 @@ typedef real64  r64;
  * parameters and thus stifle these noisy compiler warnings.
  */
 #ifndef UNREFERENCED
-#define UNREFERENCED(name) ((void)(name))
+#define UNREFERENCED(arg) ((void)(arg))
 #endif
 
 /** @brief if PROJECT_WIN32 is defined, then define import/export macros */
