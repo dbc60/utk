@@ -114,8 +114,8 @@ enum test_ehm_results {
 };
 
 /**
-* @brief unit tests
-*/
+ * @brief unit tests
+ */
 
 /** @brief Throw an unhandled exception.
  * This is really a test of the driver that is executing the test cases. While
