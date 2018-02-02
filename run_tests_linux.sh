@@ -41,3 +41,7 @@ $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ute_counter.so
 echo
 echo Executing $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ute_driver.so
 $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ute_driver.so
+
+echo
+echo Executing $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_utk_mutex.so
+$BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_utk_mutex.so
