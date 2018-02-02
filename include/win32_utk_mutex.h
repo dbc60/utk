@@ -49,8 +49,8 @@ enum {
         }                                                               \
     } while (0)
 #define utk_mutex_trylock(mutex)    \
-    ((int)!InterlockedExchange((mutex), UTK_MUTEX_LOCK))
+    ((int)InterlockedExchange((mutex), UTK_MUTEX_LOCKED))
 #define utk_mutex_unlock(mutex)     \
-    ((void)InterlockedExchange((mutex), UTK_MUTEX_UNLOCK))
+    ((void)InterlockedExchange((mutex), UTK_MUTEX_UNLOCKED))
 
 #endif  // WIN32_UTK_MUTEX_H_INCLUDED

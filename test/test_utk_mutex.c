@@ -9,6 +9,7 @@
 #include <platform.h>
 #include <utk.h>
 #include <but.h>
+#include <utk_mutex.h>
 #include "test_utk_mutex.h"
 
 // The name of the exported test suite
@@ -69,21 +70,46 @@ enum test_mutex_results {
  */
 
 utk_result test_lock(void *data) {
+    utk_mutex mtx = UTK_MUTEX_INITIALIZER;
+    utk_result result = MTX_ABJECT_FAILURE;
+
     UNREFERENCED(data);
 
-    return MTX_ABJECT_FAILURE;
+    utk_mutex_lock(&mtx);
+    if (utk_mutex_trylock(&mtx) != 0) {
+        result = MTX_SUCCESS;
+    }
+
+    return result;
 }
 
 utk_result test_unlock(void *data) {
+    utk_mutex mtx = UTK_MUTEX_INITIALIZER;
+    utk_result result = MTX_ABJECT_FAILURE;
+
     UNREFERENCED(data);
 
-    return MTX_ABJECT_FAILURE;
+    utk_mutex_lock(&mtx);
+    utk_mutex_unlock(&mtx);
+    if (utk_mutex_trylock(&mtx) == 0)  {
+        result = MTX_SUCCESS;
+    }
+
+    return result;
 }
 
 utk_result test_trylock(void *data) {
+    utk_mutex mtx = UTK_MUTEX_INITIALIZER;
+    utk_result result = MTX_ABJECT_FAILURE;
+    
     UNREFERENCED(data);
 
-    return MTX_ABJECT_FAILURE;
+    if (utk_mutex_trylock(&mtx) == 0
+        && utk_mutex_trylock(&mtx) != 0) {
+        result = MTX_SUCCESS;
+    }
+
+    return result;
 }
 
 
