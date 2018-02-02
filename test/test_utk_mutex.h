@@ -10,12 +10,8 @@
 
 #include <utk.h>
 #include <but.h>
-#include <ehm.h>
+#include <utk_mutex.h>
 
-extern utk_test_case test_case_unhandled_exception;
-extern utk_test_case test_case_catch_unhandled_exception;
-extern utk_test_case test_case_catch_nested;
-extern utk_test_case test_case_catch;
-extern utk_test_case test_case_catch_all;
-extern utk_test_case test_case_catch_finally;
-extern utk_test_case test_case_catch_all_finally;
+extern utk_test_case test_case_lock;
+extern utk_test_case test_case_unlock;
+extern utk_test_case test_case_trylock;

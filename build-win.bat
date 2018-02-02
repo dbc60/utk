@@ -290,6 +290,19 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_counter.dll"
      "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\win32_ehm.lib"
 
 
+::
+:: test_mutex.dll test suite
+::
+
+:: compile the components of test_mutex.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_mutex.pch ^
+   /Fd%BUILD_PATH%\test_utk_mutex.pdb "test\test_utk_mutex.c"
+
+:: build test_mutex.dll
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_mutex.dll" ^
+     /PDB:%BUILD_PATH%\test_mutex.pdb "%BUILD_PATH%\test_utk_mutex.obj"
+
+
 :: Build complete
 goto :EOF
 
