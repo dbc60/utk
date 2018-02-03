@@ -206,32 +206,25 @@ lib /OUT:"%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
 :: Exception Handling Module (EHM)
 ::
 
-:: build the static library for EHM: ehm.lib
+:: We build EHM as a shared library so there's only one instance of ehm_stack.
+:: Building ehm.dll and ehm.lib (the import link-library)
+::
 cl %COMPILER_FLAGS% /D PROJECTLIBRARY_EXPORTS /c /Fp%BUILD_PATH%\ehm.pch ^
-   /Fd%BUILD_PATH%\ehm.pdb src\ehm.c src\ehm_assert.c
-
-lib /OUT:"%BUILD_PATH%\ehm.lib" %MACHINE_FLAG% /NOLOGO ^
-    %BUILD_PATH%\ehm.obj %BUILD_PATH%\ehm_assert.obj
-
-::
-:: win32_ehm.dll and win32_ehm.lib (the import link-library)
-::
-cl %COMPILER_FLAGS% /D PROJECTLIBRARY_EXPORTS /c /Fp%BUILD_PATH%\win32_ehm.pch ^
-   /Fd%BUILD_PATH%\win32_ehm.pdb src\win32_ehm.c
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\win32_ehm.dll" ^
+   /Fd%BUILD_PATH%\ehm.pdb src\win32_ehm.c src\ehm.c src\ehm_assert.c
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\ehm.dll" ^
      /PDB:%BUILD_PATH%\win32_ehm.pdb "%BUILD_PATH%\win32_ehm.obj" ^
-     "%BUILD_PATH%\ehm.lib"
+     "%BUILD_PATH%\ehm.obj" "%BUILD_PATH%\ehm_assert.obj"
 
 ::
 :: win32_but_driver.exe
 ::
 
 :: build win32_but_driver.exe from win32_but_driver.c, but_test_driver.c,
-:: but_driver.lib, and win32_ehm.lib
+:: but_driver.lib, and ehm.lib
 cl %COMPILER_FLAGS% "src\win32_but_driver.c" ^
    "src\but_test_driver.c" /Fe%BUILD_PATH%\win32_but_driver.exe ^
    /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% ^
-   %BUILD_PATH%\but_driver.lib %BUILD_PATH%\win32_ehm.lib
+   %BUILD_PATH%\but_driver.lib %BUILD_PATH%\ehm.lib
 
 
 ::
@@ -252,14 +245,14 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" 
 :: test_ehm.dll test suite
 ::
 
-:: compile the components of test_ehm.dll that tests win32_ehm.lib
+:: compile the components of test_ehm.dll that tests ehm.lib
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ehm.pch ^
    /Fd%BUILD_PATH%\test_ehm.pdb "test\test_ehm.c"
 
-:: build test_ehm.dll - the unit test for win32_ehm.lib
+:: build test_ehm.dll - the unit test for ehm.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
      /PDB:%BUILD_PATH%\test_ehm.pdb "%BUILD_PATH%\test_ehm.obj" ^
-     "%BUILD_PATH%\win32_ehm.lib"
+     "%BUILD_PATH%\ehm.lib"
 
 
 ::
@@ -273,7 +266,7 @@ cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
 :: build test_ute_driver.dll - the unit test for ute_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
      /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
-     "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\win32_ehm.lib"
+     "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\ehm.lib"
 
 
 ::
@@ -287,7 +280,7 @@ cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_counter.pch ^
 :: build test_ute_driver.dll - the unit test for ute_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_counter.dll" ^
      /PDB:%BUILD_PATH%\test_ute_counter.pdb "%BUILD_PATH%\test_ute_counter.obj" ^
-     "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\win32_ehm.lib"
+     "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\ehm.lib"
 
 
 ::

@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\ehm_assert.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ehm.c">
+    <ClCompile Include="..\..\test\test_utk_mutex.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\ehm.h">
+    <ClInclude Include="..\..\test\test_utk_mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ehm_assert.h">
+    <ClInclude Include="..\..\include\but.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\platform.h">
+    <ClInclude Include="..\..\include\utk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\utk_mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
