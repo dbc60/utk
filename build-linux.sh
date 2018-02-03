@@ -70,19 +70,15 @@ ar rcs $BUILD_PATH/ute_driver.a $BUILD_PATH/ute_driver.o \
 ## Exception Handling Module (EHM)
 ##
 
-## Build the static library for EHM: ehm.a
-echo Building static lib ehm.a
+## We build EHM as a shared library so there's only one instance of ehm_stack.
+## libehm.so is the shared and import library
+##
+echo Building shared lib libehm.so
+gcc $COMPILER_FLAGS -c -fpic -Isrc src/linux_ehm.c -o $BUILD_PATH/linux_ehm.o
 gcc $COMPILER_FLAGS -c -fpic src/ehm.c -o $BUILD_PATH/ehm.o
 gcc $COMPILER_FLAGS -c -fpic src/ehm_assert.c -o $BUILD_PATH/ehm_assert.o
-ar rcs $BUILD_PATH/ehm.a $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
-
-##
-## linux_ehm.a and linux_ehm.lib (the shared and import libraries)
-##
-echo Building shared lib liblinuxehm.so
-gcc $COMPILER_FLAGS -c -fpic -Isrc src/linux_ehm.c -o $BUILD_PATH/linux_ehm.o
-gcc -shared -Wl,-soname,$BUILD_PATH/liblinuxehm.so -o $BUILD_PATH/liblinuxehm.so \
-    $BUILD_PATH/linux_ehm.o $BUILD_PATH/ehm.a
+gcc -shared -Wl,-soname,$BUILD_PATH/libehm.so -o $BUILD_PATH/libehm.so \
+    $BUILD_PATH/linux_ehm.o $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
 
 ##
 ## linux_but_driver application
@@ -93,7 +89,7 @@ gcc -shared -Wl,-soname,$BUILD_PATH/liblinuxehm.so -o $BUILD_PATH/liblinuxehm.so
 echo Building executable linux_but_driver
 gcc $COMPILER_FLAGS src/linux_but_driver.c src/but_test_driver.c \
     -o $BUILD_PATH/linux_but_driver $LINKER_FLAGS $BUILD_PATH/but_driver.a \
-    -L$BUILD_PATH -llinuxehm -ldl
+    -L$BUILD_PATH -lehm -ldl
 
 ##
 ## libtest_but_driver.so test suite
@@ -122,7 +118,7 @@ gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ehm.c -o $BUILD_PATH/test_ehm.o
 echo building shared library libtest_ehm.so
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ehm.so.1 \
     -o $BUILD_PATH/libtest_ehm.so $BUILD_PATH/test_ehm.o \
-    -L$BUILD_PATH -llinuxehm
+    -L$BUILD_PATH -lehm
 
 
 ##
@@ -138,7 +134,7 @@ gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ute_driver.c -o \
 echo Building shared library libtest_ute_driver.so
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_driver.so.1 \
     -o $BUILD_PATH/libtest_ute_driver.so $BUILD_PATH/test_ute_driver.o \
-    $BUILD_PATH/ute_driver.a -L$BUILD_PATH -llinuxehm
+    $BUILD_PATH/ute_driver.a -L$BUILD_PATH -lehm
 
 
 ##
@@ -153,7 +149,21 @@ gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_ute_counter.c -o \
 ## build libtest_ute_counter.so - the unit tests for ute_counter.o
 gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_counter.so \
     -o $BUILD_PATH/libtest_ute_counter.so $BUILD_PATH/test_ute_counter.o \
-    $BUILD_PATH/ute_counter.o $BUILD_PATH/ute_driver.a -L$BUILD_PATH -llinuxehm
+    $BUILD_PATH/ute_counter.o $BUILD_PATH/ute_driver.a -L$BUILD_PATH -lehm
+
+
+##
+## libtest_mutex.so test suite
+##
+
+## compile the components of libtest_mutex.so
+echo Building components of libtest_utk_mutex.so
+gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_utk_mutex.c -o \
+    $BUILD_PATH/test_utk_mutex.o
+
+## build libtest_mutex.so - the unit tests for ute_counter.o
+gcc -shared -Wl,-soname,$BUILD_PATH/libtest_utk_mutex.so \
+    -o $BUILD_PATH/libtest_utk_mutex.so $BUILD_PATH/test_utk_mutex.o -lpthread
 
 
 ##

@@ -13,7 +13,7 @@
 #include "test_utk_mutex.h"
 
 // The name of the exported test suite
-#define TS_NAME_UTK_MUTEX "UTK_MUTEX"
+#define TS_NAME_UTK_MUTEX "UTK Mutex"
 
 // The names of our test cases
 #define TC_NAME_LOCK        "Lock"

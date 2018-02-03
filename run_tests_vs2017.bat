@@ -56,6 +56,10 @@ echo.
 echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ute_driver.dll
 %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ute_driver.dll
 
+echo.
+echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_mutex.dll
+%BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_mutex.dll
+
 goto :EOF
 
 :errProjectPath
