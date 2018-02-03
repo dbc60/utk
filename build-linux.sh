@@ -166,4 +166,18 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libtest_utk_mutex.so \
     -o $BUILD_PATH/libtest_utk_mutex.so $BUILD_PATH/test_utk_mutex.o -lpthread
 
 
+##
+## libtest_mutex.so test suite
+##
+
+## compile the components of libtest_mutex.so
+echo Building components of libtest_utk_mutex.so
+gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_utk_mutex.c -o \
+    $BUILD_PATH/test_utk_mutex.o
+
+## build libtest_mutex.so - the unit tests for ute_counter.o
+gcc -shared -Wl,-soname,$BUILD_PATH/libtest_utk_mutex.so \
+    -o $BUILD_PATH/libtest_utk_mutex.so $BUILD_PATH/test_utk_mutex.o -lpthread
+
+
 echo build complete
