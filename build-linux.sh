@@ -45,6 +45,7 @@ COMPILER_FLAGS="$COMMON_COMPILER_FLAGS $COMPILER_BUILD_FLAGS"
 ## Build the static library for the BUT driver: but_driver.a.
 ## Need to compile with Position Independent Code (PIC) so it can be linked
 ## into the test suite shared library as well as the test driver.
+echo Building static library but_driver.a
 gcc $COMPILER_FLAGS -c -fpic src/but_driver.c -o $BUILD_PATH/but_driver.o
 gcc $COMPILER_FLAGS -c -fpic src/but_version.c -o $BUILD_PATH/but_version.o
 
@@ -81,14 +82,14 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libehm.so -o $BUILD_PATH/libehm.so \
     $BUILD_PATH/linux_ehm.o $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
 
 ##
-## linux_but_driver application
+## but_driver application
 ##
 
 ## -ldl will link against libdl to resolve dlopen, dlclose, etc.
 ## Note that "-l<library>" must trail the file names for gcc.
-echo Building executable linux_but_driver
-gcc $COMPILER_FLAGS src/linux_but_driver.c src/but_test_driver.c \
-    -o $BUILD_PATH/linux_but_driver $LINKER_FLAGS $BUILD_PATH/but_driver.a \
+echo Building executable but_driver
+gcc $COMPILER_FLAGS src/but_driver_linux.c src/but_test_driver.c \
+    -o $BUILD_PATH/but_driver $LINKER_FLAGS $BUILD_PATH/but_driver.a \
     -L$BUILD_PATH -lehm -ldl
 
 ##

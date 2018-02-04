@@ -41,24 +41,24 @@ set BUILD_PATH=%BUILD_ROOT%\%PLATFORM%\%BUILD_CONFIG%
 
 :: Run the test suites
 echo.
-echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_but_driver.dll
-%BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_but_driver.dll
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_but_driver.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_but_driver.dll
 
 echo.
-echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ehm.dll
-%BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ehm.dll
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_ehm.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_ehm.dll
 
 echo.
-echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ute_counter.dll
-%BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ute_counter.dll
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_ute_counter.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_ute_counter.dll
 
 echo.
-echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ute_driver.dll
-%BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_ute_driver.dll
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_ute_driver.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_ute_driver.dll
 
 echo.
-echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_mutex.dll
-%BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_mutex.dll
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_mutex.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_mutex.dll
 
 goto :EOF
 

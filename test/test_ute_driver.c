@@ -652,7 +652,7 @@ utk_test_suite ute_ts = {UTE_TS_NAME,
                          ARRAY_COUNT(tca),
                          tca};
 
-DLL_EXPORT utk_test_suite *
+PROJECTAPI utk_test_suite *
 test_suite_load(void)
 {
     return &ute_ts;

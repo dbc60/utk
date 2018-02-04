@@ -30,7 +30,7 @@
  * @return the version of the UTE library as a string
  */
 /* Returns UTE_VERSION_STR */
-DLL_EXPORT const ch8* ute_get_version_str(void);
+ const ch8* ute_get_version_str(void);
 
 /**
  * The UTE version encoded into an int, with the low order 8 bits being the
@@ -42,6 +42,6 @@ DLL_EXPORT const ch8* ute_get_version_str(void);
  * @return the version of the UTE library as a 32-bit unsigned int.
  */
 /* Returns UTE_VERSION_NUM */
-DLL_EXPORT u32 ute_get_version_num(void);
+ u32 ute_get_version_num(void);
 
 #endif  /* UTE_VERSION_H_INCLUDED */
