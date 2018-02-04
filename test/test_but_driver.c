@@ -581,7 +581,7 @@ utk_test_suite but_ts = {TS_NAME_BUT,
                          ARRAY_COUNT(tca),
                          tca};
 
-DLL_EXPORT utk_test_suite *
+PROJECTAPI utk_test_suite *
 test_suite_load(void)
 {
     return &but_ts;

@@ -16,9 +16,9 @@
 #include <platform.h>
 
 
-DLL_EXPORT ehm_frame *ehm_stack;
+PROJECTAPI ehm_frame *ehm_stack;
 
-DLL_EXPORT void
+PROJECTAPI void
 ehm_throw(const ehm_exception *e,
           const ch8 *filename,
           u32 line,

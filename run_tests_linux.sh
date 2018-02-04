@@ -27,21 +27,21 @@ BUILD_PATH=$BUILD_ROOT/$PLATFORM/$BUILD_CONFIG
 
 ## Run the test suites
 echo
-echo Executing $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_but_driver.so
-$BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_but_driver.so
+echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_but_driver.so
+$BUILD_PATH/but_driver $BUILD_PATH/libtest_but_driver.so
 
 echo
-echo Executing $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ehm.so
-$BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ehm.so
+echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_ehm.so
+$BUILD_PATH/but_driver $BUILD_PATH/libtest_ehm.so
 
 echo
-echo Executing $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ute_counter.so
-$BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ute_counter.so
+echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_ute_counter.so
+$BUILD_PATH/but_driver $BUILD_PATH/libtest_ute_counter.so
 
 echo
-echo Executing $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ute_driver.so
-$BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_ute_driver.so
+echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_ute_driver.so
+$BUILD_PATH/but_driver $BUILD_PATH/libtest_ute_driver.so
 
 echo
-echo Executing $BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_utk_mutex.so
-$BUILD_PATH/linux_but_driver $BUILD_PATH/libtest_utk_mutex.so
+echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_utk_mutex.so
+$BUILD_PATH/but_driver $BUILD_PATH/libtest_utk_mutex.so

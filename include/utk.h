@@ -61,7 +61,7 @@ typedef utk_test_suite* (utk_test_suite_load)(void);
 
 // This is the only function that a Basic Unit Test DLL must export.
 #define TEST_SUITE_LOAD_NAME "test_suite_load"
-DLL_EXPORT utk_test_suite_load test_suite_load;
+PROJECTAPI utk_test_suite_load test_suite_load;
 
 
 END_EXTERN_C

@@ -181,11 +181,13 @@ del /q "%BUILD_PATH%"\*.pdb >nul 2>&1
 ::
 
 :: build the static library for the BUT driver: but_driver.lib
+echo ** Building static library but_driver.lib
 cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\but_driver.pch ^
    /Fd%BUILD_PATH%\but_driver.pdb src\but_driver.c src\but_version.c
 
 lib /OUT:"%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO ^
     %BUILD_PATH%\but_driver.obj %BUILD_PATH%\but_version.obj
+echo.
 
 
 ::
@@ -193,6 +195,7 @@ lib /OUT:"%BUILD_PATH%\but_driver.lib" %MACHINE_FLAG% /NOLOGO ^
 ::
 
 :: build the static library for the UTE driver: ute_driver.lib
+echo ** Building static library ute_driver.lib
 cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch ^
    /Fd%BUILD_PATH%\ute_driver.pdb src\ute_driver.c src\ute_version.c ^
    src\ute_counter.c
@@ -200,6 +203,7 @@ cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\ute_driver.pch ^
 lib /OUT:"%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
     %BUILD_PATH%\ute_driver.obj %BUILD_PATH%\ute_version.obj ^
     %BUILD_PATH%\ute_counter.obj
+echo.
 
 
 ::
@@ -209,22 +213,28 @@ lib /OUT:"%BUILD_PATH%\ute_driver.lib" %MACHINE_FLAG% /NOLOGO ^
 :: We build EHM as a shared library so there's only one instance of ehm_stack.
 :: Building ehm.dll and ehm.lib (the import link-library)
 ::
+echo ** Building shared library ehm.dll
 cl %COMPILER_FLAGS% /D PROJECTLIBRARY_EXPORTS /c /Fp%BUILD_PATH%\ehm.pch ^
    /Fd%BUILD_PATH%\ehm.pdb src\win32_ehm.c src\ehm.c src\ehm_assert.c
+
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\ehm.dll" ^
      /PDB:%BUILD_PATH%\win32_ehm.pdb "%BUILD_PATH%\win32_ehm.obj" ^
      "%BUILD_PATH%\ehm.obj" "%BUILD_PATH%\ehm_assert.obj"
+echo.
+
 
 ::
-:: win32_but_driver.exe
+:: but_driver.exe
 ::
 
-:: build win32_but_driver.exe from win32_but_driver.c, but_test_driver.c,
+:: build but_driver.exe from but_driver_win32.c, but_test_driver.c,
 :: but_driver.lib, and ehm.lib
-cl %COMPILER_FLAGS% "src\win32_but_driver.c" ^
-   "src\but_test_driver.c" /Fe%BUILD_PATH%\win32_but_driver.exe ^
-   /Fm%BUILD_PATH%\win32_but_driver.map  /link %LINKER_FLAGS% ^
-   %BUILD_PATH%\but_driver.lib %BUILD_PATH%\ehm.lib
+echo ** Building application but_driver.exe
+cl %COMPILER_FLAGS% "src\but_driver_win32.c" ^
+   "src\but_test_driver.c" /Fe%BUILD_PATH%\but_driver.exe ^
+   /Fm%BUILD_PATH%\but_driver.map  ^
+   /link %LINKER_FLAGS% %BUILD_PATH%\but_driver.lib %BUILD_PATH%\ehm.lib
+echo.
 
 
 ::
@@ -232,13 +242,17 @@ cl %COMPILER_FLAGS% "src\win32_but_driver.c" ^
 ::
 
 :: compile the components of test_but_driver.dll
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_but_driver.pch ^
-   /Fd%BUILD_PATH%\test_but_driver.pdb "test\test_but_driver.c"
+echo ** Building shared test library test_but_driver.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_but_driver.pch /Fd%BUILD_PATH%\test_but_driver.pdb ^
+   "test\test_but_driver.c"
 
 :: Link the components and libraries to create the  test suite
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% ^
+     /OUT:"%BUILD_PATH%\test_but_driver.dll" ^
      /PDB:%BUILD_PATH%\test_but_driver.pdb "%BUILD_PATH%\test_but_driver.obj" ^
      "%BUILD_PATH%\but_driver.lib"
+echo.
 
 
 ::
@@ -246,13 +260,15 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_but_driver.dll" 
 ::
 
 :: compile the components of test_ehm.dll that tests ehm.lib
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ehm.pch ^
-   /Fd%BUILD_PATH%\test_ehm.pdb "test\test_ehm.c"
+echo ** Building shared test library test_ehm.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_ehm.pch /Fd%BUILD_PATH%\test_ehm.pdb "test\test_ehm.c"
 
 :: build test_ehm.dll - the unit test for ehm.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
      /PDB:%BUILD_PATH%\test_ehm.pdb "%BUILD_PATH%\test_ehm.obj" ^
      "%BUILD_PATH%\ehm.lib"
+echo.
 
 
 ::
@@ -260,13 +276,16 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ehm.dll" ^
 ::
 
 :: compile the components of test_ute_driver.dll that tests ute_driver.lib
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_driver.pch ^
-   /Fd%BUILD_PATH%\test_ute_driver.pdb "test\test_ute_driver.c"
+echo ** Building shared test library test_ute_driver.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_ute_driver.pch /Fd%BUILD_PATH%\test_ute_driver.pdb ^
+   "test\test_ute_driver.c"
 
 :: build test_ute_driver.dll - the unit test for ute_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" ^
      /PDB:%BUILD_PATH%\test_ute_driver.pdb "%BUILD_PATH%\test_ute_driver.obj" ^
      "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\ehm.lib"
+echo.
 
 
 ::
@@ -274,13 +293,16 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_driver.dll" 
 ::
 
 :: compile the components of test_ute_counter.dll
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_ute_counter.pch ^
-   /Fd%BUILD_PATH%\test_ute_counter.pdb "test\test_ute_counter.c"
+echo ** Building shared test library test_ute_counter.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_ute_counter.pch /Fd%BUILD_PATH%\test_ute_counter.pdb ^
+   "test\test_ute_counter.c"
 
 :: build test_ute_driver.dll - the unit test for ute_driver.lib
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_counter.dll" ^
      /PDB:%BUILD_PATH%\test_ute_counter.pdb "%BUILD_PATH%\test_ute_counter.obj" ^
      "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\ehm.lib"
+echo.
 
 
 ::
@@ -288,25 +310,15 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_ute_counter.dll"
 ::
 
 :: compile the components of test_mutex.dll
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_mutex.pch ^
-   /Fd%BUILD_PATH%\test_utk_mutex.pdb "test\test_utk_mutex.c"
+echo ** Building shared test library test_mutex.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_mutex.pch /Fd%BUILD_PATH%\test_utk_mutex.pdb ^
+   "test\test_utk_mutex.c"
 
 :: build test_mutex.dll
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_mutex.dll" ^
      /PDB:%BUILD_PATH%\test_mutex.pdb "%BUILD_PATH%\test_utk_mutex.obj"
-
-
-::
-:: test_mutex.dll test suite
-::
-
-:: compile the components of test_mutex.dll
-cl %COMPILER_FLAGS% /c /Isrc /D _LIB /Fp%BUILD_PATH%\test_mutex.pch ^
-   /Fd%BUILD_PATH%\test_utk_mutex.pdb "test\test_utk_mutex.c"
-
-:: build test_mutex.dll
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_mutex.dll" ^
-     /PDB:%BUILD_PATH%\test_mutex.pdb "%BUILD_PATH%\test_utk_mutex.obj"
+echo.
 
 
 :: Build complete

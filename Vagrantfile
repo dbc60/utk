@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Start with "vagrant up linux"
   config.vm.define "linux" do |devlinux|
-    devlinux.vm.box = "ubuntu/xenial64"
+    devlinux.vm.box = "bento/ubuntu-16.04"
   end
 
   # Vagrant Configuration per https://forums.freebsd.org/threads/52717/
