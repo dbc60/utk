@@ -321,6 +321,22 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_mutex.dll" ^
 echo.
 
 
+::
+:: test_rgn_cfg.dll test suite
+::
+
+:: compile the components of test_rgn_cfg.dll
+echo ** Building shared test library test_rgn_cfg.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_rgn_cfg.pch /Fd%BUILD_PATH%\test_rgn_cfg.pdb ^
+   "test\test_rgn_cfg.c"
+
+:: build test_rgn_cfg.dll
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_rgn_cfg.dll" ^
+     /PDB:%BUILD_PATH%\test_rgn_cfg.pdb "%BUILD_PATH%\test_rgn_cfg.obj"
+echo.
+
+
 :: Build complete
 goto :EOF
 

@@ -6,7 +6,9 @@
 * ========================================================================
 */
 
-#include "test_ehm.h"
+#include <utk.h>
+#include <but.h>
+#include <ehm.h>
 
 // The name of the exported test suite
 #define TS_NAME_EHM "EHM"
@@ -24,6 +26,7 @@
 const ehm_exception exc_dont_catch = {"Catch Me If You Can!"};
 const ehm_exception exc_catch_me = {"Catch Me"};
 
+
 // Test methods
 INTERNAL_FUNCTION utk_result test_unhandled_exception(void *data);
 INTERNAL_FUNCTION utk_result test_catch_unhandled_exception(void *data);
@@ -37,7 +40,7 @@ INTERNAL_FUNCTION utk_result test_catch_all_finally(void *data);
 /** @brief EHM test cases
  */
 
-utk_test_case test_case_unhandled_exception =
+LOCAL_VARIABLE utk_test_case test_case_unhandled_exception =
 {
     TC_NAME_UNHANDLED,
     NULL,
@@ -46,7 +49,7 @@ utk_test_case test_case_unhandled_exception =
     NULL
 };
 
-utk_test_case test_case_catch_unhandled_exception =
+LOCAL_VARIABLE utk_test_case test_case_catch_unhandled_exception =
 {
     TC_NAME_CATCH_UNHANDLED,
     NULL,
@@ -55,7 +58,7 @@ utk_test_case test_case_catch_unhandled_exception =
     NULL
 };
 
-utk_test_case test_case_catch_nested = 
+LOCAL_VARIABLE utk_test_case test_case_catch_nested = 
 {
     TC_NAME_NESTED_CATCH,
     NULL,
@@ -64,7 +67,7 @@ utk_test_case test_case_catch_nested =
     NULL
 };
 
-utk_test_case test_case_catch = 
+LOCAL_VARIABLE utk_test_case test_case_catch = 
 {
     TC_NAME_CATCH,
     NULL,
@@ -73,7 +76,7 @@ utk_test_case test_case_catch =
     NULL
 };
 
-utk_test_case test_case_catch_all = 
+LOCAL_VARIABLE utk_test_case test_case_catch_all = 
 {
     TC_NAME_CATCH_ALL,
     NULL,
@@ -82,7 +85,7 @@ utk_test_case test_case_catch_all =
     NULL
 };
 
-utk_test_case test_case_catch_finally = 
+LOCAL_VARIABLE utk_test_case test_case_catch_finally = 
 {
     TC_NAME_CATCH_FINALLY,
     NULL,
@@ -91,7 +94,7 @@ utk_test_case test_case_catch_finally =
     NULL
 };
 
-utk_test_case test_case_catch_all_finally = 
+LOCAL_VARIABLE utk_test_case test_case_catch_all_finally = 
 {
     TC_NAME_CATCH_ALL_FINALLY,
     NULL,

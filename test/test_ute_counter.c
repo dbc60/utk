@@ -8,10 +8,22 @@
 
 #include <platform.h>
 #include <but.h>
-#include "test_ute_counter.h"
+#include <ute_counter.h>
 #include <ute_driver.h>
-
 #include <string.h>
+
+
+struct ute_counter_data
+{
+    ute_context    *ctx;
+    ute_counter     ctr;
+};
+typedef struct ute_counter_data ute_counter_data;
+
+
+// Test setup and teardown methods
+INTERNAL_FUNCTION utk_result setup_counter(void *data);
+INTERNAL_FUNCTION void teardown_counter(void *data);
 
 
 // The names of our test cases
@@ -33,9 +45,24 @@
 LOCAL_VARIABLE utk_test_suite ute_ts;
 LOCAL_VARIABLE ute_counter_data test_data;
 
+
+// Test methods
+INTERNAL_FUNCTION utk_result test_initialization(void *data);
+INTERNAL_FUNCTION utk_result test_get_context(void *data);
+INTERNAL_FUNCTION utk_result test_increment_count_throw(void *data);
+INTERNAL_FUNCTION utk_result test_throw_try(void *data);
+INTERNAL_FUNCTION utk_result test_throw_disable_1(void *data);
+INTERNAL_FUNCTION utk_result test_throw_disable_2(void *data);
+INTERNAL_FUNCTION utk_result test_throw_enable_1(void *data);
+INTERNAL_FUNCTION utk_result test_throw_enable_2(void *data);
+INTERNAL_FUNCTION utk_result test_throw_is_enabled(void *data);
+INTERNAL_FUNCTION utk_result test_throw_disabled_initially(void *data);
+INTERNAL_FUNCTION utk_result test_throw_enabled_after_throw(void *data);
+
+
 /** @brief test cases for the UTE Counter implementation */
 
-utk_test_case test_case_counter_init =
+LOCAL_VARIABLE utk_test_case test_case_counter_init =
 {
     TEST_NAME_INIT,
     setup_counter,
@@ -44,7 +71,7 @@ utk_test_case test_case_counter_init =
     &test_data
 };
 
-utk_test_case test_case_counter_get_context =
+LOCAL_VARIABLE utk_test_case test_case_counter_get_context =
 {
     TEST_NAME_GET_CONTEXT,
     setup_counter,
@@ -53,7 +80,7 @@ utk_test_case test_case_counter_get_context =
     &test_data
 };
 
-utk_test_case test_case_counter_increment_count_throw = 
+LOCAL_VARIABLE utk_test_case test_case_counter_increment_count_throw = 
 {
     TEST_NAME_INCREMENT_COUNT_THROW,
     setup_counter,
@@ -62,7 +89,7 @@ utk_test_case test_case_counter_increment_count_throw =
     &test_data
 };
 
-utk_test_case test_case_throw_try =
+LOCAL_VARIABLE utk_test_case test_case_throw_try =
 {
     TEST_NAME_THROW_TRY,
     setup_counter,
@@ -71,7 +98,7 @@ utk_test_case test_case_throw_try =
     &test_data
 };
 
-utk_test_case test_case_throw_disable_1 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_disable_1 = 
 {
     TEST_NAME_THROW_DISABLE_1,
     setup_counter,
@@ -80,7 +107,7 @@ utk_test_case test_case_throw_disable_1 =
     &test_data
 };
 
-utk_test_case test_case_throw_disable_2 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_disable_2 = 
 {
     TEST_NAME_THROW_DISABLE_2,
     setup_counter,
@@ -89,7 +116,7 @@ utk_test_case test_case_throw_disable_2 =
     &test_data
 };
 
-utk_test_case test_case_throw_enable_1 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_enable_1 = 
 {
     TEST_NAME_THROW_ENABLE_1,
     setup_counter,
@@ -98,7 +125,7 @@ utk_test_case test_case_throw_enable_1 =
     &test_data
 };
 
-utk_test_case test_case_throw_enable_2 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_enable_2 = 
 {
     TEST_NAME_THROW_ENABLE_2,
     setup_counter,
@@ -107,7 +134,7 @@ utk_test_case test_case_throw_enable_2 =
     &test_data
 };
 
-utk_test_case test_case_throw_disabled_initially = 
+LOCAL_VARIABLE utk_test_case test_case_throw_disabled_initially = 
 {
     TEST_NAME_THROW_DISABLED_INITIALLY,
     setup_counter,
@@ -116,7 +143,7 @@ utk_test_case test_case_throw_disabled_initially =
     &test_data
 };
 
-utk_test_case test_case_throw_is_enabled = 
+LOCAL_VARIABLE utk_test_case test_case_throw_is_enabled = 
 {
     TEST_NAME_THROW_IS_ENABLED,
     setup_counter,
@@ -125,7 +152,7 @@ utk_test_case test_case_throw_is_enabled =
     &test_data
 };
 
-utk_test_case test_case_throw_enabled_after_throw = 
+LOCAL_VARIABLE utk_test_case test_case_throw_enabled_after_throw = 
 {
     TEST_NAME_THROW_ENABLED_AFTER_THROW,
     setup_counter,
