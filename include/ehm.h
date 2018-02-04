@@ -17,6 +17,17 @@
 #include "platform.h"
 #include <setjmp.h>
 
+// export/import symbol management
+#if defined(PROJECT_WIN32)
+#if defined(EHM_SHARED_EXPORT)
+#define EHM_API __declspec(dllexport)
+#else
+#define EHM_API __declspec(dllimport)
+#endif
+#else
+#define EHM_API
+#endif
+
 
 struct ehm_exception
 {
@@ -34,8 +45,6 @@ struct ehm_frame
     u32 line;
 };
 typedef struct ehm_frame ehm_frame;
-
-PROJECTAPI ehm_frame *ehm_stack;
 
 #define EHM_FRAME_INIT(frame, stack, flag)  \
     (frame).prev = (stack);                 \
@@ -66,7 +75,7 @@ typedef enum ehm_states ehm_state;
 * 'EHM_RETURN result;' expand to a valid C statement.
 */
 #define EHM_RETURN                          \
-    switch (ehm_stack = ehm_stack->prev, 0) \
+    switch ((*ehm_stack) = (*ehm_stack)->prev, 0) \
     default:                                \
         return
 
@@ -75,54 +84,56 @@ typedef enum ehm_states ehm_state;
     do                                  \
     {                                   \
         volatile ehm_state ehm_flag;    \
-        ehm_frame ehm_exc;                \
-        EHM_FRAME_INIT(ehm_exc, ehm_stack, ehm_flag);   \
+        ehm_frame **ehm_stack;          \
+        ehm_frame ehm_exc;              \
+        ehm_stack = ehm_get_stack();    \
+        EHM_FRAME_INIT(ehm_exc, (*ehm_stack), ehm_flag);   \
         if (EHM_ENTERED == ehm_flag)    \
         {
 
 #define EHM_CATCH(e)                    \
-        if (EHM_ENTERED == ehm_flag)        \
-        {                                   \
-            ehm_stack = ehm_stack->prev;    \
+        if (EHM_ENTERED == ehm_flag)    \
+        {                               \
+            (*ehm_stack) = (*ehm_stack)->prev;    \
         }                               \
     }                                   \
     else if (&(e) == ehm_exc.exception) \
     {                                   \
         ehm_flag = EHM_HANDLED;
 
-#define EHM_CATCH_ALL                \
-    if (EHM_ENTERED == ehm_flag)     \
-    {                                \
-        ehm_stack = ehm_stack->prev; \
-    }                                \
-    }                                \
-    else                             \
-    {                                \
+#define EHM_CATCH_ALL                       \
+    if (EHM_ENTERED == ehm_flag)            \
+    {                                       \
+        (*ehm_stack) = (*ehm_stack)->prev;  \
+    }                                       \
+    }                                       \
+    else                                    \
+    {                                       \
         ehm_flag = EHM_HANDLED;
 
-#define EHM_FINALLY                   \
-    if (EHM_ENTERED == ehm_flag)      \
-    {                                 \
-        ehm_stack = ehm_stack->prev;  \
-    }                                 \
-    }                                 \
-    {                                 \
-        if (EHM_ENTERED == ehm_flag)  \
-        {                             \
-            ehm_flag = EHM_FINALIZED; \
+#define EHM_FINALLY                         \
+    if (EHM_ENTERED == ehm_flag)            \
+    {                                       \
+        (*ehm_stack) = (*ehm_stack)->prev;  \
+    }                                       \
+    }                                       \
+    {                                       \
+        if (EHM_ENTERED == ehm_flag)        \
+        {                                   \
+            ehm_flag = EHM_FINALIZED;       \
         }
 
-#define EHM_ENDTRY                   \
-    if (EHM_ENTERED == ehm_flag)     \
-    {                                \
-        ehm_stack = ehm_stack->prev; \
-    }                                \
-    }                                \
-    if (EHM_THROWN == ehm_flag)      \
-    {                                \
-        EHM_RETHROW;                 \
-    }                                \
-    }                                \
+#define EHM_ENDTRY                          \
+    if (EHM_ENTERED == ehm_flag)            \
+    {                                       \
+        (*ehm_stack) = (*ehm_stack)->prev;  \
+    }                                       \
+    }                                       \
+    if (EHM_THROWN == ehm_flag)             \
+    {                                       \
+        EHM_RETHROW;                        \
+    }                                       \
+    }                                       \
     while (0)
 
 #define EHM_WHAT ((ehm_exc.exception->reason)     \
@@ -132,8 +143,10 @@ typedef enum ehm_states ehm_state;
 #define EHM_LINE (ehm_exc.line)
 #define EHM_FUNC (ehm_exc.function)
 
-EXTERN_C PROJECTAPI void
+EXTERN_C EHM_API void
 ehm_throw(const ehm_exception *e, const ch8 *file, u32 line, const ch8 *func);
+
+EXTERN_C EHM_API ehm_frame** ehm_get_stack(void);
 
 /** @brief throw an exception.
 * capture file name, line number, and function name, and pass them to the

@@ -1,4 +1,5 @@
 #include <platform.h>
+#define EHM_SHARED_EXPORT 1
 #include <ehm.h>
 #include <ehm_assert.h>
 

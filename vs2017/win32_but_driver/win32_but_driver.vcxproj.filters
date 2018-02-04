@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\win32_but_driver.c">
+    <ClCompile Include="..\..\src\but_test_driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\but_test_driver.c">
+    <ClCompile Include="..\..\src\but_driver_win32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\but_test_driver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ehm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
