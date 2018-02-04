@@ -11,6 +11,7 @@
  * @brief A simple assertion mechanism based on excepions.
  */
 
+#define EHM_SHARED_EXPORT 1
 #include "ehm.h"
 #include "ehm_assert.h"
 

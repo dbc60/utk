@@ -11,14 +11,21 @@
  * @brief An excepion handling module.
  */
 
+#define EHM_SHARED_EXPORT 1
 #include "ehm.h"
 #include "ehm_assert.h"
 #include <platform.h>
 
 
-PROJECTAPI ehm_frame *ehm_stack;
+LOCAL_VARIABLE ehm_frame *ehm_stack;
 
-PROJECTAPI void
+EHM_API ehm_frame**
+ehm_get_stack()
+{
+    return &ehm_stack;
+}
+
+EHM_API void
 ehm_throw(const ehm_exception *e,
           const ch8 *filename,
           u32 line,

@@ -19,13 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\but_driver_win32.c" />
     <ClCompile Include="..\..\src\but_test_driver.c" />
-    <ClCompile Include="..\..\src\win32_but_driver.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\but.h" />
     <ClInclude Include="..\..\include\but_driver.h" />
     <ClInclude Include="..\..\include\but_version.h" />
+    <ClInclude Include="..\..\include\ehm.h" />
     <ClInclude Include="..\..\include\platform.h" />
     <ClInclude Include="..\..\include\utk.h" />
     <ClInclude Include="..\..\src\but_test_driver.h" />
