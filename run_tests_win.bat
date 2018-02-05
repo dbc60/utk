@@ -61,8 +61,8 @@ echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_mutex.dll
 %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_mutex.dll
 
 echo.
-echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_rgn_cfg.dll
-%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_rgn_cfg.dll
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_rgn.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_rgn.dll
 
 goto :EOF
 

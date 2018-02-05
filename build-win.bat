@@ -322,18 +322,18 @@ echo.
 
 
 ::
-:: test_rgn_cfg.dll test suite
+:: test_rgn.dll test suite
 ::
 
-:: compile the components of test_rgn_cfg.dll
-echo ** Building shared test library test_rgn_cfg.dll
+:: compile the components of test_rgn.dll
+echo ** Building shared test library test_rgn.dll
 cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
-   /Fp%BUILD_PATH%\test_rgn_cfg.pch /Fd%BUILD_PATH%\test_rgn_cfg.pdb ^
-   "test\test_rgn_cfg.c"
+   /Fp%BUILD_PATH%\test_rgn.pch /Fd%BUILD_PATH%\test_rgn.pdb ^
+   "test\test_rgn.c"
 
-:: build test_rgn_cfg.dll
-link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_rgn_cfg.dll" ^
-     /PDB:%BUILD_PATH%\test_rgn_cfg.pdb "%BUILD_PATH%\test_rgn_cfg.obj"
+:: build test_rgn.dll
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_rgn.dll" ^
+     /PDB:%BUILD_PATH%\test_rgn.pdb "%BUILD_PATH%\test_rgn.obj"
 echo.
 
 
