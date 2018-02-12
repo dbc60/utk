@@ -562,7 +562,7 @@ test_counter_throw_1(void *data)
         EHM_TRY {
             // bump the exception point to count_throw
             for (count_throw_attempts = 0; count_throw_attempts < count_throw; ++count_throw_attempts) {
-                ute_increment_count_throw(ctr);
+                ute_increment_count_fail(ctr);
             }
 
             count_throw_attempts = 0;

@@ -24,7 +24,6 @@ struct rgn_config
     u32  region_scale;  // the exponent to apply to region_size to get region_size_scaled
     u32  region_size_scaled;    // mcRegionSize left shifted by mcRegionScale
     u32  alignment;     // usually 8 or 16 (must be a power of two no less than 8)
-    utk_mutex lock;     // lock/unlock to ensure thread-safety
 };
 
 typedef struct rgn_config rgn_config;
@@ -83,7 +82,6 @@ rgn_cfg_init(rgn_config* cfg) {
     cfg->region_size_scaled = sys_info.dwAllocationGranularity
                              << RGN_CFG_DEFAULT_REGION_SCALE;
     cfg->alignment = RGN_CFG_ALIGNMENT_MAX;
-    cfg->lock = UTK_MUTEX_INITIALIZER;
 }
 
 utk_result

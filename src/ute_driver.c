@@ -235,9 +235,12 @@ ute_run(ute_context *ctx)
 
     ute_counter_init(&counter, ctx);
     do {
-        //count_start = utm_get_count_allocation(&counter);
-        UNREFERENCED(count_start);
-        ute_increment_count_throw(&counter);
+        /*
+         * Get the current number of memory allocations so we can check for
+         * memory leaks after the test run is over.
+         */
+        count_start = utm_get_count_allocation(&counter);
+        ute_increment_count_fail(&counter);
 
         EHM_TRY {
             if (tc->setup) {
@@ -280,8 +283,8 @@ ute_run(ute_context *ctx)
             }
         }
 
-        //count_leaks = ute_get_count_allocation(&counter) - count_start;
-        if (count_leaks > 0) {
+        count_leaks = ute_get_count_allocation(&counter) - count_start;
+        if (count_leaks != 0) {
             if (!thrown && result_test != UTR_PASSED) {
                 /**
                  * If the test result was UTR_PASSED, then change it to

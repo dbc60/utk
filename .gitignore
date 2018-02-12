@@ -274,3 +274,6 @@ _static/MathJax/
 
 # Vagrant generated files
 .vagrant/
+
+# VSCode Workspaces
+*.code-workspace
