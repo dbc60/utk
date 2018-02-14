@@ -158,27 +158,27 @@ gcc -shared -Wl,-soname,$BUILD_PATH/libtest_ute_counter.so \
 ##
 
 ## compile the components of libtest_mutex.so
-echo Building components of libtest_utk_mutex.so
+echo Building components of libtest_mutex.so
 gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_utk_mutex.c -o \
     $BUILD_PATH/test_utk_mutex.o
 
 ## build libtest_mutex.so - the unit tests for ute_counter.o
-gcc -shared -Wl,-soname,$BUILD_PATH/libtest_utk_mutex.so \
-    -o $BUILD_PATH/libtest_utk_mutex.so $BUILD_PATH/test_utk_mutex.o -lpthread
+gcc -shared -Wl,-soname,$BUILD_PATH/libtest_mutex.so \
+    -o $BUILD_PATH/libtest_mutex.so $BUILD_PATH/test_utk_mutex.o -lpthread
 
 
 ##
-## libtest_mutex.so test suite
+## libtest_dlist.so test suite
 ##
 
-## compile the components of libtest_mutex.so
-echo Building components of libtest_utk_mutex.so
-gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_utk_mutex.c -o \
-    $BUILD_PATH/test_utk_mutex.o
+## compile the components of libtest_dlist.so
+echo Building components of libtest_dlist.so
+gcc $COMPILER_FLAGS -c -fpic -Isrc test/test_dlist.c -o \
+    $BUILD_PATH/test_dlist.o
 
-## build libtest_mutex.so - the unit tests for ute_counter.o
-gcc -shared -Wl,-soname,$BUILD_PATH/libtest_utk_mutex.so \
-    -o $BUILD_PATH/libtest_utk_mutex.so $BUILD_PATH/test_utk_mutex.o -lpthread
+## build libtest_dlist.so
+gcc -shared -Wl,-soname,$BUILD_PATH/libtest_dlist.so \
+    -o $BUILD_PATH/libtest_dlist.so $BUILD_PATH/test_dlist.o
 
 
 echo build complete

@@ -10,7 +10,6 @@
 #include <utk.h>
 #include <but.h>
 #include <utk_mutex.h>
-#include "test_utk_mutex.h"
 
 // The name of the exported test suite
 #define TS_NAME_UTK_MUTEX "UTK Mutex"
@@ -28,7 +27,7 @@ INTERNAL_FUNCTION utk_result test_trylock(void *data);
 /** @brief mutex test cases
  */
 
-utk_test_case test_case_lock =
+LOCAL_VARIABLE utk_test_case test_case_lock =
 {
     TC_NAME_LOCK,
     NULL,
@@ -37,7 +36,7 @@ utk_test_case test_case_lock =
     NULL
 };
 
-utk_test_case test_case_unlock =
+LOCAL_VARIABLE utk_test_case test_case_unlock =
 {
     TC_NAME_UNLOCK,
     NULL,
@@ -46,7 +45,7 @@ utk_test_case test_case_unlock =
     NULL
 };
 
-utk_test_case test_case_trylock =
+LOCAL_VARIABLE utk_test_case test_case_trylock =
 {
     TC_NAME_TRYLOCK,
     NULL,
@@ -111,7 +110,6 @@ utk_result test_trylock(void *data) {
 
     return result;
 }
-
 
 
 LOCAL_VARIABLE utk_test_case *tca[] =

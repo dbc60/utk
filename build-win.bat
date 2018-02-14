@@ -321,6 +321,38 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_mutex.dll" ^
 echo.
 
 
+::
+:: test_rgn.dll test suite
+::
+
+:: compile the components of test_rgn.dll
+echo ** Building shared test library test_rgn.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_rgn.pch /Fd%BUILD_PATH%\test_rgn.pdb ^
+   "test\test_rgn.c"
+
+:: build test_rgn.dll
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_rgn.dll" ^
+     /PDB:%BUILD_PATH%\test_rgn.pdb "%BUILD_PATH%\test_rgn.obj"
+echo.
+
+
+::
+:: test_dlist.dll test suite
+::
+
+:: compile the components of test_dlist.dll
+echo ** Building shared test library test_dlist.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_dlist.pch /Fd%BUILD_PATH%\test_dlist.pdb ^
+   "test\test_dlist.c"
+
+:: build test_dlist.dll
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_dlist.dll" ^
+     /PDB:%BUILD_PATH%\test_dlist.pdb "%BUILD_PATH%\test_dlist.obj"
+echo.
+
+
 :: Build complete
 goto :EOF
 

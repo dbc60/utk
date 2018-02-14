@@ -29,7 +29,6 @@
     <ClInclude Include="..\..\include\ute_driver.h" />
     <ClInclude Include="..\..\include\utk.h" />
     <ClInclude Include="..\..\src\ute_counter.h" />
-    <ClInclude Include="..\..\test\test_ute_counter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

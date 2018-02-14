@@ -65,6 +65,13 @@ struct ute_context
 };
 
 
+struct ute_counter_mem {
+    ute_counter counter;
+    u64         count_mem;
+};
+typedef struct ute_counter_mem ute_counter_mem;
+
+
 /**
  *  Local functions
  */
@@ -215,6 +222,12 @@ ute_get_count_test_cases(ute_context *ctx)
 }
 
 
+INTERNAL_FUNCTION u64
+ute_get_count_allocation(const ute_counter_mem *c) {
+    return c->count_mem;
+}
+
+
 /**
  * @brief run the current test case for each exception point.
  * Run the setup and teardown methods if they exist. When no test exception is
@@ -224,7 +237,7 @@ ute_get_count_test_cases(ute_context *ctx)
 void
 ute_run(ute_context *ctx)
 {
-    ute_counter counter;
+    ute_counter_mem counter = {0};
     utk_test_suite *ts = ctx->test_suite;
     utk_test_case *tc = ts->test_cases[ctx->index];
     u64 count_start = 0;
@@ -233,11 +246,14 @@ ute_run(ute_context *ctx)
     b32 thrown = FALSE;
     u64 count_leaks = 0;
 
-    ute_counter_init(&counter, ctx);
+    ute_counter_init(&counter.counter, ctx);
     do {
-        //count_start = utm_get_count_allocation(&counter);
-        UNREFERENCED(count_start);
-        ute_increment_count_throw(&counter);
+        /*
+         * Get the current number of memory allocations so we can check for
+         * memory leaks after the test run is over.
+         */
+        count_start = ute_get_count_allocation(&counter);
+        ute_increment_count_fail(&counter.counter);
 
         EHM_TRY {
             if (tc->setup) {
@@ -256,8 +272,8 @@ ute_run(ute_context *ctx)
             // Do nothing
         } EHM_ENDTRY;
 
-        thrown = ute_thrown(&counter);
-        ute_throw_disable(&counter);
+        thrown = ute_thrown(&counter.counter);
+        ute_throw_disable(&counter.counter);
 
         /**
          * If an exception_ute_test was NOT thrown, then we have a valid result
@@ -280,8 +296,8 @@ ute_run(ute_context *ctx)
             }
         }
 
-        //count_leaks = ute_get_count_allocation(&counter) - count_start;
-        if (count_leaks > 0) {
+        count_leaks = ute_get_count_allocation(&counter) - count_start;
+        if (count_leaks != 0) {
             if (!thrown && result_test != UTR_PASSED) {
                 /**
                  * If the test result was UTR_PASSED, then change it to

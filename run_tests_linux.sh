@@ -43,5 +43,9 @@ echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_ute_driver.so
 $BUILD_PATH/but_driver $BUILD_PATH/libtest_ute_driver.so
 
 echo
-echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_utk_mutex.so
-$BUILD_PATH/but_driver $BUILD_PATH/libtest_utk_mutex.so
+echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_mutex.so
+$BUILD_PATH/but_driver $BUILD_PATH/libtest_mutex.so
+
+echo
+echo Executing $BUILD_PATH/but_driver $BUILD_PATH/libtest_dlist.so
+$BUILD_PATH/but_driver $BUILD_PATH/libtest_dlist.so

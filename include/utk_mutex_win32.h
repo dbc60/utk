@@ -15,6 +15,8 @@
 #define WIN32_UTK_MUTEX_H_INCLUDED
 
 #include "platform.h"
+ // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 

@@ -8,10 +8,22 @@
 
 #include <platform.h>
 #include <but.h>
-#include "test_ute_counter.h"
+#include <ute_counter.h>
 #include <ute_driver.h>
-
 #include <string.h>
+
+
+struct ute_counter_data
+{
+    ute_context    *ctx;
+    ute_counter     ctr;
+};
+typedef struct ute_counter_data ute_counter_data;
+
+
+// Test setup and teardown methods
+INTERNAL_FUNCTION utk_result setup_counter(void *data);
+INTERNAL_FUNCTION void teardown_counter(void *data);
 
 
 // The names of our test cases
@@ -33,9 +45,24 @@
 LOCAL_VARIABLE utk_test_suite ute_ts;
 LOCAL_VARIABLE ute_counter_data test_data;
 
+
+// Test methods
+INTERNAL_FUNCTION utk_result test_initialization(void *data);
+INTERNAL_FUNCTION utk_result test_get_context(void *data);
+INTERNAL_FUNCTION utk_result test_increment_count_throw(void *data);
+INTERNAL_FUNCTION utk_result test_throw_try(void *data);
+INTERNAL_FUNCTION utk_result test_throw_disable_1(void *data);
+INTERNAL_FUNCTION utk_result test_throw_disable_2(void *data);
+INTERNAL_FUNCTION utk_result test_throw_enable_1(void *data);
+INTERNAL_FUNCTION utk_result test_throw_enable_2(void *data);
+INTERNAL_FUNCTION utk_result test_throw_is_enabled(void *data);
+INTERNAL_FUNCTION utk_result test_throw_disabled_initially(void *data);
+INTERNAL_FUNCTION utk_result test_throw_enabled_after_throw(void *data);
+
+
 /** @brief test cases for the UTE Counter implementation */
 
-utk_test_case test_case_counter_init =
+LOCAL_VARIABLE utk_test_case test_case_counter_init =
 {
     TEST_NAME_INIT,
     setup_counter,
@@ -44,7 +71,7 @@ utk_test_case test_case_counter_init =
     &test_data
 };
 
-utk_test_case test_case_counter_get_context =
+LOCAL_VARIABLE utk_test_case test_case_counter_get_context =
 {
     TEST_NAME_GET_CONTEXT,
     setup_counter,
@@ -53,7 +80,7 @@ utk_test_case test_case_counter_get_context =
     &test_data
 };
 
-utk_test_case test_case_counter_increment_count_throw = 
+LOCAL_VARIABLE utk_test_case test_case_counter_increment_count_throw = 
 {
     TEST_NAME_INCREMENT_COUNT_THROW,
     setup_counter,
@@ -62,7 +89,7 @@ utk_test_case test_case_counter_increment_count_throw =
     &test_data
 };
 
-utk_test_case test_case_throw_try =
+LOCAL_VARIABLE utk_test_case test_case_throw_try =
 {
     TEST_NAME_THROW_TRY,
     setup_counter,
@@ -71,7 +98,7 @@ utk_test_case test_case_throw_try =
     &test_data
 };
 
-utk_test_case test_case_throw_disable_1 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_disable_1 = 
 {
     TEST_NAME_THROW_DISABLE_1,
     setup_counter,
@@ -80,7 +107,7 @@ utk_test_case test_case_throw_disable_1 =
     &test_data
 };
 
-utk_test_case test_case_throw_disable_2 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_disable_2 = 
 {
     TEST_NAME_THROW_DISABLE_2,
     setup_counter,
@@ -89,7 +116,7 @@ utk_test_case test_case_throw_disable_2 =
     &test_data
 };
 
-utk_test_case test_case_throw_enable_1 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_enable_1 = 
 {
     TEST_NAME_THROW_ENABLE_1,
     setup_counter,
@@ -98,7 +125,7 @@ utk_test_case test_case_throw_enable_1 =
     &test_data
 };
 
-utk_test_case test_case_throw_enable_2 = 
+LOCAL_VARIABLE utk_test_case test_case_throw_enable_2 = 
 {
     TEST_NAME_THROW_ENABLE_2,
     setup_counter,
@@ -107,7 +134,7 @@ utk_test_case test_case_throw_enable_2 =
     &test_data
 };
 
-utk_test_case test_case_throw_disabled_initially = 
+LOCAL_VARIABLE utk_test_case test_case_throw_disabled_initially = 
 {
     TEST_NAME_THROW_DISABLED_INITIALLY,
     setup_counter,
@@ -116,7 +143,7 @@ utk_test_case test_case_throw_disabled_initially =
     &test_data
 };
 
-utk_test_case test_case_throw_is_enabled = 
+LOCAL_VARIABLE utk_test_case test_case_throw_is_enabled = 
 {
     TEST_NAME_THROW_IS_ENABLED,
     setup_counter,
@@ -125,7 +152,7 @@ utk_test_case test_case_throw_is_enabled =
     &test_data
 };
 
-utk_test_case test_case_throw_enabled_after_throw = 
+LOCAL_VARIABLE utk_test_case test_case_throw_enabled_after_throw = 
 {
     TEST_NAME_THROW_ENABLED_AFTER_THROW,
     setup_counter,
@@ -186,7 +213,7 @@ test_initialization(void *data)
 
     if (ctr_data->ctr.count_exception_point != 0) {
         result = CTR_INVALID_EXCEPTION_POINT_INITIAL;
-    } else if (ctr_data->ctr.count_throw != 0) {
+    } else if (ctr_data->ctr.count_fail != 0) {
         result = CTR_INVALID_COUNT_THROW_INITIAL;
     } else if (ctr_data->ctr.throw_test_exception) {
         result = CTR_INVALID_THROW_TEST_EXCEPTION_INITIAL;
@@ -219,14 +246,14 @@ test_increment_count_throw(void *data)
     utk_result result = CTR_SUCCESS;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
     u64 expected = 0;
-    u64 actual = ute_get_count_throw(&ctr_data->ctr);
+    u64 actual = ute_get_count_fail(&ctr_data->ctr);
 
     if (expected != actual) {
         result = CTR_INVALID_COUNT_THROW_INITIAL;
     } else {
-        ute_increment_count_throw(&ctr_data->ctr);
+        ute_increment_count_fail(&ctr_data->ctr);
         ++expected;
-        actual = ute_get_count_throw(&ctr_data->ctr);
+        actual = ute_get_count_fail(&ctr_data->ctr);
         if (expected != actual) {
             result = CTR_INVALID_COUNT_THROW;
         }
@@ -242,12 +269,12 @@ test_throw_try(void *data)
     utk_result result = CTR_FAILED;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
 
-    ute_increment_count_throw(&ctr_data->ctr);
+    ute_increment_count_fail(&ctr_data->ctr);
     EHM_TRY {
         ute_throw_try(&ctr_data->ctr);
         result = CTR_FAILED_TO_THROW;
     } EHM_CATCH(exception_ute_test) {
-        ute_increment_count_throw(&ctr_data->ctr);
+        ute_increment_count_fail(&ctr_data->ctr);
         EHM_TRY {
             ute_throw_try(&ctr_data->ctr);
             EHM_TRY {
@@ -271,7 +298,7 @@ test_throw_disable_1(void *data)
     utk_result result = CTR_FAILED;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
 
-    ute_increment_count_throw(&ctr_data->ctr);
+    ute_increment_count_fail(&ctr_data->ctr);
     EHM_TRY {
         ute_throw_disable(&ctr_data->ctr);
         ute_throw_try(&ctr_data->ctr);
@@ -290,12 +317,12 @@ test_throw_disable_2(void *data)
     utk_result result = CTR_FAILED;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
 
-    ute_increment_count_throw(&ctr_data->ctr);
+    ute_increment_count_fail(&ctr_data->ctr);
     EHM_TRY {
         ute_throw_try(&ctr_data->ctr);
         result = CTR_FAILED_TO_THROW;
     } EHM_CATCH(exception_ute_test) {
-        ute_increment_count_throw(&ctr_data->ctr);
+        ute_increment_count_fail(&ctr_data->ctr);
         EHM_TRY {
             ute_throw_try(&ctr_data->ctr);
             EHM_TRY {
@@ -320,7 +347,7 @@ test_throw_enable_1(void *data)
     utk_result result = CTR_FAILED;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
 
-    ute_increment_count_throw(&ctr_data->ctr);
+    ute_increment_count_fail(&ctr_data->ctr);
     ute_throw_disable(&ctr_data->ctr);
     EHM_TRY {
         ute_throw_enable(&ctr_data->ctr);
@@ -340,7 +367,7 @@ test_throw_enable_2(void *data)
     ute_counter_data *ctr_data = (ute_counter_data*)data;
     utk_result result = CTR_FAILED;
 
-    ute_increment_count_throw(&ctr_data->ctr);
+    ute_increment_count_fail(&ctr_data->ctr);
     EHM_TRY {
         ute_throw_disable(&ctr_data->ctr);
         ute_throw_try(&ctr_data->ctr);
@@ -380,7 +407,7 @@ test_throw_is_enabled(void *data)
     utk_result result = CTR_FAILED;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
     
-    ute_increment_count_throw(&ctr_data->ctr);
+    ute_increment_count_fail(&ctr_data->ctr);
     if (ute_throw_is_enabled(&ctr_data->ctr)) {
         result = CTR_SUCCESS;
     }
@@ -395,7 +422,7 @@ test_throw_enabled_after_throw(void *data)
     utk_result result = CTR_FAILED_TO_THROW;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
     
-    ute_increment_count_throw(&ctr_data->ctr);
+    ute_increment_count_fail(&ctr_data->ctr);
     EHM_TRY {
         ute_throw_try(&ctr_data->ctr);
         result = CTR_FAILED_TO_THROW;
