@@ -28,7 +28,6 @@
     <ClInclude Include="..\..\include\utk_mutex.h" />
     <ClInclude Include="..\..\include\utk_mutex_linux.h" />
     <ClInclude Include="..\..\include\utk_mutex_win32.h" />
-    <ClInclude Include="..\..\test\test_utk_mutex.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

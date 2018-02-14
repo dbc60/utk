@@ -11,6 +11,8 @@
 #include <but.h>
 #include <utk_mutex.h>
 
+// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
 // SYSTEM_INFO
 #include <Windows.h>
 

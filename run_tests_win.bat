@@ -64,6 +64,10 @@ echo.
 echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_rgn.dll
 %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_rgn.dll
 
+echo.
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_dlist.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_dlist.dll
+
 goto :EOF
 
 :errProjectPath

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\test\test_ehm.c">
+    <ClCompile Include="..\..\test\test_rgn.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="..\..\include\utk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ehm.h">
+    <ClInclude Include="..\..\include\utk_mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

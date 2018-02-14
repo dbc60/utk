@@ -213,7 +213,7 @@ test_initialization(void *data)
 
     if (ctr_data->ctr.count_exception_point != 0) {
         result = CTR_INVALID_EXCEPTION_POINT_INITIAL;
-    } else if (ctr_data->ctr.count_throw != 0) {
+    } else if (ctr_data->ctr.count_fail != 0) {
         result = CTR_INVALID_COUNT_THROW_INITIAL;
     } else if (ctr_data->ctr.throw_test_exception) {
         result = CTR_INVALID_THROW_TEST_EXCEPTION_INITIAL;

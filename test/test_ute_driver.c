@@ -518,7 +518,7 @@ static utk_result test_counter_init(void *data)
     if (ctr->context != NULL) {
         result = TDR_UNEXPECTED_CONTEXT;
     } else if (ctr->count_exception_point != 0
-               || ctr->count_throw != 0) {
+               || ctr->count_fail != 0) {
         result = TDR_UNEXPECTED_COUNT;
     } else if (ctr->throw_test_exception) {
         result = TDR_UNEXPECTED_ENABLED_THROW;

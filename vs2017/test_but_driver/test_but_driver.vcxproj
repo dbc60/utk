@@ -22,7 +22,6 @@
     <ClCompile Include="..\..\test\test_but_driver.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\test\test_but_driver.h" />
     <ClInclude Include="..\..\include\but.h" />
     <ClInclude Include="..\..\include\but_driver.h" />
     <ClInclude Include="..\..\include\but_version.h" />
