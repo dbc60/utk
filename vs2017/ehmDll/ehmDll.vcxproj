@@ -160,12 +160,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\ehm.h" />
-    <ClInclude Include="..\..\include\ehm_assert.h" />
     <ClInclude Include="..\..\include\platform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ehm.c" />
-    <ClCompile Include="..\..\src\ehm_assert.c" />
     <ClCompile Include="..\..\src\win32_ehm.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

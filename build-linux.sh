@@ -77,9 +77,8 @@ ar rcs $BUILD_PATH/ute_driver.a $BUILD_PATH/ute_driver.o \
 echo Building shared lib libehm.so
 gcc $COMPILER_FLAGS -c -fpic -Isrc src/linux_ehm.c -o $BUILD_PATH/linux_ehm.o
 gcc $COMPILER_FLAGS -c -fpic src/ehm.c -o $BUILD_PATH/ehm.o
-gcc $COMPILER_FLAGS -c -fpic src/ehm_assert.c -o $BUILD_PATH/ehm_assert.o
 gcc -shared -Wl,-soname,$BUILD_PATH/libehm.so -o $BUILD_PATH/libehm.so \
-    $BUILD_PATH/linux_ehm.o $BUILD_PATH/ehm.o $BUILD_PATH/ehm_assert.o
+    $BUILD_PATH/linux_ehm.o $BUILD_PATH/ehm.o
 
 ##
 ## but_driver application

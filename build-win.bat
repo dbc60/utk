@@ -215,11 +215,11 @@ echo.
 ::
 echo ** Building shared library ehm.dll
 cl %COMPILER_FLAGS% /D PROJECTLIBRARY_EXPORTS /c /Fp%BUILD_PATH%\ehm.pch ^
-   /Fd%BUILD_PATH%\ehm.pdb src\win32_ehm.c src\ehm.c src\ehm_assert.c
+   /Fd%BUILD_PATH%\ehm.pdb src\win32_ehm.c src\ehm.c
 
 link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\ehm.dll" ^
      /PDB:%BUILD_PATH%\win32_ehm.pdb "%BUILD_PATH%\win32_ehm.obj" ^
-     "%BUILD_PATH%\ehm.obj" "%BUILD_PATH%\ehm_assert.obj"
+     "%BUILD_PATH%\ehm.obj"
 echo.
 
 

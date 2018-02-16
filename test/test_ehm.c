@@ -10,6 +10,7 @@
 #include <but.h>
 #include <ehm.h>
 
+
 // The name of the exported test suite
 #define TS_NAME_EHM "EHM"
 
@@ -21,6 +22,8 @@
 #define TC_NAME_CATCH_ALL "Catch All"
 #define TC_NAME_CATCH_FINALLY "Catch Finally"
 #define TC_NAME_CATCH_ALL_FINALLY "Catch All Finally"
+#define TC_NAME_ASSERT_OKAY "Assertion Success"
+#define TC_NAME_ASSERT_FAIL "Assertion Failure"
 
 // Exceptions to catch or not to catch, as needed.
 const ehm_exception exc_dont_catch = {"Catch Me If You Can!"};
@@ -35,6 +38,8 @@ INTERNAL_FUNCTION utk_result test_catch(void *data);
 INTERNAL_FUNCTION utk_result test_catch_all(void *data);
 INTERNAL_FUNCTION utk_result test_catch_finally(void *data);
 INTERNAL_FUNCTION utk_result test_catch_all_finally(void *data);
+INTERNAL_FUNCTION utk_result test_assert_okay(void *data);
+INTERNAL_FUNCTION utk_result test_assert_fail(void *data);
 
 
 /** @brief EHM test cases
@@ -101,6 +106,26 @@ LOCAL_VARIABLE utk_test_case test_case_catch_all_finally =
     &test_catch_all_finally,
     NULL,
     NULL
+};
+
+LOCAL_VARIABLE b32 test_okay = TRUE;
+LOCAL_VARIABLE utk_test_case test_case_assert_okay = 
+{
+    TC_NAME_ASSERT_OKAY,
+    NULL,
+    &test_assert_okay,
+    NULL,
+    &test_okay
+};
+
+LOCAL_VARIABLE b32 test_fail = FALSE;
+LOCAL_VARIABLE utk_test_case test_case_assert_fail = 
+{
+    TC_NAME_ASSERT_FAIL,
+    NULL,
+    &test_assert_fail,
+    NULL,
+    &test_fail
 };
 
 
@@ -285,6 +310,21 @@ test_catch_all_finally(void *data)
     return result;
 }
 
+static utk_result
+test_assert_okay(void *data) {
+    b32 test = *((b32*)data);
+
+    EHM_ASSERT(TRUE == test);
+    return EHM_SUCCESS;
+}
+
+static utk_result
+test_assert_fail(void *data) {
+    b32 test = *((b32*)data);
+
+    EHM_ASSERT(TRUE == test);
+    return EHM_SUCCESS;
+}
 
 LOCAL_VARIABLE utk_test_case *tca[] =
 {
@@ -295,7 +335,9 @@ LOCAL_VARIABLE utk_test_case *tca[] =
     &test_case_catch,
     &test_case_catch_all,
     &test_case_catch_finally,
-    &test_case_catch_all_finally
+    &test_case_catch_all_finally,
+    &test_case_assert_okay,
+    &test_case_assert_fail
 };
 
 LOCAL_VARIABLE

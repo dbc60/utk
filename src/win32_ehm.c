@@ -1,7 +1,6 @@
 #include <platform.h>
 #define EHM_SHARED_EXPORT 1
 #include <ehm.h>
-#include <ehm_assert.h>
 
 #include <SDKDDKVer.h>
 
@@ -17,8 +16,9 @@
  */
 void dummy_throw()
 {
+    b32 test = FALSE;
     EHM_TRY{
-        EHM_ASSERT(1==0);
+        EHM_ASSERT(test);
     } EHM_CATCH_ALL{
         ;
     } EHM_ENDTRY;

@@ -158,8 +158,15 @@ typedef real64  r64;
 /** @brief A stringification macro for C or C++.
  * STRINGIFY converts its argument to a string.
  */
+#if !defined(STRINGIFY)
 #define STRINGIFY_HELPER(X) #X
 #define STRINGIFY(X) STRINGIFY_HELPER(X)
+#endif
+
+#if !defined(CONCAT)
+#define CONCAT2(x,y) x##y
+#define CONCAT(x,y) CONCAT2(x,y)
+#endif
 
 /** @brief: These macros define different usages of the keyword static */
 #define INTERNAL_FUNCTION static

@@ -160,4 +160,15 @@ EXTERN_C EHM_API ehm_frame** ehm_get_stack(void);
               ehm_exc.line,      \
               ehm_exc.function)
 
+
+#ifdef NDEBUG
+#define EHM_ASSERT(expr) ((void)0)
+#else   // NDEBUG
+#define EHM_ASSERT(expr)                                        \
+do {                                                            \
+    static const ehm_exception ehm_assert = {STRINGIFY(expr)};  \
+    if (!(expr)) {EHM_THROW(ehm_assert);}                       \
+} while (0)
+#endif  // NDEBUG
+
 #endif // EHM_H_INCLUDED
