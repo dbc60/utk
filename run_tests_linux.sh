@@ -18,7 +18,7 @@ else
     fi
 fi
 
-BUILD_ROOT=obj/linux
+BUILD_ROOT=build/linux
 PLATFORM=x64
 BUILD_PATH=$BUILD_ROOT/$PLATFORM/$BUILD_CONFIG
 

@@ -15,7 +15,7 @@ if    "%1" == ""          set BUILD_CONFIG=Debug
 if /i "%1" == "Debug"     set BUILD_CONFIG=Debug
 if /i "%1" == "Release"   set BUILD_CONFIG=Release
 
-set BUILD_ROOT=obj\win
+set BUILD_ROOT=build\win
 
 if "%BUILD_CONFIG%" == "Debug" (
     set COMPILER_BUILD_FLAGS=/Od /D PROJECT_INTERNAL=1 ^

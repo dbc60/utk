@@ -1,3 +1,16 @@
+/* ========================================================================
+ * (C) Copyright 2015,2017 Douglas B. Cuthbertson
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ * ========================================================================
+ */
+
+/**
+ * @file
+ * @brief An excepion handling module - Linux Shared Library.
+ */
+
 #include <platform.h>
 #include <ehm.h>
 
