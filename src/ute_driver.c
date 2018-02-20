@@ -128,7 +128,7 @@ insert_result(ute_context *ctx, ute_test_result result, int error_code)
  */
 
 ute_context*
-ute_new(utk_test_suite *ts)
+ute_context_new(utk_test_suite *ts)
 {
     ute_context *result;
 
@@ -143,7 +143,7 @@ ute_new(utk_test_suite *ts)
 }
 
 void
-ute_delete(ute_context *ctx)
+ute_context_delete(ute_context *ctx)
 {
     if (ctx->results) {
         free(ctx->results);
@@ -272,7 +272,7 @@ ute_run(ute_context *ctx)
             // Do nothing
         } EHM_ENDTRY;
 
-        thrown = ute_thrown(&counter.counter);
+        thrown = ute_has_thrown(&counter.counter);
         ute_throw_disable(&counter.counter);
 
         /**

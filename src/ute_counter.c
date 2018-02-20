@@ -6,10 +6,13 @@
  * ========================================================================
  */
 
+#include <platform.h>
 #include "ute_counter.h"
 #include <string.h>
 
 
+// The test exception thrown by ute_throw_try(). It is public so the test
+// driver can catch it.
 ehm_exception exception_ute_test = {"UTE Test Exception"};
 
 
@@ -64,7 +67,7 @@ ute_throw_try(ute_counter *uc)
  * Return TRUE if the counter has thrown a test exception
  */
 b32
-ute_thrown(const ute_counter *uc)
+ute_has_thrown(const ute_counter *uc)
 {
     return uc->count_exception_point >= uc->count_fail;
 }
@@ -103,7 +106,7 @@ ute_throw_is_enabled(const ute_counter *uc)
 /**
  * Retrieve the current fail count
  */
-u64
+size_t
 ute_get_count_fail(ute_counter *uc)
 {
     return uc->count_fail;
@@ -113,7 +116,7 @@ ute_get_count_fail(ute_counter *uc)
 /**
  * Retrieve the current exception point
  */
-u64
+size_t
 ute_get_count_exception_point(ute_counter *uc)
 {
     return uc->count_exception_point;

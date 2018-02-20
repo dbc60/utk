@@ -22,8 +22,8 @@
  // Function prototype typedefs
 typedef const ch8* (*get_version_str)(void);
 typedef u32 (*get_version_num)(void);
-typedef ute_context * (*ute_context_new)(utk_test_suite *);
-typedef void (*ute_context_delete)(ute_context*);
+typedef ute_context * (*ute_new)(utk_test_suite *);
+typedef void (*ute_delete)(ute_context*);
 typedef b32 (*is_valid)(ute_context*);
 typedef void (*next)(ute_context*);
 typedef b32 (*is_end)(ute_context*);
@@ -45,8 +45,8 @@ struct ute_test_driver_inf
     utk_test_suite         *tdd_ts;
     get_version_str         tdd_get_version_str;
     get_version_num         tdd_get_version_num;
-    ute_context_new         tdd_new;
-    ute_context_delete      tdd_delete;
+    ute_new                 tdd_new;
+    ute_delete              tdd_delete;
     is_valid                tdd_is_valid;
     is_end                  tdd_is_end;
     next                    tdd_next;
@@ -140,8 +140,8 @@ driver_setup(ute_test_driver_inf *tdd, utk_test_suite *ts) {
     if (ts != NULL) {
         tdd->tdd_get_version_str = &ute_get_version_str;
         tdd->tdd_get_version_num = &ute_get_version_num;
-        tdd->tdd_new = &ute_new;
-        tdd->tdd_delete = &ute_delete;
+        tdd->tdd_new = &ute_context_new;
+        tdd->tdd_delete = &ute_context_delete;
         tdd->tdd_is_valid = &ute_is_valid;
         tdd->tdd_next = &ute_next;
         tdd->tdd_is_end = &ute_is_end;
@@ -580,7 +580,7 @@ test_counter_throw_1(void *data)
              * this test works on Windows is ute_throw_try(ctr) throws the test
              * exception when count_throw_attempts == 1.
              */
-            if (count_throw_attempts != count_throw || !ute_thrown(ctr)) {
+            if (count_throw_attempts != count_throw || !ute_has_thrown(ctr)) {
                 result = TDR_UNEXPECTED_CATCH;
             }
         } EHM_ENDTRY;
@@ -588,7 +588,7 @@ test_counter_throw_1(void *data)
         result = TDR_UNEXPECTED_CATCH;
     } EHM_ENDTRY;
 
-    if (!ute_thrown(ctr)) {
+    if (!ute_has_thrown(ctr)) {
         result = TDR_UNEXPECTED_NO_THROW;
     }
 

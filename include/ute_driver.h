@@ -18,10 +18,10 @@ BEGIN_EXTERN_C
 /** @brief make a new test context for the given test suite.
  * Set the internal case iterator to the first test case.
  */
-ute_context *ute_new(utk_test_suite *bts);
+ute_context *ute_context_new(utk_test_suite *bts);
 
 /** @brief release a test context */
-void ute_delete(ute_context *ctx);
+void ute_context_delete(ute_context *ctx);
 
 /** @brief validate the test context */
 b32 ute_is_valid(ute_context *ctx);

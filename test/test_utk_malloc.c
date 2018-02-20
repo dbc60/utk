@@ -8,12 +8,13 @@
 
 #include <platform.h>
 #include <ute_counter.h>
+#include <ute_driver.h>
 #include <stdlib.h>
 
 
 /** @def RESTRICT
-* @brief Defined to the restrict keyword or equivalent if available
-*/
+ * @brief Defined to the restrict keyword or equivalent if available
+ */
 #ifndef RESTRICT
   #if __STDC_VERSION__ >= 199901L		/* C99 or better */
     #define RESTRICT restrict
@@ -153,25 +154,344 @@
 
 EXTERN_C UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void * utk_malloc(size_t size);
 
+struct utk_counter {
+    ute_counter ctr;
+    size_t count_allocations;
+    size_t count_invalid_free;
+};
+typedef struct utk_counter utk_counter;
 
-GLOBAL_VARIABLE ute_counter mem_counter = {0};
+
+const ehm_exception exc_invalid_argument = {"Invalid Argument"};
+const ehm_exception exc_out_of_memory = {"Allocation Failure"};
+
+
+void utk_counter_init(utk_counter *uc, ute_context *ctx);
+void utk_counter_init(utk_counter *uc, ute_context *ctx) {
+    ute_counter_init(&uc->ctr, ctx);
+    uc->count_allocations = 0;
+    uc->count_invalid_free = 0;
+}
+
+GLOBAL_VARIABLE utk_counter mem_counter;
+
+INTERNAL_FUNCTION void
+utk_record_allocation(utk_counter *ctr, void *mem) {
+    /** @brief record the allocation.
+     * @todo add a container to utk_counter to record the address that was
+     * allocated. If any memory leaks occur, the exact addresses can then be
+     * reported by the test driver.
+     */
+    UNREFERENCED(mem);
+    ++ctr->count_allocations;
+}
+
+UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
+ute_malloc_exceptions(size_t bytes)
+{
+    void *result = malloc(bytes);
+    if (NULL == result) {
+        EHM_THROW(exc_out_of_memory);
+    }
+
+    return result;
+}
 
 UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
 utk_malloc(size_t bytes)
 {
     void *result;
 
-    if (ute_would_throw(&mem_counter)) {
+    if (ute_would_throw(&mem_counter.ctr)) {
         result = NULL;
     } else {
-        // Standard malloc behavior (N.B.: replace with utk_malloc_handled)
-        result = malloc(bytes);
-        if (result)
-        {
+        EHM_TRY {
+            result = ute_malloc_exceptions(bytes);
             // log the allocation
             utk_record_allocation(&mem_counter, result);
-        }
+        } EHM_CATCH(exc_out_of_memory) {
+            result = NULL;
+        } EHM_ENDTRY;
     }
 
     return result;
 }   // uteMalloc
+
+
+UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
+ute_malloc_exceptions_track(size_t bytes, const ch8 *func, size_t line)
+{
+    UNREFERENCED(func);
+    UNREFERENCED(line);
+    void *result = malloc(bytes);
+    if (NULL == result) {
+        EHM_THROW(exc_out_of_memory);
+    }
+
+    return result;
+}
+
+UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
+utk_malloc_track(size_t bytes, const ch8 *func, size_t line)
+{
+    void *result;
+
+    if (ute_would_throw(&mem_counter.ctr)) {
+        result = NULL;
+    } else {
+        EHM_TRY {
+            result = ute_malloc_exceptions_track(bytes, func, line);
+            // log the allocation
+            utk_record_allocation(&mem_counter, result);
+        } EHM_CATCH(exc_out_of_memory) {
+            result = NULL;
+        } EHM_ENDTRY;
+    }
+
+    return result;
+}   // uteMalloc
+
+
+INTERNAL_FUNCTION void
+utk_record_invalid_free(utk_counter *ctr, void *mem) {
+    b32 enabled = FALSE;
+
+    ++ctr->count_invalid_free;
+    if (ute_throw_is_enabled(&ctr->ctr)) {
+        // Ensure we don't throw test exceptions when we're trying to record
+        // an invalid call to free
+        enabled = TRUE;
+        ute_throw_disable(&ctr->ctr);
+    }
+
+    /** @brief record invalid free
+     * @todo add a container to utk_counter to record invalid free addresses
+     * that can later be reported by the test driver.
+     */
+    UNREFERENCED(mem);
+
+    if (enabled) {
+        // Re-enable throwing on exception points
+        ute_throw_enable(&ctr->ctr);
+    }
+}
+
+UTK_MALLOC_NO_ALIAS_ATTR void
+ute_free_exceptions(void *mem) {
+    free(mem);
+}
+
+UTK_MALLOC_NO_ALIAS_ATTR void
+utk_free(void *mem) {
+    EHM_TRY {
+        ute_free_exceptions(mem);
+        --mem_counter.count_allocations;
+    } EHM_CATCH(exc_invalid_argument) {
+        // Count an attempt to free memory that is not currently allocated.
+        utk_record_invalid_free(&mem_counter, mem);
+    } EHM_ENDTRY;
+}
+
+
+INTERNAL_FUNCTION void
+utk_record_invalid_free_track(utk_counter *ctr, void *mem,
+                              const ch8 *func, size_t line) {
+    b32 enabled = FALSE;
+
+    UNREFERENCED(func);
+    UNREFERENCED(line);
+
+    ++ctr->count_invalid_free;
+    if (ute_throw_is_enabled(&ctr->ctr)) {
+        // Ensure we don't throw test exceptions when we're trying to record
+        // an invalid call to free
+        enabled = TRUE;
+        ute_throw_disable(&ctr->ctr);
+    }
+
+    /** @brief record invalid free
+     * @todo add a container to utk_counter to record invalid free addresses
+     * that can later be reported by the test driver.
+     */
+    UNREFERENCED(mem);
+
+    if (enabled) {
+        // Re-enable throwing on exception points
+        ute_throw_enable(&ctr->ctr);
+    }
+}
+
+UTK_MALLOC_NO_ALIAS_ATTR void
+ute_free_exceptions_track(void *mem, const ch8 *func, size_t line) {
+    UNREFERENCED(func);
+    UNREFERENCED(line);
+    free(mem);
+}
+
+UTK_MALLOC_NO_ALIAS_ATTR void
+utk_free_track(void *mem, const ch8 *func, size_t line) {
+    EHM_TRY {
+        ute_free_exceptions_track(mem, func, line);
+        --mem_counter.count_allocations;
+    } EHM_CATCH(exc_invalid_argument) {
+        // Count an attempt to free memory that is not currently allocated.
+        utk_record_invalid_free_track(&mem_counter, mem, func, line);
+    } EHM_ENDTRY;
+}
+
+
+//GLOBAL_VARIABLE utk_counter * const test_data = &mem_counter;
+
+// setup and teardown methods
+INTERNAL_FUNCTION utk_result setup(void *data);
+INTERNAL_FUNCTION void teardown(void *data);
+
+// test suite name and a forward reference to it.
+#define UTK_TS_NAME "UTK Malloc"
+GLOBAL_VARIABLE utk_test_suite utk_ts;
+
+// test cases names
+#define TEST_NAME_ALLOCATE_ONCE  "Allocate Once"
+#define TEST_NAME_FAIL_ONCE "Fail Once"
+
+// test methods
+INTERNAL_FUNCTION utk_result test_alloc_once(void *data);
+INTERNAL_FUNCTION utk_result test_fail_once(void *data);
+
+
+//
+// Test Cases
+//
+
+GLOBAL_VARIABLE utk_test_case test_case_alloc_once = {
+    TEST_NAME_ALLOCATE_ONCE,
+    setup,
+    test_alloc_once,
+    teardown,
+    &mem_counter
+};
+
+GLOBAL_VARIABLE utk_test_case test_case_fail_once = {
+    TEST_NAME_FAIL_ONCE,
+    setup,
+    test_fail_once,
+    teardown,
+    &mem_counter
+};
+
+
+//
+// Test Results
+//
+
+enum test_results {
+    UTK_MALLOC_SUCCESS = UTK_SUCCESS,
+    UTK_MALLOC_UNEXPECTED_ALLOCATION,
+    UTK_MALLOC_ALLOCATION_COUNT_INVALID,
+//    UTK_MALLOC_INVALID_EXCEPTION_POINT_INITIAL,
+//    UTK_MALLOC_INVALID_COUNT_THROW_INITIAL,
+//    UTK_MALLOC_INVALID_THROW_TEST_EXCEPTION_INITIAL,
+//    UTK_MALLOC_INVALID_CONTEXT,
+//    UTK_MALLOC_INVALID_COUNT_THROW,
+//    UTK_MALLOC_FAILED_TO_THROW,
+//    UTK_MALLOC_FAILED_TO_THROW2,
+//    UTK_MALLOC_INVALID_THROW,
+//    UTK_MALLOC_FAILED_THROW_ENABLE,
+    UTK_MALLOC_FAILED
+};
+
+
+//
+// Setup and Teardown Methods
+//
+
+utk_result
+setup(void *data) {
+    utk_result result = UTK_MALLOC_SUCCESS;
+    utk_counter *ctr = (utk_counter*)data;
+    ute_context *ctx = ute_context_new(&utk_ts);
+
+    if (NULL == ctx) {
+        result = UTK_FAIL_SETUP;
+    } else {
+        utk_counter_init(ctr, ctx);
+    }
+
+    return result;
+}
+
+void
+teardown(void *data) {
+    utk_counter *ctr = (utk_counter*)data;
+    ute_context *ctx = ute_counter_get_context(&ctr->ctr);
+    ute_context_delete(ctx);
+}
+
+
+//
+// Test Methods
+//
+
+utk_result
+test_alloc_once(void *data) {
+    utk_result result = UTK_MALLOC_FAILED;
+    utk_counter *ctr = (utk_counter*)data;
+    b32 count_correct = FALSE;
+    void *mem;
+
+    mem = utk_malloc(100);
+    if (mem != NULL) {
+        if (1 == ctr->count_allocations) {
+            count_correct = TRUE;
+        } else {
+            result = UTK_MALLOC_ALLOCATION_COUNT_INVALID;
+        }
+
+        utk_free(mem);
+        if (count_correct && 0 == ctr->count_allocations) {
+            result = UTK_SUCCESS;
+        }
+    }
+
+    return result;
+}
+
+utk_result
+test_fail_once(void *data) {
+    utk_result result = UTK_MALLOC_FAILED;
+    utk_counter *ctr = (utk_counter*)data;
+    void *mem;
+
+    ute_increment_count_fail(&ctr->ctr);
+    mem = utk_malloc(100);
+    if (mem == NULL) {
+        if (0 == ctr->count_allocations) {
+            result = UTK_SUCCESS;
+        }
+    } else {
+        utk_free(mem);
+        result = UTK_MALLOC_UNEXPECTED_ALLOCATION;
+    }
+
+    return result;
+}
+
+
+GLOBAL_VARIABLE utk_test_case *tca[] = {
+    &test_case_alloc_once,
+    &test_case_fail_once
+};
+
+
+GLOBAL_VARIABLE utk_test_suite utk_ts = {
+    UTK_TS_NAME,
+    ARRAY_COUNT(tca),
+    tca
+};
+
+
+/// @brief exported load function
+PROJECTAPI utk_test_suite *
+test_suite_load(void) {
+    return &utk_ts;
+}

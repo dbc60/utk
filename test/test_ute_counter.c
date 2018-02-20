@@ -182,7 +182,7 @@ setup_counter(void *data)
 {
     utk_result result = CTR_SUCCESS;
     ute_counter_data *ctr_data = (ute_counter_data*)data;
-    ctr_data->ctx = ute_new(&ute_ts);
+    ctr_data->ctx = ute_context_new(&ute_ts);
 
     if (NULL == ctr_data->ctx) {
         result = UTK_FAIL_SETUP;
@@ -198,7 +198,7 @@ teardown_counter(void *data)
 {
     ute_counter_data *ctr_data = (ute_counter_data*)data;
     ute_context *ctx = ute_counter_get_context(&ctr_data->ctr);
-    ute_delete(ctx);
+    ute_context_delete(ctx);
 }
 
 
@@ -438,9 +438,7 @@ test_throw_enabled_after_throw(void *data)
 
 // The array of test cases for the test suite
 GLOBAL_VARIABLE
-utk_test_case *tca[] = 
-{
-    // UTE driver tests
+utk_test_case *tca[] = {
     &test_case_counter_init,
     &test_case_counter_get_context,
     &test_case_counter_increment_count_throw,
@@ -454,13 +452,14 @@ utk_test_case *tca[] =
     &test_case_throw_enabled_after_throw
 };
 
-GLOBAL_VARIABLE
-utk_test_suite ute_ts = {UTE_TS_NAME, 
-                         ARRAY_COUNT(tca),
-                         tca};
+GLOBAL_VARIABLE utk_test_suite ute_ts = {
+    UTE_TS_NAME, 
+    ARRAY_COUNT(tca),
+    tca
+};
+
 
 PROJECTAPI utk_test_suite *
-test_suite_load(void)
-{
+test_suite_load(void) {
     return &ute_ts;
 }

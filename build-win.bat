@@ -353,6 +353,24 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% /OUT:"%BUILD_PATH%\test_dlist.dll" ^
 echo.
 
 
+::
+:: test_utk_malloc.dll test suite
+::
+
+:: compile the components of test_utk_malloc.dll
+echo ** Building shared test library test_utk_malloc.dll
+cl %COMPILER_FLAGS% /c /Isrc /D _LIB /D PROJECTLIBRARY_EXPORTS ^
+   /Fp%BUILD_PATH%\test_utk_malloc.pch /Fd%BUILD_PATH%\test_utk_malloc.pdb ^
+   "test\test_utk_malloc.c"
+
+:: build test_utk_malloc.dll
+link %LINKER_FLAGS% /DLL %MACHINE_FLAG% ^
+     /OUT:"%BUILD_PATH%\test_utk_malloc.dll" ^
+     /PDB:%BUILD_PATH%\test_utk_malloc.pdb "%BUILD_PATH%\test_utk_malloc.obj" ^
+     "%BUILD_PATH%\ute_driver.lib" "%BUILD_PATH%\ehm.lib"
+echo.
+
+
 :: Build complete
 goto :EOF
 

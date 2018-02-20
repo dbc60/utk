@@ -68,6 +68,10 @@ echo.
 echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_dlist.dll
 %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_dlist.dll
 
+echo.
+echo Executing %BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_utk_malloc.dll
+%BUILD_PATH%\but_driver.exe %BUILD_PATH%\test_utk_malloc.dll
+
 goto :EOF
 
 :errProjectPath
