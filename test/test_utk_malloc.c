@@ -152,7 +152,8 @@
 #endif  // UTK_REPLACE_SYSTEM_ALLOCATOR
 
 
-EXTERN_C UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void * utk_malloc(size_t size);
+EXTERN_C UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR
+void * utk_malloc(size_t size);
 
 struct utk_counter {
     ute_counter ctr;
@@ -175,7 +176,8 @@ void utk_counter_init(utk_counter *uc, ute_context *ctx) {
 
 GLOBAL_VARIABLE utk_counter mem_counter;
 
-INTERNAL_FUNCTION void
+INTERNAL_FUNCTION
+void
 utk_record_allocation(utk_counter *ctr, void *mem) {
     /** @brief record the allocation.
      * @todo add a container to utk_counter to record the address that was
@@ -186,7 +188,9 @@ utk_record_allocation(utk_counter *ctr, void *mem) {
     ++ctr->count_allocations;
 }
 
-UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
+
+UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR
+void *
 ute_malloc_exceptions(size_t bytes)
 {
     void *result = malloc(bytes);
@@ -197,7 +201,9 @@ ute_malloc_exceptions(size_t bytes)
     return result;
 }
 
-UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
+
+UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR
+void *
 utk_malloc(size_t bytes)
 {
     void *result;
@@ -218,21 +224,47 @@ utk_malloc(size_t bytes)
 }   // uteMalloc
 
 
-UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
-ute_malloc_exceptions_track(size_t bytes, const ch8 *func, size_t line)
+/** @todo Track file, function, and line number of each allocation request.
+ * Design Question: should these values be tracked in a separate container that
+ * contains the address of the memory allocated along with the file name,
+ * function name, and line number where malloc, calloc, or realloc was called,
+ * or should that information be passed down to an internal structures, such as
+ * a header or footer in the "chunk" struct?
+ */
+
+/**
+ * @brief accept the file, function, and line info from a tracking-allocator.
+ */
+UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR
+void *
+ute_malloc_exceptions_track(size_t bytes,
+                            const ch8 *name_file,
+                            const ch8 *name_function,
+                            size_t line)
 {
-    UNREFERENCED(func);
+    UNREFERENCED(name_file);
+    UNREFERENCED(name_function);
     UNREFERENCED(line);
     void *result = malloc(bytes);
     if (NULL == result) {
         EHM_THROW(exc_out_of_memory);
-    }
+    } else {}
 
     return result;
 }
 
-UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR void *
-utk_malloc_track(size_t bytes, const ch8 *func, size_t line)
+
+/**
+ * @brief track the file, function, and line where an allocation was requested.
+ * This should be helpful in debugging, but requires a macro defined in a
+ * header file to capture and pass those values from the call site.
+ */
+UTK_MALLOC_NO_ALIAS_ATTR UTK_MALLOC_CPTR_ATTR
+void *
+utk_malloc_track(size_t bytes,
+                 const ch8 *name_file,
+                 const ch8 *name_function,
+                 size_t line)
 {
     void *result;
 
@@ -240,7 +272,10 @@ utk_malloc_track(size_t bytes, const ch8 *func, size_t line)
         result = NULL;
     } else {
         EHM_TRY {
-            result = ute_malloc_exceptions_track(bytes, func, line);
+            result = ute_malloc_exceptions_track(bytes,
+                                                 name_file,
+                                                 name_function,
+                                                 line);
             // log the allocation
             utk_record_allocation(&mem_counter, result);
         } EHM_CATCH(exc_out_of_memory) {
@@ -252,7 +287,8 @@ utk_malloc_track(size_t bytes, const ch8 *func, size_t line)
 }   // uteMalloc
 
 
-INTERNAL_FUNCTION void
+INTERNAL_FUNCTION
+void
 utk_record_invalid_free(utk_counter *ctr, void *mem) {
     b32 enabled = FALSE;
 
@@ -276,7 +312,9 @@ utk_record_invalid_free(utk_counter *ctr, void *mem) {
     }
 }
 
-UTK_MALLOC_NO_ALIAS_ATTR void
+
+UTK_MALLOC_NO_ALIAS_ATTR
+void
 ute_free_exceptions(void *mem) {
     free(mem);
 }
@@ -293,7 +331,8 @@ utk_free(void *mem) {
 }
 
 
-INTERNAL_FUNCTION void
+INTERNAL_FUNCTION
+void
 utk_record_invalid_free_track(utk_counter *ctr, void *mem,
                               const ch8 *func, size_t line) {
     b32 enabled = FALSE;
@@ -321,14 +360,17 @@ utk_record_invalid_free_track(utk_counter *ctr, void *mem,
     }
 }
 
-UTK_MALLOC_NO_ALIAS_ATTR void
+
+UTK_MALLOC_NO_ALIAS_ATTR
+void
 ute_free_exceptions_track(void *mem, const ch8 *func, size_t line) {
     UNREFERENCED(func);
     UNREFERENCED(line);
     free(mem);
 }
 
-UTK_MALLOC_NO_ALIAS_ATTR void
+UTK_MALLOC_NO_ALIAS_ATTR
+void
 utk_free_track(void *mem, const ch8 *func, size_t line) {
     EHM_TRY {
         ute_free_exceptions_track(mem, func, line);

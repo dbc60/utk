@@ -56,7 +56,7 @@ enum ute_test_results
     UTR_SETUP_FAILED,
 
     // This is an internal error. Something is wrong with the test context
-    UTR_CONTEXT_INVALID,
+    UTR_INVALID_CONTEXT,
 
     // The test case has not run
     UTR_NOT_RUN

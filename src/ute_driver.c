@@ -25,7 +25,10 @@
 // Record the invalid address passed to free
 struct invalid_free
 {
-    void   *block;
+    void       *block;
+    const ch8  *file_name;
+    const ch8  *function_name;
+    size_t      line;
 };
 typedef struct invalid_free invalid_free;
 
@@ -37,13 +40,13 @@ typedef struct invalid_free invalid_free;
 */
 struct ute_result_context
 {
-    memory_index    index;              // the index of the test case
-    ute_test_result result;             // the result code
-    int             error_code;         // the error code from the test case
-    int             count_fail_free;    // The number of times free failed
-    int             capacity;           // The number of invalid addresses that
-                                        // can be stored in invalid_addresses
-    invalid_free   *invalid_addresses;  // array of invalid addresses
+    memory_index    index;                  // the index of the test case
+    ute_test_result result;                 // the result code
+    int             error_code;             // the error code from the test case
+    int             count_fail_free;        // The number of times free failed
+    int             capacity_invalid_free;  // The number of invalid addresses that
+                                            // can be stored in invalid_addresses
+    invalid_free   *invalid_addresses;      // array of invalid addresses
 };
 typedef struct ute_result_context ute_result_context;
 
@@ -59,7 +62,7 @@ struct ute_context
     size_t          count_failed;       // number of tests that ran and failed
     size_t          count_failed_setup; // number of tests that failed setup
     size_t          count_results;      // number of test results
-    size_t          capacity;           // number of results that can be stored
+    size_t          capacity_results;   // number of results that can be stored
     ute_result_context *results;        // array of test results.
     ute_counter     counter;
 };
@@ -84,13 +87,13 @@ grow_capacity(ute_context *ctx)
     size_t count;
     size_t const increment = 10;
 
-    // Calculate a new capacity, but make it no more than
-    // the number of test cases in the test suite
-    if (ctx->capacity + increment > (size_t)ctx->test_suite->count) {
+    // Calculate a new capacity, but make it no more than the number of test
+    // cases in the test suite
+    if (ctx->capacity_results + increment > (size_t)ctx->test_suite->count) {
         new_capacity = ctx->test_suite->count;
-        count = ctx->test_suite->count - ctx->capacity;
+        count = ctx->test_suite->count - ctx->capacity_results;
     } else {
-        new_capacity = ctx->capacity + increment;
+        new_capacity = ctx->capacity_results + increment;
         count = increment;
     }
 
@@ -98,10 +101,10 @@ grow_capacity(ute_context *ctx)
                           new_capacity * sizeof(ute_result_context));
     if (new_results) {
         // Initialize new memory block
-        memset(&new_results[ctx->capacity],
+        memset(&new_results[ctx->capacity_results],
                0,
                count * sizeof(ute_result_context));
-        ctx->capacity = new_capacity;
+        ctx->capacity_results = new_capacity;
         ctx->results = new_results;
     }
 }
@@ -110,11 +113,11 @@ grow_capacity(ute_context *ctx)
 INTERNAL_FUNCTION void
 insert_result(ute_context *ctx, ute_test_result result, int error_code)
 {
-    if (ctx->count_results == ctx->capacity) {
+    if (ctx->count_results == ctx->capacity_results) {
         grow_capacity(ctx);
     }
 
-    if ((size_t)ctx->count_results < ctx->capacity) {
+    if ((size_t)ctx->count_results < ctx->capacity_results) {
         ctx->results[ctx->count_results].index = ctx->index;
         ctx->results[ctx->count_results].result = result;
         ctx->results[ctx->count_results].error_code = error_code;
@@ -237,7 +240,7 @@ ute_get_count_allocation(const ute_counter_mem *c) {
 void
 ute_run(ute_context *ctx)
 {
-    ute_counter_mem counter = {0};
+    ute_counter_mem counter_mem = {0};
     utk_test_suite *ts = ctx->test_suite;
     utk_test_case *tc = ts->test_cases[ctx->index];
     u64 count_start = 0;
@@ -246,14 +249,14 @@ ute_run(ute_context *ctx)
     b32 thrown = FALSE;
     u64 count_leaks = 0;
 
-    ute_counter_init(&counter.counter, ctx);
+    ute_counter_init(&counter_mem.counter, ctx);
     do {
         /*
          * Get the current number of memory allocations so we can check for
          * memory leaks after the test run is over.
          */
-        count_start = ute_get_count_allocation(&counter);
-        ute_increment_count_fail(&counter.counter);
+        count_start = ute_get_count_allocation(&counter_mem);
+        ute_increment_count_fail(&counter_mem.counter);
 
         EHM_TRY {
             if (tc->setup) {
@@ -272,8 +275,8 @@ ute_run(ute_context *ctx)
             // Do nothing
         } EHM_ENDTRY;
 
-        thrown = ute_has_thrown(&counter.counter);
-        ute_throw_disable(&counter.counter);
+        thrown = ute_has_thrown(&counter_mem.counter);
+        ute_throw_disable(&counter_mem.counter);
 
         /**
          * If an exception_ute_test was NOT thrown, then we have a valid result
@@ -296,7 +299,7 @@ ute_run(ute_context *ctx)
             }
         }
 
-        count_leaks = ute_get_count_allocation(&counter) - count_start;
+        count_leaks = ute_get_count_allocation(&counter_mem) - count_start;
         if (count_leaks != 0) {
             if (!thrown && result_test != UTR_PASSED) {
                 /**
