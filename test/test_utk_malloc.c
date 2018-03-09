@@ -174,7 +174,34 @@ void utk_counter_init(utk_counter *uc, ute_context *ctx) {
     uc->count_invalid_free = 0;
 }
 
+/** @brief the exception counter so ute_malloc_exceptions knows when to throw a
+ * test exception.
+ */
 GLOBAL_VARIABLE utk_counter mem_counter;
+
+/** @todo When do test exceptions get thrown and caught? They are the mechanism
+ * through which the test driver records the results of what happens on each
+ * exception path. The allocators must throw a test exception, I think, so the
+ * test driver can process each exception path. How does the data flow in the
+ * face of a test exception such that the code under test can continue to run
+ * after the test exception is thrown?
+ * 
+ * Look at TestContext::run() in utkBaseline\src\ute\src\uteTestContext.cpp. It
+ * runs setup, test and teardown. It catches UteAllocException and re-throws
+ * it, but only as a means to provide a place for a debugger to set a break
+ * point. UteAllocExceptions should be caught by the test allocator, which will
+ * either throw std::bad_alloc for C++ "new", or return NULL for "new nothrow"
+ * and C allocators. The run() method also catches and records unhandled
+ * exceptions. Ideally, the run() method never catches an exception. Test
+ * exceptions should be handled in the test allocator, and the code under test
+ * should handle all other exceptions that it throws.
+ * 
+ * Also see the definition of class CppExceptionPoint in
+ * utkBaseline\src\ute\src\uteExceptionPoint.h. An instance of this class is
+ * what the run() method uses to get a test result, a count of invalid free
+ * calls, and the test result for each exception path.
+ */
+
 
 INTERNAL_FUNCTION
 void
@@ -248,7 +275,30 @@ ute_malloc_exceptions_track(size_t bytes,
     void *result = malloc(bytes);
     if (NULL == result) {
         EHM_THROW(exc_out_of_memory);
-    } else {}
+    } else {
+        /// @todo record file name, function, and line number.
+        // shouldn't there be a function like:
+        //
+        //  utk_record_allocation(&mem_counter,
+        //                        result, name_file, name_function, line);
+        //
+        // or a struct that records name_file, name_function, line and a copy
+        // of it gets passed to a function like 'utk_record_allocation'?
+        // utk_counter *is* a ute_counter with fields added for counting
+        // allocations that haven't been freed, and a count of invalid free
+        // calls. It will have to be expanded to include the memory address,
+        // file name, function name and line number for each allocation that
+        // does *not* have a matching free. It should also have that data for
+        // each invalid free. Anything else?
+        //
+        // So each allocation will insert a new record, and each *valid* free
+        // will remove one. Each invalid free will have its own set of records.
+        // That means both utk_malloc_track and utk_free_track will have to
+        // accept address, name_file, name_function, and line as arguments. In
+        // the case of utk_free_track that data will be recorded only if the
+        // address is invalid. Otherwise, it's used to remove a record that was
+        // created by utk_malloc_track.
+    }
 
     return result;
 }

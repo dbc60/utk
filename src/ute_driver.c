@@ -80,7 +80,7 @@ typedef struct ute_counter_mem ute_counter_mem;
  */
 
 INTERNAL_FUNCTION void
-grow_capacity(ute_context *ctx)
+grow_capacity_results(ute_context *ctx)
 {
     ute_result_context *new_results;
     size_t new_capacity;
@@ -114,7 +114,7 @@ INTERNAL_FUNCTION void
 insert_result(ute_context *ctx, ute_test_result result, int error_code)
 {
     if (ctx->count_results == ctx->capacity_results) {
-        grow_capacity(ctx);
+        grow_capacity_results(ctx);
     }
 
     if ((size_t)ctx->count_results < ctx->capacity_results) {

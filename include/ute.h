@@ -25,7 +25,7 @@ BEGIN_EXTERN_C
 typedef struct ute_context ute_context;
 
 /*
- * ute_test_result is ordered from best result (passed) to successively worse
+ * ute_test_results are ordered from best result (passed) to successively worse
  * results, ending in not run. Subjectively, memory leaks along exception paths
  * are worse than passing along all paths. Memory leaks along the main path are
  * worse than along the exception path. A test failure along an exception path
@@ -56,7 +56,7 @@ enum ute_test_results
     UTR_SETUP_FAILED,
 
     // This is an internal error. Something is wrong with the test context
-    UTR_INVALID_CONTEXT,
+    UTR_CONTEXT_INVALID,
 
     // The test case has not run
     UTR_NOT_RUN
