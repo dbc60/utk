@@ -200,6 +200,8 @@ GLOBAL_VARIABLE utk_counter mem_counter;
  * utkBaseline\src\ute\src\uteExceptionPoint.h. An instance of this class is
  * what the run() method uses to get a test result, a count of invalid free
  * calls, and the test result for each exception path.
+ * 
+ * See also the run() function in utkBaseline/src/ute/src/uteDriver.c
  */
 
 
