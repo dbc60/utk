@@ -37,6 +37,8 @@ typedef struct invalid_free invalid_free;
 ** Point to one test case and the current result from running it.
 ** The ResultContext only exists for tests that didn't run or ran, but didn't
 ** pass. All tests that run and pass don't generate one of these.
+**
+** NOTE: that rule will change. All test cases will generate a result.
 */
 struct ute_result_context
 {
@@ -54,6 +56,7 @@ typedef struct ute_result_context ute_result_context;
 
 struct ute_context
 {
+    // magic is set to the address of the context.
     intptr_t        magic;              // indicates a valid context
     utk_test_suite *test_suite;         // suite under test
     memory_index    index;              // index of the current test case

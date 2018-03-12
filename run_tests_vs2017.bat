@@ -7,33 +7,27 @@
 
 @echo off
 
-:: Ensure the environment has bee set
-if "%PROJECT_PATH%" == "" goto errProjectPath
-
 set BUILD_CONFIG=Debug
 if    "%1" == ""          set BUILD_CONFIG=Debug
 if /i "%1" == "Debug"     set BUILD_CONFIG=Debug
 if /i "%1" == "Release"   set BUILD_CONFIG=Release
 
-set BUILD_ROOT=build\vs2017
+if    "%2" == ""        set Architecture=amd64
+if /i "%2" == "x86"     set Architecture=x86
+if /i "%2" == "amd64"   set Architecture=amd64
+if /i "%2" == "x64"     set Architecture=amd64
+if /i "%2" == "arm"     set Architecture=arm
+if /i "%2" == "arm64"   set Architecture=arm64
+if "%Architecture%" == "" goto :errArch
 
-if "%BUILD_CONFIG%" == "Debug" (
-    set COMPILER_BUILD_FLAGS=/Od /D PROJECT_INTERNAL=1 ^
-    /D PROJECT_SLOW=1 /MTd
-)
-
-if "%BUILD_CONFIG%" =="Release" (
-    set COMPILER_BUILD_FLAGS=/Ox /D PROJECT_INTERNAL=0 /D PROJECT_SLOW=0 /MT
-)
+set BUILD_ROOT=build\win
 
 :: Architecture is set by the shell-vs*.bat scripts in misc\
 if "%Architecture%" == "amd64" (
-    set MACHINE_FLAG=/MACHINE:X64
     set PLATFORM=x64
 )
 
 if "%Architecture%" == "x86" (
-    set MACHINE_FLAG=/MACHINE:X86
     set PLATFORM=x86
 )
 
@@ -70,5 +64,6 @@ echo Executing %BUILD_PATH%\win32_but_driver.exe %BUILD_PATH%\test_dlist.dll
 
 goto :EOF
 
-:errProjectPath
-echo Error: The build environment is not set. Run either 'misc\shell-vs2015.bat' or 'misc\shell-vs2017.bat'?
+:errArch
+echo Error: "%2" is not a valid platform architecture. Please select amd64 (default), x86, arm64, or arm.
+goto :EOF

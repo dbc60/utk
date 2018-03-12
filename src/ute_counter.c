@@ -36,17 +36,17 @@ ute_counter_get_context(ute_counter *uc)
     return uc->context;
 }
 
-/** @brief update the fail count to the next exception point
- * Reset the exception point counter, enable throwing a test exception, and
- * increment the fail count so the test exception will be thrown if an
- * exception point equal to the fail count is reached.
+/** @brief Reset the exception point counter to the next exception point.
+ * Enable throwing a test exception, and increment the fail count so the test
+ * exception will be thrown if count_exception_point is incremented to the
+ * value of count_fail in ute_throw_try(), below.
  */
 void
 ute_increment_count_fail(ute_counter *uc)
 {
     uc->count_exception_point = 0;
     ++uc->count_fail;
-    uc->throw_test_exception = TRUE;
+    uc->enable_test_exception = TRUE;
 }
 
 
@@ -57,7 +57,7 @@ ute_increment_count_fail(ute_counter *uc)
 void
 ute_throw_try(ute_counter *uc)
 {
-    if (uc->throw_test_exception
+    if (uc->enable_test_exception
         && ++(uc->count_exception_point) == uc->count_fail) {
         EHM_THROW(exception_ute_test);
     }
@@ -79,7 +79,7 @@ ute_has_thrown(const ute_counter *uc)
 void
 ute_throw_disable(ute_counter *uc)
 {
-    uc->throw_test_exception = FALSE;
+    uc->enable_test_exception = FALSE;
 }
 
 
@@ -89,7 +89,7 @@ ute_throw_disable(ute_counter *uc)
 void
 ute_throw_enable(ute_counter *uc)
 {
-    uc->throw_test_exception = TRUE;
+    uc->enable_test_exception = TRUE;
 }
 
 
@@ -99,7 +99,7 @@ ute_throw_enable(ute_counter *uc)
 b32
 ute_throw_is_enabled(const ute_counter *uc)
 {
-    return uc->throw_test_exception;
+    return uc->enable_test_exception;
 }
 
 
@@ -132,7 +132,7 @@ b32
 ute_would_throw(ute_counter *uc) {
     b32 result = FALSE;
 
-    if (uc->throw_test_exception
+    if (uc->enable_test_exception
         && ++(uc->count_exception_point) == uc->count_fail) {
         result = TRUE;
     }
