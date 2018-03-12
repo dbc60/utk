@@ -41,22 +41,22 @@ enum ute_test_results
     UTR_PASSED,
 
     // The test case passed, but leaked memory on an exception path
-    UTR_EXC_WEAK_PASS,
+    UTR_PASSED_WEAK_EXCEPTION_PATH,
 
     // The test case passed, but leaked memory on the main path
-    UTR_WEAK_PASS,
+    UTR_PASSED_WEAK_MAIN,
 
     // The main test passed, but an exception path failed
-    UTR_EXC_FAILED,
+    UTR_FAILED_EXCEPTION_PATH,
 
     // The test case was run and it returned a failure on the main path
-    UTR_FAILED,
+    UTR_FAILED_MAIN_PATH,
 
     // The setup function reported a failure
-    UTR_SETUP_FAILED,
+    UTR_FAILED_SETUP,
 
     // This is an internal error. Something is wrong with the test context
-    UTR_CONTEXT_INVALID,
+    UTR_INVALID_CONTEXT,
 
     // The test case has not run
     UTR_NOT_RUN

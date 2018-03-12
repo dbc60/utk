@@ -18,10 +18,10 @@ struct ute_counter
 {
     /*
      * The number of the exception point that we are up to executing in the
-     * code. It is initialized to zero (no exception points encounted, yet) and
-     * incremented at each exception point. When its value reaches that of
-     * cntThrowCount and if cntThrowTestException is TRUE, a test exception
-     * will be thrown at the current exception point.
+     * code. It is initialized to zero (no exception points encountered, yet)
+     * and if enable_test_exception is TRUE, it is incremented at each
+     * exception point. When its value reaches that of count_fail, a test
+     * exception will be thrown.
      */
     size_t count_exception_point;
 
@@ -35,19 +35,8 @@ struct ute_counter
      * TRUE if exceptions should be thrown when count_exception_point equals
      * throw_count.
      */
-    b32 throw_test_exception;
+    b32 enable_test_exception;
     
-    /*
-     * This counts the number of times malloc, calloc, etc. have successfully
-     * returned a non-null result, minus the number of times a valid pointer
-     * has been passed to free/delete. This value should be zero when the test
-     * is over.
-     */
-    //u64 count_allocations;
-    
-    // the number of invalid pointers passed to free/delete
-    //u64 count_invalid_free;
-
     // The current test context
     ute_context *context;
 };
