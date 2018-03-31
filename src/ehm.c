@@ -8,7 +8,7 @@
 
 /**
  * @file
- * @brief An excepion handling module.
+ * @brief An exception handling module.
  */
 
 #define EHM_SHARED_EXPORT 1
@@ -27,7 +27,7 @@ ehm_get_stack()
 EHM_API void
 ehm_throw(const ehm_exception *e,
           const ch8 *filename,
-          u32 line,
+          umm line,
           const ch8 *func)
 {
     ehm_frame *frame = ehm_stack;

@@ -8,7 +8,7 @@
 
 /**
  * @file
- * @brief An excepion handling module - Windows Shared Library.
+ * @brief An exception handling module - Windows Shared Library.
  */
 
 #include <platform.h>

@@ -371,6 +371,48 @@ link %LINKER_FLAGS% /DLL %MACHINE_FLAG% ^
 echo.
 
 
+::
+:: atom.lib
+::
+
+:: build atom.lib
+echo ** Building atom.lib
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\atom.pch ^
+   /Fd%BUILD_PATH%\atom.pdb src\atom.c
+
+lib /OUT:"%BUILD_PATH%\atom.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\atom.obj
+echo.
+
+
+::
+:: mem.lib
+::
+
+:: build mem.lib
+echo ** Building mem.lib
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\mem.pch ^
+   /Fd%BUILD_PATH%\mem.pdb src\mem.c
+
+lib /OUT:"%BUILD_PATH%\mem.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\mem.obj
+echo.
+
+
+
+::
+:: memchk.lib
+::
+
+:: build memchk.lib
+echo ** Building memchk.lib
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\memchk.pch ^
+   /Fd%BUILD_PATH%\memchk.pdb src\memchk.c
+
+lib /OUT:"%BUILD_PATH%\memchk.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\memchk.obj
+echo.
+
 :: Build complete
 goto :EOF
 

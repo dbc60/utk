@@ -8,7 +8,7 @@
 
 /**
  * @file
- * @brief An excepion handling module - Linux Shared Library.
+ * @brief An exception handling module - Linux Shared Library.
  */
 
 #include <platform.h>
