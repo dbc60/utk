@@ -87,7 +87,7 @@
 ::                       1995 = C95, 1999 = C99, 2011 = C11.
 :: Optimization switches /O2 /Oi /fp:fast
 
-:: Ensure the environment has bee set
+:: Ensure the environment has been set
 if "%PROJECT_PATH%" == "" goto errProjectPath
 
 set BUILD_CONFIG=Debug
@@ -157,6 +157,11 @@ if /i "%1" == "rebuild" (
 if /i "%2" == "rebuild" (
     call :DoClean
     call :BuildAll
+    goto :EOF
+)
+
+if /i "%1" == "cli" (
+    call :BuildCli
     goto :EOF
 )
 
@@ -399,7 +404,6 @@ lib /OUT:"%BUILD_PATH%\mem.lib" %MACHINE_FLAG% /NOLOGO ^
 echo.
 
 
-
 ::
 :: memchk.lib
 ::
@@ -411,6 +415,21 @@ cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\memchk.pch ^
 
 lib /OUT:"%BUILD_PATH%\memchk.lib" %MACHINE_FLAG% /NOLOGO ^
     %BUILD_PATH%\memchk.obj
+echo.
+
+
+:BuildCli
+::
+:: cli.lib
+::
+
+:: build cli.lib
+echo ** Building cli.lib
+cl %COMPILER_FLAGS% /c /Fp%BUILD_PATH%\cli.pch ^
+   /Fd%BUILD_PATH%\cli.pdb src\cli_command.c src\cli_command_help.c
+
+lib /OUT:"%BUILD_PATH%\cli.lib" %MACHINE_FLAG% /NOLOGO ^
+    %BUILD_PATH%\cli_command.obj %BUILD_PATH%\cli_command_help.obj
 echo.
 
 :: Build complete
