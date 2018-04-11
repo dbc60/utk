@@ -2,17 +2,15 @@
 #include <string.h>
 
 
-static b32 execute(cli_command *me);
-static b32 parse(cli_command *me, int argc, ch8 **argv);
 static const ch8 *get_help_short(const cli_command *me);
 static const ch8 *get_help_detailed(const cli_command *me);
 static const ch8 *get_name(const cli_command *me);
 static int get_error_code(const cli_command *me);
 static b32 match(const cli_command *me, const ch8 *name_command);
 
-static cli_command_vtbl vtbl_default = {
-    execute,
-    parse,
+cli_command_vtbl vtbl_cli_command = {
+    NULL,
+    NULL,
     get_help_short,
     get_help_detailed,
     get_name,
@@ -20,13 +18,13 @@ static cli_command_vtbl vtbl_default = {
     match
 };
 
+
 void
-cli_command_init(cli_command *me, cli_command_vtbl *vtbl, const ch8 *name,
-                 const ch8 *help_short, const ch8 *help_detailed) {
-    me->vtbl = vtbl;
-    me->name = name;
-    me->help_short = help_short;
-    me->help_detailed = help_detailed;
+cli_command_init(cli_command *me) {
+    me->vtbl = &vtbl_cli_command;
+    me->name = "";
+    me->help_short = "";
+    me->help_detailed = "";
     me->error_code = 0;
 }
 
@@ -75,26 +73,6 @@ cli_command_match(const cli_command *me, const ch8 *name) {
 
 
 /** @brief "virtual" functions in the vtable */
-
-b32
-execute(cli_command *me) {
-    me->error_code = 0;
-    return TRUE;
-}
-
-
-// parse a cli_command-line - return TRUE for success, FALSE otherwise.
-b32
-parse(cli_command *me, int argc, ch8 **argv) {
-    int compare_result;
-
-    UNREFERENCED(argc);
-
-    // each command has its own name - match it.
-    compare_result = strcmp(me->name, argv[1]);
-    return (0 == compare_result);
-}
-
 
 // return a short help string
 const

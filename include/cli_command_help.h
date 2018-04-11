@@ -2,7 +2,7 @@
 #define CLI_COMMAND_HELP_H_INCLUDED
 
 #include "platform.h"
-
+#include "cli_command.h"
 
 struct cli_command_help_vtbl;
 typedef struct cli_command_help_vtbl cli_command_help_vtbl;
@@ -17,17 +17,21 @@ struct cli_command_help {
 };
 typedef struct cli_command_help cli_command_help;
 
+typedef void (*pfn_command_register)(const cli_command *cmd);
+
 struct cli_command_help_vtbl {
-    b32(*execute)(cli_command_help *);
-    b32 (*parse)(cli_command_help *me, int argc, ch8 **argv);
-    const ch8 *(*help_short)(cli_command_help *me);
-    const ch8 *(*help_detailed)(cli_command_help *me);
-    const ch8 *(*get_name)(cli_command_help *me);
-    int (*get_error_code)(cli_command_help *me);
-    b32 (*match)(cli_command_help *me, const ch8 *name);
+    pfn_execute execute;
+    pfn_parse parse;
+    pfn_help_short help_short;
+    pfn_help_detailed help_detailed;
+    pfn_get_name get_name;
+    pfn_get_error_code get_error_code;
+    pfn_match match;
+    pfn_command_register command_register;
 };
 
 // The help-command object
 extern struct cli_command_help cli_help;
+void cli_command_help_init(cli_command_help *me);
 
 #endif  // CLI_COMMAND_HELP_H_INCLUDED
